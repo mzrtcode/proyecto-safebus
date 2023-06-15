@@ -1,7 +1,8 @@
 # ✨Proyect ADSO SENA Safebus✨
 SafeBus, es mi proyecto final SENA del tecnologo en Análisis y Desarrollo de Software . 🚀 Este proyecto tiene como objetivo principal facilitar la creación y venta de tiquetes 🎫, así como la generación de planillas de planillaje 📝 y el control eficiente de vehículos 🚍
 
-![dashboard](https://github.com/mzrtcode/proyecto-safebus-sena/assets/71569136/1f11c156-bc40-494b-8cbf-31b21e746f32)
+![brave_LcOw2Xh1VD](https://github.com/mzrtcode/proyecto-safebus/assets/71569136/eefb864a-dafe-4533-a124-79a7417bd9f8)
+
 
 Instalacion
 SafeBus requiere una version de Node.js v10+ para funcionar
