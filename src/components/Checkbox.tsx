@@ -11,7 +11,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ initialState, onToggle }) => {
   const [id, setId] = useState<string>('');
 
   useEffect(() => {
-    const uniqueId = `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+    const uniqueId = `checkbox-${Math.random().toString(36).substring(2, 11)}`;
     setId(uniqueId);
   }, []);
 
