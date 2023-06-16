@@ -3,6 +3,7 @@ import styles from './localidades.module.css'
 import Card from '../components/Card';
 import Table from '../components/Table';
 import useToast from '../hooks/useToast';
+import Checkbox from "../components/Checkbox";
 
 const Localidades = () => {
 
@@ -28,20 +29,27 @@ const Localidades = () => {
         { id: 10, nombre_localidad: 'Ciudad del Oeste', acronimo: 'CDO' },
     ];
 
+
+    interface Localidades {
+        id: number;
+        nombre_localidad: string;
+        acronimo: string;
+      }
+
     const columnas = [
         {
             name: 'ID',
-            selector: 'id',
+            selector: (row: Localidades) => row.id,
             sortable: true
         },
         {
             name: 'Nombre Localidad',
-            selector: 'nombre_localidad',
+            selector: (row: Localidades) => row.nombre_localidad,
             sortable: true
         },
         {
             name: 'Acronimo',
-            selector: 'acronimo',
+            selector: (row: Localidades) => row.acronimo,
             sortable: true
         },
      
@@ -99,7 +107,8 @@ const Localidades = () => {
                     <i className='bx bx-plus-circle'></i>
                 </button>
 
-            </form>            
+            </form>       
+
             <Table datos={localidadesData} titulo="Lista de localidades registradas" columnas={columnas} />
 
         </Card>
