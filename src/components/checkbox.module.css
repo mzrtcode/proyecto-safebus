@@ -7,11 +7,11 @@
 .switch-label {
   cursor: pointer;
   text-indent: -9999px;
-  width: 51.2px; 
-  height: 25.6px; 
-  background: rgb(241, 44, 44);
+  width: 38.4px; 
+  height: 19.2px; 
+  background: #d2d6db;
   display: block;
-  border-radius: 80px;
+  border-radius: 60px;
   position: relative;
 }
 
@@ -19,23 +19,23 @@
   content: "";
   position: absolute;
   top: 4px; 
-  left: 4px; 
-  width: 17.6px; 
-  height: 17.6px; 
+  left: 3px; 
+  width: 11.2px; 
+  height: 11.2px; 
   background: #fff;
-  border-radius: 70.4px; 
+  border-radius: 44.8px; 
   transition: 0.3s;
 }
 
 .switch:checked + .switch-label {
-  background: #a5ce1e;
+  background: #4f46e5;
 }
 
 .switch:checked + .switch-label:after {
-  left: calc(100% - 4px); 
+  left: calc(100% - 3px); 
   transform: translateX(-100%);
 }
 
 .switch-label:active:after {
-  width: 22.4px; 
+  width: 14.4px; 
 }
