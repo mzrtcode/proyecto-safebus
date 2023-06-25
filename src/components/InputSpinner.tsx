@@ -1,17 +1,23 @@
 import  { useState } from 'react';
 import styles from './InputSpinner.module.css';
 
-const InputSpinner = () => {
+interface InputSpinnerProps {
+  onChange: (counter:number) => void;
+}
+
+const InputSpinner: React.FC<InputSpinnerProps> = ({onChange}) => {
   const [counter, setCounter] = useState(1);
 
   const handleMinusClick = () => {
     const newCounter = counter - 1 < 1 ? 1 : counter - 1;
     setCounter(newCounter);
+    onChange(newCounter);
   };
 
   const handlePlusClick = () => {
     const newCounter = counter + 1;
     setCounter(newCounter);
+    onChange(newCounter);
   };
 
   return (
