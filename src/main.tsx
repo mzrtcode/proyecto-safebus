@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import Dashboard from './layouts/Dashboard';
 import Localidades, { localidadesLoader } from './pages/Localidades';
-import Rutas from './pages/Rutas';
+import Rutas, { rutasLoader } from './pages/Rutas';
 import Conductores from './pages/Conductores';
 import Propietarios from './pages/Propietarios';
 import Vehiculos from './pages/Vehiculos';
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
     element: <Dashboard/> ,
     children: [
       {path: 'localidades', element: <Localidades/>, loader: localidadesLoader},
-      {path: 'rutas', element: <Rutas/>  },
+      {path: 'rutas', element: <Rutas/>, loader: rutasLoader },
       {path: 'conductores', element: <Conductores/>},
       {path: 'propietarios', element: <Propietarios/>},
       {path: 'vehiculos', element: <Vehiculos/>},
