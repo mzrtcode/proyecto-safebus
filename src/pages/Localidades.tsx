@@ -3,53 +3,42 @@ import styles from './localidades.module.css'
 import Card from '../components/Card';
 import Table from '../components/Table';
 import useToast from '../hooks/useToast';
-import Checkbox from "../components/Checkbox";
+import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+
+interface LocalidadesTypes {
+    id_localidad: number;
+    nombre: string;
+    acronimo: string;
+  }
 
 const Localidades = () => {
+    
+
+    // Uso de useLoaderData con el tipo esperado
+    const localidadesData = useLoaderData() as LocalidadesTypes[];
 
     const { register, handleSubmit } = useForm();
-
     const showToast = useToast();
 
     const handleShowAlert = () => {
         showToast('Este es un de prueba', 'success', 'bottom-center');
     };
 
-
-    const localidadesData = [
-        { id: 1, nombre_localidad: 'Ciudad Central', acronimo: 'CCN' },
-        { id: 2, nombre_localidad: 'Pueblo Nuevo', acronimo: 'PNV' },
-        { id: 3, nombre_localidad: 'Villa del Sol', acronimo: 'VDS' },
-        { id: 4, nombre_localidad: 'Ciudad del Este', acronimo: 'CDE' },
-        { id: 5, nombre_localidad: 'Ciudad del Oeste', acronimo: 'CDO' },
-        { id: 6, nombre_localidad: 'Ciudad del Norte', acronimo: 'CDN' },
-        { id: 7, nombre_localidad: 'Ciudad del Sur', acronimo: 'CDS' },
-        { id: 8, nombre_localidad: 'Ciudad del Centro', acronimo: 'CDC' },
-        { id: 9, nombre_localidad: 'Ciudad del Este', acronimo: 'CDE' },
-        { id: 10, nombre_localidad: 'Ciudad del Oeste', acronimo: 'CDO' },
-    ];
-
-
-    interface Localidades {
-        id: number;
-        nombre_localidad: string;
-        acronimo: string;
-      }
-
+      
     const columnas = [
         {
             name: 'ID',
-            selector: (row: Localidades) => row.id,
+            selector: (row: LocalidadesTypes) => row.id_localidad,
             sortable: true
         },
         {
             name: 'Nombre Localidad',
-            selector: (row: Localidades) => row.nombre_localidad,
+            selector: (row: LocalidadesTypes) => row.nombre,
             sortable: true
         },
         {
             name: 'Acronimo',
-            selector: (row: Localidades) => row.acronimo,
+            selector: (row: LocalidadesTypes) => row.acronimo,
             sortable: true
         },
      
@@ -115,4 +104,9 @@ const Localidades = () => {
     )
 }
 
+// loader function
+export const localidadesLoader = async (): Promise<LocalidadesTypes[]> => {
+    const res = await fetch("http://localhost:3000/api/v1/localidades");
+    return res.json();
+  };
 export default Localidades
