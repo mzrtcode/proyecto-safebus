@@ -7,7 +7,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Dashboard from './layouts/Dashboard';
-import Localidades from './pages/Localidades';
+import Localidades, { localidadesLoader } from './pages/Localidades';
 import Rutas from './pages/Rutas';
 import Conductores from './pages/Conductores';
 import Propietarios from './pages/Propietarios';
@@ -33,7 +33,7 @@ const router = createBrowserRouter([
     path: "/registros",
     element: <Dashboard/> ,
     children: [
-      {path: 'localidades', element: <Localidades/> },
+      {path: 'localidades', element: <Localidades/>, loader: localidadesLoader},
       {path: 'rutas', element: <Rutas/>  },
       {path: 'conductores', element: <Conductores/>},
       {path: 'propietarios', element: <Propietarios/>},
