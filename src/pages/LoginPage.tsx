@@ -1,12 +1,23 @@
 import  { useState } from 'react';
+
 import styles from './loginPage.module.css';
+import { useForm } from 'react-hook-form';
 
 const LoginPage = () => {
+
+  const { register, handleSubmit, formState:{
+    errors
+  }} = useForm();
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = ():void => {
     setIsPasswordVisible((prevState) => !prevState);
   };
+
+  const onSubmit = (data: any) => {
+    console.log(data)
+  }
 
   return (
    <div className={styles.main}>
@@ -15,9 +26,11 @@ const LoginPage = () => {
         <div className={styles.form}>
           <span className={styles.title}>Iniciar Sesion</span>
 
-          <form action="#">
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className={styles['input-field']}>
-              <input type="email" placeholder="Tu correo electronico" required />
+              <input type="email" placeholder="Tu correo electronico" {...register('correo', {
+                required: true,
+              })}/>
               <i className={`uil uil-envelope ${styles.icon}`}></i>
             </div>
             <div className={styles['input-field']}>
@@ -25,7 +38,9 @@ const LoginPage = () => {
                 type={isPasswordVisible ? 'text' : 'password'}
                 className={styles.clave}
                 placeholder="Tu contraseña"
-                required
+                {...register('clave', {
+                  required: true,
+                })}
               />
               <i className={`uil uil-lock ${styles.icon}`}></i>
               <i
@@ -43,7 +58,7 @@ const LoginPage = () => {
             </div>
 
             <div className={`${styles['input-field']} ${styles.button}`}>
-              <input type="button" value="Iniciar Sesion" />
+              <input type="submit" value="Iniciar Sesion" />
             </div>
           </form>
         </div>
