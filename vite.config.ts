@@ -5,11 +5,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    https:{
+  /*   https:{
       key: './server.key',
       cert: './server.crt'
     },
     host: 'safebusapp.com',
-    port: 443
+    port: 443 */
   },
 })

@@ -8,6 +8,7 @@ interface AuthContextType {
     usuario: any; // Cambiar 'any' por el tipo de dato que representa al usuario
     isAuthenticated: boolean;
     iniciarSesion: (usuario: usuarioLogin) => Promise<void>;
+    loading: boolean;
 }
 
 
@@ -29,6 +30,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const [usuario, setUsuario] = useState(null)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [loading, setLoading] = useState<boolean>(true)
 
     const iniciarSesion = async (usuario: usuarioLogin) => {
         try {
@@ -44,18 +46,29 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     useEffect(() => {
         async function checkLogin() {
             const cookies = Cookies.get()
-            if (cookies.token) {
-                try {
-                    const res = await verifyTokenRequest()
-                    if (!res.data) setIsAuthenticated(false)
+            if (!cookies.token) {
+                setIsAuthenticated(false)
+                setLoading(false)
+                return setUsuario(null)
+            }
 
-                    setIsAuthenticated(true)
-                    setUsuario(res.data)
-                    console.log(cookies.token)
-                } catch (error) {
+            try {
+                const res = await verifyTokenRequest()
+                if (!res.data) {
                     setIsAuthenticated(false)
-                    setUsuario(null)
+                    setLoading(false)
+                    return
                 }
+                setIsAuthenticated(true)
+                setUsuario(res.data)
+                setLoading(false)
+
+            } catch (error) {
+                console.log(error)
+                setIsAuthenticated(false)
+                setUsuario(null)
+                setLoading(false)
+
             }
         }
 
@@ -65,7 +78,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 
     return (
-        <AuthContext.Provider value={{ usuario: usuario, isAuthenticated, iniciarSesion }}>
+        <AuthContext.Provider value={{ usuario: usuario, isAuthenticated, iniciarSesion, loading }}>
             {children}
         </AuthContext.Provider>
     );
