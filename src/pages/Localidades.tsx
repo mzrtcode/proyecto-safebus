@@ -106,7 +106,17 @@ const Localidades = () => {
 
 // loader function
 export const localidadesLoader = async (): Promise<LocalidadesTypes[]> => {
-    const res = await fetch("http://localhost:3000/api/v1/localidades");
-    return res.json();
-  };
+    try {
+        const res = await fetch("http://localhost:3000/api/v1/localidades");
+        if (!res.ok) {
+            throw new Error("Error al obtener los datos de localidades");
+        }
+        return res.json();
+    } catch (error) {
+        if (error instanceof Error) {
+            console.log(error.message);
+        }
+        return []; // Devuelve un array vacío en caso de error.
+    }
+};
 export default Localidades

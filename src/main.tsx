@@ -17,6 +17,7 @@ import Vendedores from './pages/Vendedores';
 import Ventas from './pages/Ventas';
 import Card from './components/Card';
 import LoginPage from './pages/LoginPage';
+import { AuthProvider } from './context/AuthContext';
 
 
 const router = createBrowserRouter([
@@ -64,7 +65,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
+    <AuthProvider>
      <RouterProvider router={router} />
     <ToastContainer />
+    </AuthProvider>
   </React.StrictMode>,
 )

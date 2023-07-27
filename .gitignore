@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# Certificate and key for HTTPS
+*.key
+*.crt

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import './dashboard.css'
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 
 const Dashboard = () => {
@@ -10,6 +11,8 @@ const Dashboard = () => {
         menuToggle?.classList.toggle('active');
       }
 
+      const {usuario} = useAuth()
+    
     useEffect(() => {
         const handleArrowClick = (e: Event) => {
             const arrowParent = (e.target as HTMLElement).parentElement?.parentElement;
@@ -26,7 +29,6 @@ const Dashboard = () => {
             }
         };
 
-      
 
         const arrowList = document.querySelectorAll('.arrow');
         arrowList.forEach((arrow) => {
@@ -48,6 +50,10 @@ const Dashboard = () => {
             }
         };
     }, []);
+
+    const { isAuthenticated} = useAuth()
+
+    if(!isAuthenticated) return <Navigate to='/login' replace/>
 
     return (
         <>
@@ -168,7 +174,7 @@ const Dashboard = () => {
                             <img src="https://avatars.githubusercontent.com/u/71569136?s=400&u=2e359df633e9b41446484680f36f8c36943dd7fc&v=4" alt="Foto Perfil" />
                         </div>
                         <div className="menu">
-                            <h3>Stiven Medina <br /><span>Website Designer</span></h3>
+                            <h3>{usuario?.nombres} <br /><span>{usuario?.rol}</span></h3>
                             <ul>
                                 <li>
                                     <i className='bx bx-user-circle'></i>
@@ -210,7 +216,8 @@ const Dashboard = () => {
                     <Outlet />
 
                 </div>
-            </section></>
+            </section>
+        </>
     )
 }
 

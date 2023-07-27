@@ -1,13 +1,17 @@
 import  { useState } from 'react';
 
 import styles from './loginPage.module.css';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { usuarioLogin } from '../api/auth.d';
+import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
 
-  const { register, handleSubmit, formState:{
+  const { register, handleSubmit,/*  formState:{
     errors
-  }} = useForm();
+  } */} = useForm<usuarioLogin>()
+
+  const {iniciarSesion} = useAuth()
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -15,9 +19,11 @@ const LoginPage = () => {
     setIsPasswordVisible((prevState) => !prevState);
   };
 
-  const onSubmit = (data: any) => {
-    console.log(data)
-  }
+
+  const onSubmit: SubmitHandler<usuarioLogin> = (data) => {
+    console.log(data);
+    iniciarSesion(data)
+  };
 
   return (
    <div className={styles.main}>
