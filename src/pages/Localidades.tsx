@@ -3,7 +3,7 @@ import styles from './localidades.module.css'
 import Card from '../components/Card';
 import Table from '../components/Table';
 import useToast from '../hooks/useToast';
-import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 
 interface LocalidadesTypes {
     id_localidad: number;

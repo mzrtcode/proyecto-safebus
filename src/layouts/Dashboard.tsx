@@ -4,45 +4,52 @@ import { Link, Outlet } from 'react-router-dom';
 
 
 const Dashboard = () => {
-  
+
+    function toggleMenu(): void {
+        const menuToggle = document.querySelector('.menu') as HTMLElement | null;
+        menuToggle?.classList.toggle('active');
+      }
+
     useEffect(() => {
         const handleArrowClick = (e: Event) => {
-          const arrowParent = (e.target as HTMLElement).parentElement?.parentElement;
-          console.log(arrowParent);
-          if (arrowParent) {
-            arrowParent.classList.toggle("showMenu");
-          }
+            const arrowParent = (e.target as HTMLElement).parentElement?.parentElement;
+            console.log(arrowParent);
+            if (arrowParent) {
+                arrowParent.classList.toggle("showMenu");
+            }
         };
-    
+
         const handleSidebarBtnClick = () => {
-          const sidebar = document.querySelector(".sidebar");
-          if (sidebar) {
-            sidebar.classList.toggle("close");
-          }
+            const sidebar = document.querySelector(".sidebar");
+            if (sidebar) {
+                sidebar.classList.toggle("close");
+            }
         };
-    
+
+      
+
         const arrowList = document.querySelectorAll('.arrow');
         arrowList.forEach((arrow) => {
-          arrow.addEventListener('click', handleArrowClick);
+            arrow.addEventListener('click', handleArrowClick);
         });
-    
+
         const sidebarBtn = document.querySelector(".bx-menu");
         if (sidebarBtn) {
-          sidebarBtn.addEventListener("click", handleSidebarBtnClick);
+            sidebarBtn.addEventListener("click", handleSidebarBtnClick);
         }
-    
-        return () => {
-          arrowList.forEach((arrow) => {
-            arrow.removeEventListener('click', handleArrowClick);
-          });
-    
-          if (sidebarBtn) {
-            sidebarBtn.removeEventListener("click", handleSidebarBtnClick);
-          }
-        };
-      }, []);
 
-  return (
+        return () => {
+            arrowList.forEach((arrow) => {
+                arrow.removeEventListener('click', handleArrowClick);
+            });
+
+            if (sidebarBtn) {
+                sidebarBtn.removeEventListener("click", handleSidebarBtnClick);
+            }
+        };
+    }, []);
+
+    return (
         <>
             <div className="sidebar">
 
@@ -55,9 +62,9 @@ const Dashboard = () => {
                 <ul className="nav-links">
 
 
-                <li>
+                    <li>
                         <a href="#">
-                        <i className='bx bx-grid-alt dashboard-icon'></i>
+                            <i className='bx bx-grid-alt dashboard-icon'></i>
                             <span className="link_name">Dashboard</span>
                         </a>
 
@@ -155,7 +162,48 @@ const Dashboard = () => {
             <section className="home-section">
                 <div className="home-content">
                     <i className='bx bx-menu'></i>
-                    {/* <span className="text">🚧 Navbar 🚧</span> */}
+
+                    <div className="action" >
+                        <div className="profile" onClick={toggleMenu} >
+                            <img src="https://avatars.githubusercontent.com/u/71569136?s=400&u=2e359df633e9b41446484680f36f8c36943dd7fc&v=4" alt="Foto Perfil" />
+                        </div>
+                        <div className="menu">
+                            <h3>Stiven Medina <br /><span>Website Designer</span></h3>
+                            <ul>
+                                <li>
+                                    <i className='bx bx-user-circle'></i>
+                                    <a href="#">Mi perfil</a>
+                                </li>
+
+                                <li>
+                                    <i className='bx bx-edit' ></i>
+                                    <a href="#">Editar perfil</a>
+                                </li>
+
+                                <li>
+                                    <i className='bx bx-envelope' ></i>
+                                    <a href="#">Mensajes</a>
+                                </li>
+
+                                <li>
+                                    <i className='bx bx-cog' ></i>
+                                    <a href="#">Configuracion</a>
+                                </li>
+
+                                <li>
+                                    <i className='bx bx-help-circle' ></i>
+                                    <a href="#">Ayuda</a>
+                                </li>
+
+                                <li>
+                                    <i className='bx bx-log-out-circle' ></i>
+                                    <a href="#">Cerrar sesión</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div className="main-content">

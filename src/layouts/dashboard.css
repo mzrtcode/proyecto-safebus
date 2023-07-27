@@ -271,3 +271,110 @@
     padding-left: 20px;
     margin-right: 10px;
 }
+
+/* Estilos Drop-Down_User_Profile */
+.action{
+    position: fixed;
+    right: 0;
+    margin-right: 20px;
+    z-index: 9999;
+}
+
+.action .profile{
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.action .profile img{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.action .menu{
+    position: absolute;
+    top: 120px;
+    right: -10px;
+    padding: 10px 20px;
+    background-color: #fff;
+    width: 250px;
+    box-sizing: 0 5px 25px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    transition: 0.5s;
+    visibility: hidden;
+    opacity: 0;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+.action .menu.active{
+    top: 74px;
+    visibility: visible;
+    opacity: 1;
+}
+
+.action .menu::before{
+    content: '';
+    position: absolute;
+    top:-10px;
+    right: 28px;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    transform: rotate(45deg);
+
+}
+
+.action .menu h3{
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    padding: 20px 0;
+    font-weight: 500;
+    color: #555;
+    line-height: 1.2em;
+}
+
+.action .menu h3 span{
+    font-size: 14px;
+    color: #cecece;
+}
+
+.action .menu ul li{
+    list-style: none;
+    padding: 10px 0;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+}
+
+.action .menu ul li i{
+    font-size: 20px;
+    margin-right: 10px;
+    opacity: 0.5;
+    transition: 0.5s;
+}
+
+.action .menu ul li:hover i{
+    opacity: 1;
+}
+
+
+.action .menu ul li a{
+    display: inline-block;
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    transition: 0.5s;
+}
+
+.action .menu ul li:hover a{
+    color: #ff5d94;
+}

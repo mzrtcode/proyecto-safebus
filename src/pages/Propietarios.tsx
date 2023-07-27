@@ -6,7 +6,7 @@ const Propietarios = () => {
 
 
   const { register, handleSubmit } = useForm();
-  const onSubmit = (data:any) => {
+  const onSubmit = (data: any) => {
     console.log(data)
   }
 
@@ -35,7 +35,7 @@ const Propietarios = () => {
       direccion: 'Avenida Secundaria 456'
     }
   ];
-  
+
   const columnas = [
     {
       name: 'Nombres',
@@ -114,7 +114,7 @@ const Propietarios = () => {
             <div className="input-fields">
               <label htmlFor="tipo_identificacion">Tipo de identificacion:</label>
 
-              <select  id="tipo_identificacion" {...register('acronimo', {
+              <select id="tipo_identificacion" {...register('acronimo', {
                 required: true,
               })} >
                 <option value="">Seleccionar</option>
@@ -172,7 +172,7 @@ const Propietarios = () => {
       </form>
 
       <Table datos={datos} columnas={columnas} titulo="Lista de propietarios registrados" />
-    </Card> 
+    </Card>
   )
 }
 

@@ -16,7 +16,7 @@ import Agencias from './pages/Agencias';
 import Vendedores from './pages/Vendedores';
 import Ventas from './pages/Ventas';
 import Card from './components/Card';
-;
+import LoginPage from './pages/LoginPage';
 
 
 const router = createBrowserRouter([
@@ -51,6 +51,11 @@ const router = createBrowserRouter([
     children: [
       {path: 'ventas', element: <Ventas/> },    
     ]
+  },
+
+  {
+    path: "/login",
+    element: <LoginPage/>
   }
 
  

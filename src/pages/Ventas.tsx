@@ -88,7 +88,7 @@ const Ventas = () => {
       const [detallesVenta, setDetallesVenta] = useState({
         valorTiquete: 3500,
         totalPuestosVehiculo: 30,
-        puestosOcupados: 10,
+        puestosOcupados: 11,
         precioTotal: 0,
       })
 
@@ -106,8 +106,8 @@ const Ventas = () => {
         setValue('ruta', 'Popayan - Cali');
         setValue('vehiculo', '3060');
         setValue('conductor', 'Daniel Perez Gomez');
-        setValue('total', detallesVenta.precioTotal);
-        setValue('puestos', (detallesVenta.totalPuestosVehiculo - detallesVenta.puestosOcupados + "/" + detallesVenta.totalPuestosVehiculo));
+        setValue('total', detallesVenta.valorTiquete);
+        setValue('puestos', (detallesVenta.puestosOcupados + "/" + detallesVenta.totalPuestosVehiculo));
         setValue('valorTiquete', detallesVenta.valorTiquete);
         
       }, [])
