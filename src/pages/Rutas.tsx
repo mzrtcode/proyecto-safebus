@@ -116,10 +116,4 @@ const Rutas = () => {
   )
 }
 
-// loader function
-export const rutasLoader = async (): Promise<RutasTypes[]> => {
-  const res = await fetch("http://localhost:3000/api/v1/rutas");
-  return res.json();
-};
-
 export default Rutas

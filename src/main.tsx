@@ -7,8 +7,8 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Dashboard from './layouts/Dashboard';
-import Localidades, { localidadesLoader } from './pages/Localidades';
-import Rutas, { rutasLoader } from './pages/Rutas';
+import Localidades from './pages/Localidades';
+import Rutas  from './pages/Rutas';
 import Conductores from './pages/Conductores';
 import Propietarios from './pages/Propietarios';
 import Vehiculos from './pages/Vehiculos';
@@ -18,6 +18,15 @@ import Ventas from './pages/Ventas';
 import Card from './components/Card';
 import LoginPage from './pages/LoginPage';
 import { AuthProvider } from './context/AuthContext';
+import { localidadesLoader } from './api/localidades';
+import { rutasLoader } from './api/rutas';
+import { conductoresLoader } from './api/conductores';
+import { propietariosLoader } from './api/propietarios';
+import { vehiculosLoader } from './api/vehiculos';
+import { agenciasLoader } from './api/agencias';
+import { vendedorLoader } from './api/vendedores';
+import Planillaje from './pages/Planillaje';
+import Planilla from './components/Planilla';
 
 
 const router = createBrowserRouter([
@@ -36,11 +45,12 @@ const router = createBrowserRouter([
     children: [
       {path: 'localidades', element: <Localidades/>, loader: localidadesLoader},
       {path: 'rutas', element: <Rutas/>, loader: rutasLoader },
-      {path: 'conductores', element: <Conductores/>},
-      {path: 'propietarios', element: <Propietarios/>},
-      {path: 'vehiculos', element: <Vehiculos/>},
-      {path: 'agencias', element: <Agencias/>},
-      {path: 'vendedores', element: <Vendedores/>},
+      {path: 'conductores', element: <Conductores/>, loader: conductoresLoader},
+      {path: 'propietarios', element: <Propietarios/>, loader: propietariosLoader},
+      {path: 'vehiculos', element: <Vehiculos/>, loader: vehiculosLoader},
+      {path: 'agencias', element: <Agencias/>, loader: agenciasLoader},
+      {path: 'vendedores', element: <Vendedores/>, loader: vendedorLoader},
+      
 
      
     ]
@@ -50,7 +60,8 @@ const router = createBrowserRouter([
     path: "/procesos",
     element: <Dashboard/> ,
     children: [
-      {path: 'ventas', element: <Ventas/> },    
+      {path: 'ventas', element: <Ventas/> },
+      {path: 'planillaje', element: <Planillaje/> },
     ]
   },
 

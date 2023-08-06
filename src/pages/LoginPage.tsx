@@ -1,17 +1,20 @@
-import  { useState } from 'react';
+import  { useEffect, useState } from 'react';
 
 import styles from './loginPage.module.css';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { usuarioLogin } from '../api/auth.d';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+
+  const navigate = useNavigate();
 
   const { register, handleSubmit,/*  formState:{
     errors
   } */} = useForm<usuarioLogin>()
 
-  const {iniciarSesion} = useAuth()
+  const {iniciarSesion, isAuthenticated} = useAuth()
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -24,6 +27,10 @@ const LoginPage = () => {
     console.log(data);
     iniciarSesion(data)
   };
+
+  useEffect(() =>{
+    if(isAuthenticated) navigate('/');
+  },[isAuthenticated])
 
   return (
    <div className={styles.main}>
