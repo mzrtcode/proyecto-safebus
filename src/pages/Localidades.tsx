@@ -21,7 +21,7 @@ const Localidades = () => {
     const showToast = useToast();
 
     const handleShowAlert = () => {
-        showToast('Este es un de prueba', 'success', 'bottom-center');
+        showToast('Este es un mensaje de prueba', 'success', 'bottom-center');
     };
 
       

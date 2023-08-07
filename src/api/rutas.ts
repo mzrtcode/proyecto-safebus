@@ -5,8 +5,10 @@ interface RutasTypes {
     inicio_ruta: string
     fin_ruta: string
     estado: boolean
-    costo: number
+    costo?: number
   }
+  export type RutaRegistrar = Omit<RutasTypes, 'id_ruta' | 'estado'>;
+
 
 
 export const rutasLoader = async (): Promise<RutasTypes[]> => {
@@ -23,3 +25,9 @@ export const rutasLoader = async (): Promise<RutasTypes[]> => {
       return []; // Devuelve un array vacío en caso de error.
     }
   };
+
+  export const rutaRegistrar = async (ruta: RutaRegistrar): Promise<number> => {
+        const response = await axios.post('/rutas', ruta);
+        return response.status; // Devuelve el código de estado de la respuesta
+
+};

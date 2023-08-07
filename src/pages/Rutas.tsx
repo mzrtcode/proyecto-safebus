@@ -1,38 +1,95 @@
 import Card from '../components/Card'
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import styles from './rutas.module.css'
 import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
 import { useLoaderData } from 'react-router-dom';
+import Select, { StylesConfig } from 'react-select';
+import { useEffect, useState } from 'react';
+import { LocalidadesTypes, localidadesLoader } from '../api/localidades';
+import { RutaRegistrar, rutaRegistrar, rutasLoader } from '../api/rutas';
+import CurrencyInput from 'react-currency-input-field';
+import useToast from '../hooks/useToast';
+
+
 
 interface RutasTypes {
   id_ruta: number;
-  inicio_ruta: string;
-  fin_ruta: string;
+  inicio_ruta: number;
+  fin_ruta: number;
+  nombre_inicio: string,
+  nombre_fin: string,
+  acronimo_inicio: string,
+  acronimo_fin: string,
   costo: number;
   estado: number | JSX.Element;
 }
 
-const Rutas = () => {
+interface Options {
+  value: string;
+  label: string;
+}
 
-   // Uso de useLoaderData con el tipo esperado
+const Rutas = () => {
+  const [localidadesOptions, setLocalidadesOptions] = useState<Options[]>([]);
+  // Uso de useLoaderData con el tipo esperado
   const rutasData = useLoaderData() as RutasTypes[];
 
-  const { register, handleSubmit} = useForm();
-  const onSubmit = (data:any) => {
-    console.log(data)
+  const showToast = useToast();
+
+  const obtenerLocalidades = async () => {
+    try {
+      const localidades = await localidadesLoader() as LocalidadesTypes[];
+      const respuesta: Options[] = localidades.map(localidad => ({
+        value: localidad.id_localidad,
+        label: localidad.nombre,
+      }));
+
+      setLocalidadesOptions(respuesta);
+    } catch (error) {
+      console.error("Error al obtener localidades:", error);
+    }
+  };
+
+  useEffect(() => {
+    obtenerLocalidades()
+  }, [])
+
+
+
+  const { register, handleSubmit, control,formState:{
+    errors
+  } } = useForm<RutaRegistrar>();
+  const onSubmit = async (data) => {
+    const inicioRutaValue = data.inicio_ruta.value;
+    const finRutaValue = data.fin_ruta.value;
+    const costoValue = data.costo.replace(/[$,"']/g, '');
+
+    const updatedData = { ...data, inicio_ruta: inicioRutaValue, fin_ruta: finRutaValue, costo: +costoValue };
+    console.log(updatedData)
+
+    try {
+      const statusCode = await rutaRegistrar(updatedData);
+      if(statusCode === 201) showToast(`Ruta registrada`, 'success', 'bottom-center');
+      else showToast('Error al registrar la ruta', 'error', 'bottom-center');
+   
+  } catch (error) {
+      // Manejo de errores si es necesario
+      showToast('Error al registrar la ruta', 'error', 'bottom-center');
+  }
   }
 
-  
+
+
   const columnas = [
     {
       name: 'Inicio Ruta',
-      selector: (row: RutasTypes) => row.inicio_ruta,
+      selector: (row: RutasTypes) => row.nombre_inicio,
       sortable: true
     },
     {
       name: 'Fin Ruta',
-      selector: (row: RutasTypes) => row.fin_ruta,
+      selector: (row: RutasTypes) => row.nombre_fin,
       sortable: true
     },
     {
@@ -41,16 +98,24 @@ const Rutas = () => {
       sortable: true
     },
 
-     {
+    {
       name: 'Estado',
-      cell: (row:RutasTypes) => <Checkbox initialState={row.estado === 1} onToggle={() => {
+      cell: (row: RutasTypes) => <Checkbox initialState={row.estado === 1} onToggle={() => {
         console.log('Cambié de estado mi es ID:', row.id_ruta);
       }} />,
     },
   ];
-  
 
 
+
+  const customStyles = {
+    control: base => ({
+      ...base,
+      height: '42px',
+      border: '1px solid #aaa',
+      zIndex: '9999'
+    })
+  };
 
   return (
     <Card>
@@ -63,41 +128,61 @@ const Rutas = () => {
           <div className={styles.fields}>
             <div className={styles['input-fields']}>
               <label htmlFor="inicioRuta">Inicio Ruta</label>
-              <input
-                type="text"
-                id="inicioRuta"
-                placeholder="Ingrese el inicio de la ruta"
-                {...register('inicioRuta', {
-                  required: true,
-                })}
+
+
+              <Controller
+                name="inicio_ruta"
+                control={control}
+                rules={{ required: true }} // Reglas de validación
+                render={({ field }) => (
+                  <Select
+                    className={styles['select']}
+                    styles={customStyles}
+                    options={localidadesOptions}
+                    {...field}
+                  />
+                )}
               />
-              <span className={styles['input-error']}>Este campo es requerido</span>
+
+
+
+               {errors.inicio_ruta && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className={styles['input-fields']}>
               <label htmlFor="finRuta">Fin de Ruta</label>
-              <input
-                type="text"
-                id="finRuta"
-                placeholder="Ingrese el fin de la ruta"
-                {...register('finRuta', {
-                  required: true,
-                })}
+              <Controller
+                name="fin_ruta"
+                control={control}
+                rules={{ required: true }} // Reglas de validación
+                render={({ field }) => (
+                  <Select
+                    className={styles['select']}
+                    styles={customStyles}
+                    options={localidadesOptions}
+                    {...field}
+                  />
+                )}
               />
-              <span className={styles['input-error']}>Este campo es requerido</span>
+               {errors.fin_ruta && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className={styles['input-fields']}>
               <label htmlFor="costo">Costo</label>
-              <input
-                type="number"
-                id="costo"
-                placeholder="Ingrese el costo"
-                {...register('costo', {
-                  required: true,
-                })}
-              />
-              <span className={styles['input-error']}>Este campo es requerido</span>
+              <CurrencyInput
+                    id="costo"
+                    prefix="$"
+                    placeholder="Ingrese el costo"
+                    allowDecimals={false}
+                    {...register("costo",{
+                      required: true,
+                    })}
+                  />
+
+
+
+
+      {errors.costo && <span className="input-error">Este campo es requerido</span>}
             </div>
 
           </div>
@@ -117,3 +202,4 @@ const Rutas = () => {
 }
 
 export default Rutas
+

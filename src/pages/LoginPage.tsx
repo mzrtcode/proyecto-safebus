@@ -14,7 +14,7 @@ const LoginPage = () => {
     errors
   } */} = useForm<usuarioLogin>()
 
-  const {iniciarSesion, isAuthenticated} = useAuth()
+  const {iniciarSesion, isAuthenticated, errors} = useAuth()
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -38,6 +38,8 @@ const LoginPage = () => {
       <div className={styles.forms}>
         <div className={styles.form}>
           <span className={styles.title}>Iniciar Sesion</span>
+
+         {errors && <span className={styles['invalid-login']}>Credenciales inválidas</span>} 
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className={styles['input-field']}>

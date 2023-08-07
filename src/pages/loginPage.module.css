@@ -139,6 +139,19 @@
     transition: all 0.3s ease;
 }
 
+.invalid-login{
+    margin-top: 10px;
+    margin-bottom: -10px;
+
+    display: flex;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    border-radius: 0.25rem;
+    padding: 8px;
+    color: #721c24;
+    justify-content: center;
+}
+
 .button input:hover{
     background-color: #265df2;
 }

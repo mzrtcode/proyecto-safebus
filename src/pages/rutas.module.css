@@ -112,6 +112,13 @@ form button i{
   }
   
 
+.select{
+    outline: none;
+
+    height: 42px;
+    margin: 8px 0;
+}
+
 @media screen and (max-width: 480px) {
     form .fields {
       display: grid;

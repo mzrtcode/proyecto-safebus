@@ -1,6 +1,6 @@
 import axios from './axios';
 
-interface LocalidadesTypes {
+export interface LocalidadesTypes {
     id_localidad: number;
     nombre: string;
     acronimo: string;
@@ -10,7 +10,6 @@ interface LocalidadesTypes {
 export const localidadesLoader = async (): Promise<LocalidadesTypes[]> => {
     try {
       const res = await axios.get("/localidades");
-      console.log('status code' + res.status)
       if (res.status !== 200) {
         throw new Error("Error al obtener los datos de localidades");
       }

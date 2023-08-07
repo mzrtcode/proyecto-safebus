@@ -9,6 +9,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     iniciarSesion: (usuario: usuarioLogin) => Promise<void>;
     loading: boolean;
+    errors: boolean;
 }
 
 
@@ -31,6 +32,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [usuario, setUsuario] = useState(null)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [loading, setLoading] = useState<boolean>(true)
+    const [errors, setErrors] = useState(false);
 
     const iniciarSesion = async (usuario: usuarioLogin) => {
         try {
@@ -38,7 +40,10 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
             setUsuario(res.data);
             setIsAuthenticated(true);
         } catch (error) {
-            console.log(error)
+            if (error instanceof Error){
+                setErrors(true);
+            }
+            
         }
     }
 
@@ -76,9 +81,18 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, [])
 
 
+    useEffect(() => {
+        if (errors) {
+          const timer = setTimeout(() => {
+            setErrors(false);
+          }, 5000);
+    
+          return () => clearTimeout(timer);
+        }
+      }, [errors]);
 
     return (
-        <AuthContext.Provider value={{ usuario: usuario, isAuthenticated, iniciarSesion, loading }}>
+        <AuthContext.Provider value={{ usuario: usuario, isAuthenticated, iniciarSesion, loading, errors }}>
             {children}
         </AuthContext.Provider>
     );

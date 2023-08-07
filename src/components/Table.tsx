@@ -21,7 +21,7 @@ const Table: React.FC<TableProps> = ({ datos, columnas, titulo }) => {
         columns={columnas}
         data={datos}
         pagination
-        fixedHeader
+        /* fixedHeader */
         fixedHeaderScrollHeight="600px"
         paginationComponentOptions={paginationOptions}
         title={titulo}
