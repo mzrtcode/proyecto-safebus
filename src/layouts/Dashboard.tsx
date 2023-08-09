@@ -50,8 +50,9 @@ const Dashboard = () => {
             }
         };
     }, []);
+    
 
-    const { usuario } = useAuth()
+    const { usuario, cerrarSesion } = useAuth()
 
     return (
         <ProtectedRoute>
@@ -201,7 +202,7 @@ const Dashboard = () => {
 
                                 <li>
                                     <i className='bx bx-log-out-circle' ></i>
-                                    <a href="#">Cerrar sesión</a>
+                                    <a href="#" onClick={()=>{cerrarSesion()}}>Cerrar sesión</a>
                                 </li>
 
                             </ul>

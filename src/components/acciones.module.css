@@ -1,0 +1,24 @@
+.acciones{
+    font-size: 22px;
+    color: #555;
+}
+a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+.acciones span i{
+    transition: 0.5s;
+}
+
+.acciones .editar{
+    margin-right: 4px;
+}
+
+.acciones .eliminar:hover {
+    color: #ff5d94;
+}
+
+.acciones .editar:hover{
+    color: #4070f4;
+}

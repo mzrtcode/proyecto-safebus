@@ -1,5 +1,5 @@
 import Card from '../components/Card'
-import { Controller, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import styles from './rutas.module.css'
 import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
@@ -7,9 +7,10 @@ import { useLoaderData, useParams } from 'react-router-dom';
 import Select, { StylesConfig } from 'react-select';
 import { useEffect, useState } from 'react';
 import { LocalidadesTypes, localidadesLoader } from '../api/localidades';
-import { RutaRegistrar, RutaType, obtenerRuta, rutaRegistrar, rutasLoader } from '../api/rutas';
+import { RutaRegistrar, RutaType, actualizarRuta, desactivarRuta, eliminarRuta, obtenerRuta, rutaRegistrar, rutasLoader } from '../api/rutas';
 import CurrencyInput from 'react-currency-input-field';
 import useToast from '../hooks/useToast';
+import Acciones from '../components/Acciones';
 
 
 
@@ -23,6 +24,7 @@ interface RutasTypes {
   acronimo_fin: string,
   costo: number;
   estado: boolean | JSX.Element;
+  acciones?: JSX.Element;
 }
 
 interface Options {
@@ -37,34 +39,38 @@ const Rutas = () => {
   const { id } = useParams();
   const [localidadesOptions, setLocalidadesOptions] = useState<Options[]>([]);
   const [ruta, setRuta] = useState<RutaType>();
-  const { register, handleSubmit, control, formState: {
+  const { register, handleSubmit, control, setValue, formState: {
     errors,
   } } = useForm<RutaRegistrar>();
   // Uso de useLoaderData con el tipo esperado
   const rutasData = useLoaderData() as RutasTypes[];
-
+  
   let SelectInicio = { value: 'none', label: 'Selecciona' };
   let SelectFin =  { value: 'none', label: 'Selecciona' };
-  let costo = 0
+  const [costo, setCosto] = useState(0)
+
   
-  if(id){
-    const rutaEditar = rutasData.find(ruta => ruta.id_ruta === +id)
-    if (rutaEditar) {
-      SelectInicio = { value: rutaEditar.inicio_ruta.toString(), label: rutaEditar.nombre_inicio };
-      SelectFin = { value: rutaEditar.fin_ruta.toString(), label: rutaEditar.nombre_fin };
-      costo = rutaEditar.costo
-      
+
+  useEffect(() => {
+    if(id){
+      console.log('se detecto id')
+      const rutaEditar = rutasData.find(ruta => ruta.id_ruta === +id)
+      if (rutaEditar) {
+        SelectInicio = { value: rutaEditar.inicio_ruta.toString(), label: rutaEditar.nombre_inicio };
+        SelectFin = { value: rutaEditar.fin_ruta.toString(), label: rutaEditar.nombre_fin };
+        setCosto(rutaEditar.costo)
+        setValue('inicio_ruta', SelectInicio)
+        setValue('fin_ruta', SelectFin)
+      }
+     
     }
-   
-  }
+      
+  }, [id])
   
 
-   
-
+  
   
 
-
-  
 
   const showToast = useToast();
 
@@ -90,30 +96,54 @@ const Rutas = () => {
 
 
   const onSubmit = async (data) => {
-    const inicioRutaValue = data.inicio_ruta.value;
-    const finRutaValue = data.fin_ruta.value;
-    const costoValue = data.costo.replace(/[$,"']/g, '');
-
-    const updatedData = { ...data, inicio_ruta: inicioRutaValue, fin_ruta: finRutaValue, costo: +costoValue };
-    console.log(updatedData)
-
     try {
-      const statusCode = await rutaRegistrar(updatedData);
-      if (statusCode === 201) {
-
-        showToast(`Ruta registrada`, 'success', 'bottom-center')
+      const inicioRutaValue = data.inicio_ruta.value;
+      const finRutaValue = data.fin_ruta.value;
+      const costoValue = data.costo.replace(/[$,"']/g, '');
+  
+      const updatedData = {
+        ...data,
+        inicio_ruta: inicioRutaValue,
+        fin_ruta: finRutaValue,
+        costo: +costoValue
+      };
+  
+      console.log(updatedData);
+  
+      if (!id) {
+        const statusCode = await rutaRegistrar(updatedData);
+        if (statusCode === 201) {
+          showToast(`Ruta registrada`, 'success', 'bottom-center');
+        } else {
+          showToast('Error al registrar la ruta', 'error', 'bottom-center');
+        }
+      } else {
+        const respuesta = await actualizarRuta(+id, updatedData);
+        if (respuesta) {
+          showToast(`Ruta actualizada`, 'success', 'bottom-center');
+        }
       }
-      else showToast('Error al registrar la ruta', 'error', 'bottom-center');
-
     } catch (error) {
-      // Manejo de errores si es necesario
+      console.error(error);
       showToast('Error al registrar la ruta', 'error', 'bottom-center');
     }
+  };
+  
+
+  const eliminar = async(id: number):Promise<void> => {
+    console.log('Eliminando el ID:', id);
+    const seElimino = await eliminarRuta(id);
+    if(seElimino) showToast('Se elimino la ruta', 'success', 'bottom-center');
+    else showToast('Error al eliminar la ruta', 'error', 'bottom-center');
   }
 
 
 
   const columnas = [
+    {
+      name: 'ID',
+      selector: (row: RutasTypes) => row.id_ruta,
+    },
     {
       name: 'Inicio Ruta',
       selector: (row: RutasTypes) => row.nombre_inicio,
@@ -132,10 +162,28 @@ const Rutas = () => {
 
     {
       name: 'Estado',
-      cell: (row: RutasTypes) => <Checkbox initialState={row.estado === 1} onToggle={() => {
-        console.log('Cambié de estado mi es ID:', row.id_ruta);
+      cell: (row: RutasTypes) => <Checkbox initialState={row.estado === 1} onToggle={async () => {
+        const estadoRuta = row.estado === 1
+
+        if(estadoRuta){
+          console.log('Cambié de estado mi es ID:', row.id_ruta);
+          const seDesactivo = await desactivarRuta(row.id_ruta, estadoRuta)
+          if(seDesactivo) showToast('Se desactivo la ruta', 'success', 'bottom-center');
+          else showToast('Error al desactivar la ruta', 'error', 'bottom-center');
+        }else{
+          const seActivo = await desactivarRuta(row.id_ruta, estadoRuta)
+          if(seActivo) showToast('Se activo la ruta', 'success', 'bottom-center');
+          else showToast('Error al desactivar la ruta', 'error', 'bottom-center');
+        }
+        
+     
       }} />,
     },
+
+    {
+      name: 'Acciones',
+      cell: (row: RutasTypes) => <Acciones editarLink={`/registros/rutas/${row.id_ruta}`} eliminar={eliminar} id={row.id_ruta} />
+    }
   ];
 
 
@@ -149,6 +197,11 @@ const Rutas = () => {
     })
   };
 
+  const handleOnValueChange = (value:number) => {
+    // Actualiza el estado con el valor del costo
+    setCosto(value);
+  };
+  
 
   return (
     <Card>
@@ -164,7 +217,6 @@ const Rutas = () => {
 
 
               <Controller
-               defaultValue={SelectInicio}
                 name="inicio_ruta"
                 control={control}
                 rules={{ required: true }} // Reglas de validación
@@ -187,7 +239,6 @@ const Rutas = () => {
             <div className={styles['input-fields']}>
               <label htmlFor="finRuta">Fin de Ruta</label>
               <Controller
-              defaultValue={SelectFin}
                 name="fin_ruta"
                 control={control}
                 rules={{ required: true }} // Reglas de validación
@@ -209,9 +260,9 @@ const Rutas = () => {
             <div className={styles['input-fields']}>
               <label htmlFor="costo">Costo</label>
               <CurrencyInput
-                value={costo}
                 id="costo"
-                prefix="$"
+                value={costo}
+                onValueChange={handleOnValueChange}
                 placeholder="Ingrese el costo"
                 allowDecimals={false}
                 {...register("costo", {

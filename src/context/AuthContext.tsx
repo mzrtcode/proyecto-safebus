@@ -10,6 +10,7 @@ interface AuthContextType {
     iniciarSesion: (usuario: usuarioLogin) => Promise<void>;
     loading: boolean;
     errors: boolean;
+    cerrarSesion: () => Promise<void>;
 }
 
 
@@ -46,6 +47,12 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
             
         }
     }
+
+    const cerrarSesion = async ():Promise<void> =>{
+        Cookies.remove("token");
+        setIsAuthenticated(false);
+        setUsuario(null);
+      }
 
 
     useEffect(() => {
@@ -92,7 +99,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }, [errors]);
 
     return (
-        <AuthContext.Provider value={{ usuario: usuario, isAuthenticated, iniciarSesion, loading, errors }}>
+        <AuthContext.Provider value={{ usuario: usuario, isAuthenticated, iniciarSesion, loading, errors, cerrarSesion }}>
             {children}
         </AuthContext.Provider>
     );

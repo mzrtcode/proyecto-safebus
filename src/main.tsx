@@ -26,7 +26,6 @@ import { vehiculosLoader } from './api/vehiculos';
 import { agenciasLoader } from './api/agencias';
 import { vendedorLoader } from './api/vendedores';
 import Planillaje from './pages/Planillaje';
-import Planilla from './components/Planilla';
 
 
 const router = createBrowserRouter([
@@ -44,7 +43,7 @@ const router = createBrowserRouter([
     element: <Dashboard/> ,
     children: [
       {path: 'localidades', element: <Localidades/>, loader: localidadesLoader},
-      {path: 'rutas', element: <Rutas/> },
+      {path: 'rutas', element: <Rutas/>, loader: rutasLoader },
       {path: 'rutas/:id', element: <Rutas/>, loader: rutasLoader },
       {path: 'conductores', element: <Conductores/>, loader: conductoresLoader},
       {path: 'propietarios', element: <Propietarios/>, loader: propietariosLoader},
