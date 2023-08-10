@@ -1,7 +1,7 @@
 import { TipoIdentificacion } from './auth.d';
 import axios from './axios';
 
-interface PropietarioTypes {
+export interface PropietarioTypes {
     id_propietario: number
     nombres: string
     apellidos: string
@@ -9,18 +9,29 @@ interface PropietarioTypes {
     numero_identificacion: string
     correo: string
     celular: string
-    fecha_nacimiento: string
+    fecha_nacimiento: Date
     direccion: string
+    acciones?: JSX.Element
   }
 
 
-export const propietariosLoader = async (): Promise<PropietarioTypes[]> => {
+
+  export const propietariosLoader = async (): Promise<PropietarioTypes[]> => {
     try {
-      const res = await axios.get("/v1/propietarios");
+      const res = await axios.get("/propietarios");
       if (res.status !== 200) {
-        throw new Error("Error al obtener los datos de propietarios");
+        throw new Error("Error al obtener los datos de conductores");
       }
-      return res.data.data;
+      
+      // Convertir las fechas en formato ISO 8601 a objetos Date
+      const propietarios = res.data.data.map((propietario: PropietarioTypes) => {
+        return {
+          ...propietario,
+          fecha_nacimiento: new Date(propietario.fecha_nacimiento)
+        };
+      });
+  
+      return propietarios;
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);

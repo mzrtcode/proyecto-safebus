@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
 import Card from "../components/Card";
+import { useLoaderData } from "react-router-dom";
+import { PropietarioTypes } from "../api/propietarios";
+import { formatearFecha } from "../api/general";
 
 const Propietarios = () => {
 
@@ -11,71 +14,56 @@ const Propietarios = () => {
   }
 
 
-  const datos = [
-    {
-      id: 1,
-      nombres: 'John',
-      apellidos: 'Doe',
-      correo: 'johndoe@example.com',
-      tipo_identificacion: 'C.C.',
-      numero_identificacion: '123456789',
-      celular: '1234567890',
-      fecha_nacimiento: '1990-01-01',
-      direccion: 'Calle Principal 123'
-    },
-    {
-      id: 2,
-      nombres: 'Jane',
-      apellidos: 'Smith',
-      correo: 'janesmith@example.com',
-      tipo_identificacion: 'T.I.',
-      numero_identificacion: '987654321',
-      celular: '0987654321',
-      fecha_nacimiento: '1995-05-10',
-      direccion: 'Avenida Secundaria 456'
-    }
-  ];
+ const propietariosData = useLoaderData() as PropietarioTypes[];
 
   const columnas = [
     {
+      name: 'ID',
+      selector: (row: PropietarioTypes) => row.id_propietario,
+    },
+    {
       name: 'Nombres',
-      selector: 'nombres',
+      selector:  (row: PropietarioTypes) => row.nombres,
       sortable: true
     },
     {
       name: 'Apellidos',
-      selector: 'apellidos',
+      selector: (row: PropietarioTypes) => row.apellidos,
       sortable: true
     },
     {
       name: 'Correo',
-      selector: 'correo',
+      selector: (row: PropietarioTypes) => row.correo,
       sortable: true
     },
     {
       name: 'Tipo de Identificación',
-      selector: 'tipo_identificacion',
+      selector: (row: PropietarioTypes) => row.tipo_identificacion,
       sortable: true
     },
     {
       name: 'Número de Identificación',
-      selector: 'numero_identificacion',
+      selector: (row: PropietarioTypes) => row.numero_identificacion,
       sortable: true
     },
     {
       name: 'Celular',
-      selector: 'celular',
+      selector: (row: PropietarioTypes) => row.celular,
       sortable: true
     },
     {
       name: 'Fecha de Nacimiento',
-      selector: 'fecha_nacimiento',
+      selector: (row: PropietarioTypes) => formatearFecha(row.fecha_nacimiento),
       sortable: true
     },
     {
       name: 'Dirección',
-      selector: 'direccion',
+      selector: (row: PropietarioTypes) => row.direccion,
       sortable: true
+    },
+    {
+      name: 'Acciones',
+      selector: (row: PropietarioTypes) => row.acciones
     }
   ];
   return (
@@ -171,7 +159,7 @@ const Propietarios = () => {
         </button>
       </form>
 
-      <Table datos={datos} columnas={columnas} titulo="Lista de propietarios registrados" />
+      <Table datos={propietariosData} columnas={columnas} titulo="Lista de propietarios registrados" />
     </Card>
   )
 }

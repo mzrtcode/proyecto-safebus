@@ -11,6 +11,7 @@ export interface ConductorTypes {
     celular: string
     fecha_nacimiento: Date
     direccion: string
+    acciones?: JSX.Element
   }
 
 
@@ -38,9 +39,4 @@ export interface ConductorTypes {
     }
   };
 
-  export const formatearFecha = (date: Date): string => {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
+ 

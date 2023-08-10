@@ -4,8 +4,9 @@ import './conductores.css'
 
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
-import { ConductorTypes, formatearFecha } from '../api/conductores';
+import { ConductorTypes } from '../api/conductores';
 import { useLoaderData } from 'react-router-dom';
+import { formatearFecha } from '../api/general';
 
 const Conductores = () => {
 
@@ -63,6 +64,10 @@ const Conductores = () => {
       name: 'Dirección',
       selector: (row: ConductorTypes) => row.direccion,
       sortable: true
+    },
+    {
+      name: 'Acciones',
+      selector: (row: PropietarioTypes) => row.acciones
     }
   ];
   return (
