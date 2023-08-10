@@ -11,70 +11,70 @@ type Inputs = {
     ruta: string,
     vehiculo: string,
     conductor: string,
-    total   : number,
+    total: number,
     puestos: string,
     valorTiquete: number
-  } 
+}
 
 const datos = [
     {
-      numeroTiquete: 1,
-      ruta: 'Ciudad Central - Ciudad del Este',
-      pasajeros: 10,
-      total: 100,
-      hora: '10:00 AM'
+        numeroTiquete: 1,
+        ruta: 'Ciudad Central - Ciudad del Este',
+        pasajeros: 10,
+        total: 100,
+        hora: '10:00 AM'
     },
     {
-      numeroTiquete: 2,
-      ruta: 'Pueblo Nuevo - Ciudad del Oeste',
-      pasajeros: 5,
-      total: 50,
-      hora: '11:30 AM'
+        numeroTiquete: 2,
+        ruta: 'Pueblo Nuevo - Ciudad del Oeste',
+        pasajeros: 5,
+        total: 50,
+        hora: '11:30 AM'
     },
     {
-      numeroTiquete: 3,
-      ruta: 'Villa del Sol - Ciudad del Norte',
-      pasajeros: 7,
-      total: 70,
-      hora: '12:15 PM'
+        numeroTiquete: 3,
+        ruta: 'Villa del Sol - Ciudad del Norte',
+        pasajeros: 7,
+        total: 70,
+        hora: '12:15 PM'
     },
-  ];
+];
 
-  interface Localidades {
+interface Localidades {
     numeroTiquete: number;
-    ruta:string,
+    ruta: string,
     pasajeros: number;
     total: number,
     hora: string;
-  }
+}
 
-  const columnas = [
+const columnas = [
     {
-      name: 'Numero tiquete',
-      selector: (row: Localidades) => row.numeroTiquete,
-      sortable: true
+        name: 'Numero tiquete',
+        selector: (row: Localidades) => row.numeroTiquete,
+        sortable: true
     },
     {
-      name: 'Ruta',
-      selector: (row: Localidades) => row.ruta,
-      sortable: true
+        name: 'Ruta',
+        selector: (row: Localidades) => row.ruta,
+        sortable: true
     },
     {
-      name: 'Pasajeros',
-      selector: (row: Localidades) => row.pasajeros,
-      sortable: true
+        name: 'Pasajeros',
+        selector: (row: Localidades) => row.pasajeros,
+        sortable: true
     },
     {
-      name: 'Total',
-      selector: (row: Localidades) => row.total,
-      sortable: true
+        name: 'Total',
+        selector: (row: Localidades) => row.total,
+        sortable: true
     },
     {
-      name: 'Hora',
-      selector: (row: Localidades) => row.hora,
-      sortable: true
+        name: 'Hora',
+        selector: (row: Localidades) => row.hora,
+        sortable: true
     }
-  ];
+];
 
 const Ventas = () => {
 
@@ -83,36 +83,36 @@ const Ventas = () => {
         handleSubmit,
         setValue,
         formState: { errors },
-      } = useForm<Inputs>();
+    } = useForm<Inputs>();
 
-      const [detallesVenta, setDetallesVenta] = useState({
+    const [detallesVenta, setDetallesVenta] = useState({
         valorTiquete: 3500,
         totalPuestosVehiculo: 30,
         puestosOcupados: 11,
         precioTotal: 0,
-      })
+    })
 
-      const actualizarPrecioTotal = (cantidad:number) => {
+    const actualizarPrecioTotal = (cantidad: number) => {
         const precioTotal = cantidad * detallesVenta.valorTiquete;
         setDetallesVenta((detallesVenta) => ({ ...detallesVenta, precioTotal }));
         setValue('total', precioTotal);
-      };
+    };
 
 
-      
 
-      useEffect(() => {
-        setValue('agencia', 'Terminal Popayan');     
+
+    useEffect(() => {
+        setValue('agencia', 'Terminal Popayan');
         setValue('ruta', 'Popayan - Cali');
         setValue('vehiculo', '3060');
         setValue('conductor', 'Daniel Perez Gomez');
         setValue('total', detallesVenta.valorTiquete);
         setValue('puestos', (detallesVenta.puestosOcupados + "/" + detallesVenta.totalPuestosVehiculo));
         setValue('valorTiquete', detallesVenta.valorTiquete);
-        
-      }, [])
-      
-      
+
+    }, [])
+
+
 
     return (
         <>
@@ -162,18 +162,7 @@ const Ventas = () => {
 
                                 </div>
 
-                                <div className="input-fields">
-                                    <label htmlFor="conductor">Conductor</label>
-                                    <input
-                                        type="text"
-                                        id="conductor"
-                                        placeholder="Nombre del conductor"
-                                        disabled
-                                        {...register("conductor")}
-
-                                    />
-
-                                </div>
+                               
 
 
                                 <div className="input-fields">
@@ -193,14 +182,34 @@ const Ventas = () => {
 
                             <div className="main-right">
                                 <div className="input-fields">
-                                    <label htmlFor="inicioRuta">Fecha</label>
-                                    <DateTimeComponent type="date"/>
+
+                                    <div className="grupo">
+
+                                        <div className="hora">
+                                            <label className='hora-titulo' htmlFor="inicioRuta">Hora</label>
+                                            <DateTimeComponent type="time" />
+                                        </div>
+                                        <div className="fecha">
+                                            <label className='fecha-titulo' htmlFor="inicioRuta">Fecha</label>
+                                            <DateTimeComponent type="date" />
+
+                                        </div>
+                                    </div>
+
+
 
                                 </div>
 
-                                <div className="input-fields">
-                                    <label htmlFor="inicioRuta">Hora</label>
-                                    <DateTimeComponent type="time"/>
+                                 <div className="input-fields">
+                                    <label htmlFor="conductor">Conductor</label>
+                                    <input
+                                        type="text"
+                                        id="conductor"
+                                        placeholder="Nombre del conductor"
+                                        disabled
+                                        {...register("conductor")}
+
+                                    />
 
                                 </div>
 
@@ -230,17 +239,17 @@ const Ventas = () => {
 
                                 <label htmlFor="">Cantidad puestos</label>
 
-                                <InputSpinner onChange={actualizarPrecioTotal}/>
-                               
-                             
-                                
+                                <InputSpinner onChange={actualizarPrecioTotal} />
+
+
+
                                 <button>Crear tiquete</button>
                                 <button>Despachar</button>
                                 <button>Anular Planilla</button>
 
                             </div>
                         </div>
-                                <Table columnas={columnas} datos={datos} titulo='Tiquetes Vendidos'/>
+                        <Table columnas={columnas} datos={datos} titulo='Tiquetes Vendidos' />
 
                     </div>
                     <div className="izquierda">
@@ -374,7 +383,7 @@ const Ventas = () => {
                             <div className="planilla_estado">
                                 <span className="estado despachado">Despachado</span>
                             </div>
-                       
+
                         </div>
 
 
@@ -382,7 +391,7 @@ const Ventas = () => {
 
 
 
-                   
+
                 </div>
             </Card>
         </>

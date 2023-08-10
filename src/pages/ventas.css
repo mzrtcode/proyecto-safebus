@@ -203,6 +203,32 @@ form button i{
   height: 34px;
 }
 
+.titulos{
+  display: flex;
+  margin-top: 20px;
+  justify-content: space-between;
+}
+
+.fecha-titulo{
+  display: flex;
+  margin-bottom: 22px;
+  justify-content: space-between;
+}
+
+.hora-titulo{
+  display: flex;
+  margin-bottom: 16px;
+  justify-content: space-between;
+}
+
+.grupo{
+  display: flex;
+  justify-content: space-between;
+}
+.hora, .fecha{
+  margin-top: 6px;
+  margin-bottom: 12px;
+}
 
 @media screen and (max-width: 480px) {
   form .fields {

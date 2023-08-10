@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
+import { format } from "date-fns"; // Importar la función de formateo
 
 type DateOrTime = "date" | "time";
 
@@ -16,9 +17,13 @@ const DateTimeComponent: React.FC<{ type: DateOrTime }> = ({ type }): JSX.Elemen
     };
   }, []);
 
+  const formattedDate = format(time, "EEEE, MMMM d, yyyy"); // Formatear la fecha
+
   return (
     <>
-      <p>{type === "time" ? time.toLocaleTimeString() : time.toLocaleDateString()}</p>
+      <p style={{ display: "inline-block" }}>
+        {type === "time" ? time.toLocaleTimeString() : formattedDate}
+      </p>
     </>
   );
 };
