@@ -1,6 +1,8 @@
 import Card from '../components/Card'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
+import { useLoaderData } from 'react-router-dom';
+import { AgenciaTypes } from '../api/agencias';
 
 
 const Agencias = () => {
@@ -11,35 +13,22 @@ const Agencias = () => {
         console.log(data)
     }
 
-    const datos = [
-      {
-        id: 1,
-        nombre_localidad: 'Ciudad Central',
-        direccion: 'Calle Principal #123',
-        codigo_interno: 'CC'
-      },
-      {
-        id: 2,
-        nombre_localidad: 'Pueblo Nuevo',
-        direccion: 'Avenida Central #456',
-        codigo_interno: 'PN'
-      }
-    ];
+    const agenciasData = useLoaderData() as AgenciaTypes[]
     
     const columnas = [
       {
         name: 'Nombre localidad',
-        selector: 'nombre_localidad',
+        selector: (row: AgenciaTypes) => row.nombre,
         sortable: true
       },
       {
         name: 'Dirección',
-        selector: 'direccion',
+        selector: (row: AgenciaTypes) => row.direccion,
         sortable: true
       },
       {
         name: 'Código Interno',
-        selector: 'codigo_interno',
+        selector: (row: AgenciaTypes) => row.codigo_interno,
         sortable: true
       }
     ];
@@ -90,7 +79,7 @@ const Agencias = () => {
       </form>
 
 
-      <Table datos={datos} columnas={columnas} titulo='Lista de agencias registradas'/>
+      <Table datos={agenciasData} columnas={columnas} titulo='Lista de agencias registradas'/>
     </Card>
   )
 }

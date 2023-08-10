@@ -1,6 +1,6 @@
 import axios from './axios';
 
-interface AgenciaTypes {
+export interface AgenciaTypes {
     id_agencia: number
     nombre: string
     codigo_interno: string
@@ -11,7 +11,7 @@ interface AgenciaTypes {
 
 export const agenciasLoader = async (): Promise<AgenciaTypes[]> => {
     try {
-      const res = await axios.get("/v1/agencias");
+      const res = await axios.get("/agencias");
       if (res.status !== 200) {
         throw new Error("Error al obtener los datos de agencias");
       }
