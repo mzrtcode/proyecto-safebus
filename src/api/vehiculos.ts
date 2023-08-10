@@ -1,6 +1,6 @@
 import axios from './axios';
 
-interface VehiculoTypes {
+export interface VehiculoTypes {
     id_vehiculo: number
     id_propietario: number
     placa: string
@@ -16,7 +16,7 @@ interface VehiculoTypes {
 
 export const vehiculosLoader = async (): Promise<VehiculoTypes[]> => {
     try {
-      const res = await axios.get("/v1/vehiculos");
+      const res = await axios.get("/vehiculos");
       if (res.status !== 200) {
         throw new Error("Error al obtener los datos de vehiculos");
       }

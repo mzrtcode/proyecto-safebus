@@ -1,6 +1,8 @@
 import Card from '../components/Card'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
+import { useLoaderData } from 'react-router-dom';
+import { VehiculoTypes } from '../api/vehiculos';
 
 
 const Vehiculos = () => {
@@ -11,71 +13,47 @@ const Vehiculos = () => {
         console.log(data)
     }
 
-
-    const datos = [
-      {
-        id: 1,
-        propietario: 'John Doe',
-        placa: 'ABC123',
-        marca: 'Toyota',
-        modelo: 'Corolla',
-        color: 'Rojo',
-        anio_fabricacion: 2020,
-        codigo_interno: 'AB',
-        cantidad_puestos: 30
-      },
-      {
-        id: 2,
-        propietario: 'Jane Smith',
-        placa: 'XYZ987',
-        marca: 'Honda',
-        modelo: 'Civic',
-        color: 'Azul',
-        anio_fabricacion: 2018,
-        codigo_interno: 'CD',
-        cantidad_puestos: 25
-      }
-    ];
+    const vehiculosData = useLoaderData() as VehiculoTypes[]
     
     const columnas = [
       {
         name: 'Propietario',
-        selector: 'propietario',
+        selector: (row: VehiculoTypes) => row.id_propietario,
         sortable: true
       },
       {
         name: 'Placa',
-        selector: 'placa',
+        selector: (row: VehiculoTypes) => row.placa,
         sortable: true
       },
       {
         name: 'Marca',
-        selector: 'marca',
+        selector: (row: VehiculoTypes) => row.marca,
         sortable: true
       },
       {
         name: 'Modelo',
-        selector: 'modelo',
+        selector: (row: VehiculoTypes) => row.modelo,
         sortable: true
       },
       {
         name: 'Color',
-        selector: 'color',
+        selector: (row: VehiculoTypes) => row.color,
         sortable: true
       },
       {
         name: 'Año de Fabricación',
-        selector: 'anio_fabricacion',
+        selector: (row: VehiculoTypes) => row.anio_fabricacion,
         sortable: true
       },
       {
         name: 'Código Interno',
-        selector: 'codigo_interno',
+        selector: (row: VehiculoTypes) => row.codigo_interno,
         sortable: true
       },
       {
         name: 'Cantidad de Puestos',
-        selector: 'cantidad_puestos',
+        selector: (row: VehiculoTypes) => row.cantidad_puestos,
         sortable: true
       }
     ];
@@ -171,7 +149,7 @@ const Vehiculos = () => {
         </button>
       </form>
 
-      <Table columnas={columnas} datos={datos} titulo='Lista de vehiculos registrados' />
+      <Table columnas={columnas} datos={vehiculosData} titulo='Lista de vehiculos registrados' />
     </Card>
   )
 }
