@@ -7,7 +7,9 @@ import { AgenciaTypes } from '../api/agencias';
 
 const Agencias = () => {
 
-  const { register, handleSubmit} = useForm();
+  const { register, handleSubmit, formState: {
+    errors,
+  }} = useForm();
 
     const onSubmit = (data:any) => {
         console.log(data)
@@ -43,30 +45,30 @@ const Agencias = () => {
 
           <div className="fields">
             <div className="input-fields">
-              <label htmlFor="localidad">Nombre localidad</label>
-              <input type="text" id='localidad' placeholder='Ingrese el nombre de la agencia' {...register('localidad', {
+              <label htmlFor="nombre">Nombre localidad</label>
+              <input type="text" id='nombre' placeholder='Ingrese el nombre de la agencia' {...register('nombre', {
                 required: true,
                 maxLength: 30
               })} />
-              <span className="input-error">Este campo es requerido</span>
+             {errors.nombre && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Dirección</label>
-              <input type="text" id='acronimo' placeholder='Ingrese la dirección de la agencia' {...register('acronimo', {
+              <label htmlFor="direccion">Dirección</label>
+              <input type="text" id='direccion' placeholder='Ingrese la dirección de la agencia' {...register('direccion', {
                 required: true,
                 maxLength: 3
               })} />
-              <span className="input-error">Este campo es requerido</span>
+             {errors.direccion && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Codigo interno</label>
-              <input type="text" id='acronimo' placeholder='Ejemplo: C2' {...register('acronimo', {
+              <label htmlFor="codigo_interno">Codigo interno</label>
+              <input type="text" id='codigo_interno' placeholder='Ejemplo: C2' {...register('codigo_interno', {
                 required: true,
                 maxLength: 2
               })} />
-              <span className="input-error">Este campo es requerido</span>
+             {errors.codigo_interno && <span className="input-error">Este campo es requerido</span>}
             </div>
 
           </div>

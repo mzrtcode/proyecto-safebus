@@ -7,7 +7,9 @@ import { VehiculoTypes } from '../api/vehiculos';
 
 const Vehiculos = () => {
 
-  const { register, handleSubmit} = useForm();
+  const { register, handleSubmit, formState: {
+    errors
+  }} = useForm();
 
     const onSubmit = (data:any) => {
         console.log(data)
@@ -68,76 +70,92 @@ const Vehiculos = () => {
 
           <div className="fields">
             <div className="input-fields">
-              <label htmlFor="localidad">Propietario</label>
-              <input type="text" id='localidad' placeholder='Seleccione el propietario' {...register('localidad', {
+              <label htmlFor="id_propietario">Propietario</label>
+              <input type="text" id='id_propietario' placeholder='Seleccione el propietario' {...register('id_propietario', {
                 required: true,
                 maxLength: 30
               })} />
-              <span className="input-error">Este campo es requerido</span>
+             {
+                errors.id_propietario && <span className="input-error">Este campo es requerido</span>
+              }
             </div>
 
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Placa</label>
-              <input type="text" id='acronimo' placeholder='Ingrese la placa del vehículo' {...register('acronimo', {
+              <label htmlFor="placa">Placa</label>
+              <input type="text" id='placa' placeholder='Ingrese la placa del vehículo' {...register('placa', {
                 required: true,
                 maxLength: 6
               })} />
-              <span className="input-error">Este campo es requerido</span>
+              {
+                errors.placa && <span className="input-error">Este campo es requerido</span>
+              }
             </div>
 
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Marca</label>
-              <input type="text" id='acronimo' placeholder='Ingrese la marca del vehículo' {...register('acronimo', {
+              <label htmlFor="marca">Marca</label>
+              <input type="text" id='marca' placeholder='Ingrese la marca del vehículo' {...register('marca', {
                 required: true,
               })} />
-              <span className="input-error">Este campo es requerido</span>
+              {
+                errors.marca && <span className="input-error">Este campo es requerido</span>
+              }
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Modelo</label>
-              <input type="text" id='acronimo' placeholder='Ingrese el modelo del vehículo' {...register('acronimo', {
-                required: true,
-                maxLength: 3
-              })} />
-              <span className="input-error">Este campo es requerido</span>
-            </div>
-
-            <div className="input-fields">
-              <label htmlFor="acronimo">Color</label>
-              <input type="text" id='acronimo' placeholder='Ingrese el color del vehículo' {...register('acronimo', {
+              <label htmlFor="modelo">Modelo</label>
+              <input type="text" id='modelo' placeholder='Ingrese el modelo del vehículo' {...register('modelo', {
                 required: true,
                 maxLength: 3
               })} />
-              <span className="input-error">Este campo es requerido</span>
+              {
+                errors.modelo && <span className="input-error">Este campo es requerido</span>
+              }
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Año de Fabricación</label>
-              <input type="number" min="1900" max="2099" id='acronimo' placeholder='Ingrese el año de fabricación' {...register('acronimo', {
+              <label htmlFor="color">Color</label>
+              <input type="text" id='color' placeholder='Ingrese el color del vehículo' {...register('color', {
                 required: true,
                 maxLength: 3
               })} />
-              <span className="input-error">Este campo es requerido</span>
+              {
+                errors.color && <span className="input-error">Este campo es requerido</span>
+              }
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Código Interno</label>
-              <input type="text" id='acronimo' placeholder='Ingrese el código interno' {...register('acronimo', {
+              <label htmlFor="anio_fabricacion">Año de Fabricación</label>
+              <input type="number" min="1900" max="2099" id='anio_fabricacion' placeholder='Ingrese el año de fabricación' {...register('anio_fabricacion', {
                 required: true,
                 maxLength: 3
               })} />
-              <span className="input-error">Este campo es requerido</span>
+              {
+                errors.anio_fabricacion && <span className="input-error">Este campo es requerido</span>
+              }
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Cantidad puestos</label>
-              <input type="number" id='acronimo' placeholder='Ingrese el numero de puestos' {...register('acronimo', {
+              <label htmlFor="codigo_interno">Código Interno</label>
+              <input type="text" id='acronimo' placeholder='Ingrese el código interno' {...register('codigo_interno', {
                 required: true,
                 maxLength: 3
               })} />
-              <span className="input-error">Este campo es requerido</span>
+              {
+                errors.codigo_interno && <span className="input-error">Este campo es requerido</span>
+              }
+            </div>
+
+            <div className="input-fields">
+              <label htmlFor="cantidad_puestos">Cantidad puestos</label>
+              <input type="number" id='cantidad_puestos' placeholder='Ingrese el numero de puestos' {...register('cantidad_puestos', {
+                required: true,
+                maxLength: 3
+              })} />
+              {
+                errors.cantidad_puestos && <span className="input-error">Este campo es requerido</span>
+              }
             </div>
 
           </div>

@@ -8,7 +8,9 @@ import { formatearFecha } from "../api/general";
 const Propietarios = () => {
 
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState: {
+    errors,
+  } } = useForm();
   const onSubmit = (data: any) => {
     console.log(data)
   }
@@ -76,33 +78,33 @@ const Propietarios = () => {
 
           <div className="fields">
             <div className="input-fields">
-              <label htmlFor="localidad">Nombres</label>
-              <input type="text" id='localidad' placeholder='Ingrese sus nombres' {...register('localidad', {
+              <label htmlFor="nombres">Nombres</label>
+              <input type="text" id='nombres' placeholder='Ingrese sus nombres' {...register('nombres', {
                 required: true,
               })} />
-              <span className="input-error">Este campo es requerido</span>
+               {errors.nombres && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Apellidos</label>
-              <input type="text" id='acronimo' placeholder='Ingrese sus apellidos' {...register('acronimo', {
+              <label htmlFor="apellidos">Apellidos</label>
+              <input type="text" id='apellidos' placeholder='Ingrese sus apellidos' {...register('apellidos', {
                 required: true,
               })} />
-              <span className="input-error">Este campo es requerido</span>
+               {errors.apellidos && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Correo</label>
-              <input type="email" id='acronimo' placeholder='Ejemplo: usuario@usuario.com' {...register('acronimo', {
+              <label htmlFor="correo">Correo</label>
+              <input type="email" id='correo' placeholder='Ejemplo: usuario@usuario.com' {...register('correo', {
                 required: true,
               })} />
-              <span className="input-error">Este campo es requerido</span>
+               {errors.correo && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
               <label htmlFor="tipo_identificacion">Tipo de identificacion:</label>
 
-              <select id="tipo_identificacion" {...register('acronimo', {
+              <select id="tipo_identificacion" {...register('tipo_identificacion', {
                 required: true,
               })} >
                 <option value="">Seleccionar</option>
@@ -112,39 +114,39 @@ const Propietarios = () => {
                 <option value="Pasp.">Pasp.</option>
               </select>
 
-              <span className="input-error">Este campo es requerido</span>
+              {errors.tipo_identificacion && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Número de Identificación</label>
-              <input type="number" id='acronimo' placeholder='Ingrese el número de identificación' {...register('acronimo', {
+              <label htmlFor="numero_identificacion">Número de Identificación</label>
+              <input type="number" id='numero_identificacion' placeholder='Ingrese el número de identificación' {...register('numero_identificacion', {
                 required: true,
               })} />
-              <span className="input-error">Este campo es requerido</span>
+               {errors.numero_identificacion && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Celular</label>
-              <input type="text" id='acronimo' placeholder='Ingrese su número de celular' {...register('acronimo', {
+              <label htmlFor="celular">Celular</label>
+              <input type="text" id='celular' placeholder='Ingrese su número de celular' {...register('celular', {
                 required: true,
               })} />
-              <span className="input-error">Este campo es requerido</span>
+              {errors.celular && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Fecha de Nacimiento</label>
-              <input type="date" id='acronimo' placeholder='Ingrese su fecha de nacimiento' {...register('acronimo', {
+              <label htmlFor="fecha_nacimiento">Fecha de Nacimiento</label>
+              <input type="date" id='fecha_nacimiento' placeholder='Ingrese su fecha de nacimiento' {...register('fecha_nacimiento', {
                 required: true,
               })} />
-              <span className="input-error">Este campo es requerido</span>
+              {errors.fecha_nacimiento && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
-              <label htmlFor="acronimo">Dirección</label>
-              <input type="text" id='acronimo' placeholder='Ingrese su dirección' {...register('acronimo', {
+              <label htmlFor="direccion">Dirección</label>
+              <input type="text" id='direccion' placeholder='Ingrese su dirección' {...register('direccion', {
                 required: true,
               })} />
-              <span className="input-error">Este campo es requerido</span>
+               {errors.direccion && <span className="input-error">Este campo es requerido</span>}
             </div>
 
 
