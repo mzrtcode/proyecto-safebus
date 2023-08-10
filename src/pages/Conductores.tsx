@@ -4,6 +4,8 @@ import './conductores.css'
 
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
+import { ConductorTypes, formatearFecha } from '../api/conductores';
+import { useLoaderData } from 'react-router-dom';
 
 const Conductores = () => {
 
@@ -12,70 +14,54 @@ const Conductores = () => {
     console.log(data)
   }
 
-  const datos = [
-    {
-      id: 1,
-      nombres: 'John',
-      apellidos: 'Doe',
-      correo: 'johndoe@example.com',
-      tipo_identificacion: 'C.C.',
-      numero_identificacion: '123456789',
-      celular: '1234567890',
-      fecha_nacimiento: '1990-01-01',
-      direccion: 'Calle Principal 123'
-    },
-    {
-      id: 2,
-      nombres: 'Jane',
-      apellidos: 'Smith',
-      correo: 'janesmith@example.com',
-      tipo_identificacion: 'T.I.',
-      numero_identificacion: '987654321',
-      celular: '0987654321',
-      fecha_nacimiento: '1995-05-10',
-      direccion: 'Avenida Secundaria 456'
-    }
-  ];
+  const conductoresData = useLoaderData() as ConductorTypes[];
+  
+
   
   const columnas = [
     {
+      name: 'ID',
+      selector: (row: ConductorTypes) => row.id_conductor,
+      sortable: true
+    },
+    {
       name: 'Nombres',
-      selector: 'nombres',
+      selector: (row: ConductorTypes) => row.nombres,
       sortable: true
     },
     {
       name: 'Apellidos',
-      selector: 'apellidos',
+      selector: (row: ConductorTypes) => row.apellidos,
       sortable: true
     },
     {
       name: 'Correo',
-      selector: 'correo',
+      selector: (row: ConductorTypes) => row.correo,
       sortable: true
     },
     {
       name: 'Tipo de Identificación',
-      selector: 'tipo_identificacion',
+      selector: (row: ConductorTypes) => row.tipo_identificacion,
       sortable: true
     },
     {
       name: 'Número de Identificación',
-      selector: 'numero_identificacion',
+      selector: (row: ConductorTypes) => row.numero_identificacion,
       sortable: true
     },
     {
       name: 'Celular',
-      selector: 'celular',
+      selector: (row: ConductorTypes) => row.celular,
       sortable: true
     },
     {
       name: 'Fecha de Nacimiento',
-      selector: 'fecha_nacimiento',
+      selector: (row: ConductorTypes) => formatearFecha(row.fecha_nacimiento),
       sortable: true
     },
     {
       name: 'Dirección',
-      selector: 'direccion',
+      selector: (row: ConductorTypes) => row.direccion,
       sortable: true
     }
   ];
@@ -172,7 +158,7 @@ const Conductores = () => {
         </button>
       </form>
 
-      <Table datos={datos} columnas={columnas} titulo='Lista de concutores registrados' />
+      <Table datos={conductoresData} columnas={columnas} titulo='Lista de concutores registrados' />
     </Card>
   )
 }
