@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import Table from '../components/Table';
 import Card from "../components/Card";
 import { useLoaderData, useParams } from "react-router-dom";
-import { PropietarioRegistrar, PropietarioTypes, propietarioEliminar, propietarioRegistrar } from "../api/propietarios";
+import { PropietarioRegistrar, PropietarioTypes, actualizarPropietario, propietarioEliminar, propietarioRegistrar } from "../api/propietarios";
 import { formatearFecha } from "../api/general";
 import Acciones from "../components/Acciones";
 import useToast from "../hooks/useToast";
@@ -15,8 +15,25 @@ const Propietarios = () => {
   const { register, handleSubmit,setValue, formState: {
     errors,
   } } = useForm<PropietarioRegistrar>();
-  const onSubmit = (data: PropietarioRegistrar) => {
-    console.log(data)
+  const onSubmit = async(data: PropietarioRegistrar) => {
+    try {
+      if (!id) {
+        const statusCode = await propietarioRegistrar(data);
+        if (statusCode === 201) {
+          showToast(`Conductor registrado`, 'success', 'bottom-center');
+        } else {
+          showToast('Error al registrar el conductor', 'error', 'bottom-center');
+        }
+      } else {
+        const respuesta = await actualizarPropietario(+id, data);
+        if (respuesta) {
+          showToast(`Conductor actualizada`, 'success', 'bottom-center');
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      showToast('Error al registrar el conductor', 'error', 'bottom-center');
+    }
   }
   const showToast = useToast();
 
