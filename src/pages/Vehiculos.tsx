@@ -23,9 +23,16 @@ const Vehiculos = () => {
 
   const onSubmit = async (data:VehiculoRegistrar) => {
     try {
+      const idPropietarioValue = data.id_propietario.value;
+      const updatedData = {
+        ...data,
+        id_propietario: idPropietarioValue
+      };
+
+      console.log(updatedData)
        
       if (!id) {
-        const statusCode = await vehiculoRegistrar(data);
+        const statusCode = await vehiculoRegistrar(updatedData);
         if (statusCode === 201) {
           showToast(`Vehiculo registrado`, 'success', 'bottom-center');
         } else {
@@ -202,7 +209,6 @@ const Vehiculos = () => {
               <label htmlFor="modelo">Modelo</label>
               <input type="text" id='modelo' placeholder='Ingrese el modelo del vehículo' {...register('modelo', {
                 required: true,
-                maxLength: 3
               })} />
               {
                 errors.modelo && <span className="input-error">Este campo es requerido</span>
@@ -213,7 +219,6 @@ const Vehiculos = () => {
               <label htmlFor="color">Color</label>
               <input type="text" id='color' placeholder='Ingrese el color del vehículo' {...register('color', {
                 required: true,
-                maxLength: 3
               })} />
               {
                 errors.color && <span className="input-error">Este campo es requerido</span>
@@ -224,7 +229,6 @@ const Vehiculos = () => {
               <label htmlFor="anio_fabricacion">Año de Fabricación</label>
               <input type="number" min="1900" max="2099" id='anio_fabricacion' placeholder='Ingrese el año de fabricación' {...register('anio_fabricacion', {
                 required: true,
-                maxLength: 3
               })} />
               {
                 errors.anio_fabricacion && <span className="input-error">Este campo es requerido</span>
@@ -235,7 +239,6 @@ const Vehiculos = () => {
               <label htmlFor="codigo_interno">Código Interno</label>
               <input type="text" id='acronimo' placeholder='Ingrese el código interno' {...register('codigo_interno', {
                 required: true,
-                maxLength: 3
               })} />
               {
                 errors.codigo_interno && <span className="input-error">Este campo es requerido</span>
