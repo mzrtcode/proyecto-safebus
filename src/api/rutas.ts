@@ -76,7 +76,7 @@ export const actualizarRuta = async (id_ruta: number, ruta: RutaActualizar) => {
 };
 
 
-export const eliminarRuta = async (id_ruta: number) => {
+export const eliminarRuta = async (id_ruta: number):Promise<boolean> => {
   try {
     const response = await axios.delete(`/rutas/${id_ruta}`);
     if (response.status === 204) return true;
@@ -86,7 +86,7 @@ export const eliminarRuta = async (id_ruta: number) => {
     }
     return false;
   }
-
+  return false;
 }
 
 export const desactivarRuta = async (id_ruta: number, estadoActual: boolean) => {

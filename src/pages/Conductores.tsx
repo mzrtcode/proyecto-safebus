@@ -4,21 +4,69 @@ import './conductores.css'
 
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
-import { ConductorTypes } from '../api/conductores';
-import { useLoaderData } from 'react-router-dom';
+import { ConductorRegistrar, ConductorTypes, actualizarConductor, conductorEliminar, conductorRegistrar } from '../api/conductores';
+import { useLoaderData, useParams } from 'react-router-dom';
 import { formatearFecha } from '../api/general';
+import Acciones from '../components/Acciones';
+import useToast from '../hooks/useToast';
+import { useEffect } from 'react';
 
 const Conductores = () => {
 
-  const { register, handleSubmit, formState: {
+  const {id} = useParams();
+
+  const { register, handleSubmit,setValue, formState: {
     errors,
-  } } = useForm();
-  const onSubmit = (data:any) => {
-    console.log(data)
+  } } = useForm<ConductorRegistrar>();
+  const onSubmit = async (data:ConductorRegistrar) => {
+    try {
+      if (!id) {
+        const statusCode = await conductorRegistrar(data);
+        if (statusCode === 201) {
+          showToast(`Conductor registrado`, 'success', 'bottom-center');
+        } else {
+          showToast('Error al registrar el conductor', 'error', 'bottom-center');
+        }
+      } else {
+        const respuesta = await actualizarConductor(+id, data);
+        if (respuesta) {
+          showToast(`Conductor actualizada`, 'success', 'bottom-center');
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      showToast('Error al registrar el conductor', 'error', 'bottom-center');
+    }
   }
+  const showToast = useToast();
 
   const conductoresData = useLoaderData() as ConductorTypes[];
-  
+  const eliminar = async(id: number):Promise<void> => {
+    console.log('Eliminando el ID:', id);
+
+    const seElimino = await conductorEliminar(id);
+    if(seElimino) showToast('Se elimino el conductor', 'success', 'bottom-center');
+    else showToast('Error al eliminar el conductor', 'error', 'bottom-center');
+  }
+
+  useEffect(() => {
+    if(id){
+      console.log('se detecto id')
+      const conductorEditar = conductoresData.find(conductor => conductor.id_conductor === +id)
+      if (conductorEditar) {
+        setValue('nombres', conductorEditar.nombres)
+        setValue('apellidos', conductorEditar.apellidos)
+        setValue('correo', conductorEditar.correo)
+        setValue('tipo_identificacion', conductorEditar.tipo_identificacion)
+        setValue('numero_identificacion', conductorEditar.numero_identificacion)
+        setValue('celular', conductorEditar.celular)
+        setValue('fecha_nacimiento', conductorEditar.fecha_nacimiento.toISOString().substring(0,10))
+        setValue('direccion', conductorEditar.direccion)
+      }
+     
+    }
+      
+  }, [id])
 
   
   const columnas = [
@@ -69,7 +117,7 @@ const Conductores = () => {
     },
     {
       name: 'Acciones',
-      selector: (row: PropietarioTypes) => row.acciones
+      selector: (row: ConductorTypes) => <Acciones editarLink={`/registros/conductores/${row.id_conductor}`} eliminar={eliminar} id={row.id_conductor} />
     }
   ];
   return (
@@ -131,7 +179,7 @@ const Conductores = () => {
 
             <div className="input-fields">
               <label htmlFor="celular">Celular</label>
-              <input type="text" id='celular' placeholder='Ingrese su número de celular' {...register('celular', {
+              <input type="number" id='celular' placeholder='Ingrese su número de celular' {...register('celular', {
                 required: true,
               })} />
               {errors.celular && <span className="input-error">Este campo es requerido</span>}
@@ -139,7 +187,7 @@ const Conductores = () => {
 
             <div className="input-fields">
               <label htmlFor="fecha_nacimiento">Fecha de Nacimiento</label>
-              <input type="date" id='acronimo' placeholder='Ingrese su fecha de nacimiento' {...register('fecha_nacimiento', {
+              <input type="date" id='fecha_nacimiento' placeholder='Ingrese su fecha de nacimiento' {...register('fecha_nacimiento', {
                 required: true,
               })} />
               {errors.fecha_nacimiento && <span className="input-error">Este campo es requerido</span>}

@@ -47,6 +47,7 @@ const router = createBrowserRouter([
       {path: 'rutas', element: <Rutas/>, loader: rutasLoader },
       {path: 'rutas/:id', element: <Rutas/>, loader: rutasLoader },
       {path: 'conductores', element: <Conductores/>, loader: conductoresLoader},
+      {path: 'conductores/:id', element: <Conductores/>, loader: conductoresLoader},
       {path: 'propietarios', element: <Propietarios/>, loader: propietariosLoader},
       {path: 'vehiculos', element: <Vehiculos/>, loader: vehiculosLoader},
       {path: 'agencias', element: <Agencias/>, loader: agenciasLoader},

@@ -95,7 +95,7 @@ const Rutas = () => {
 
 
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data:RutaRegistrar) => {
     try {
       const inicioRutaValue = data.inicio_ruta.value;
       const finRutaValue = data.fin_ruta.value;
