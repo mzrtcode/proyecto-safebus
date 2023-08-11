@@ -1,21 +1,75 @@
 import Card from '../components/Card'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
-import { VendedorTypes } from '../api/vendedores';
-import { useLoaderData } from 'react-router-dom';
+import { VendedorTypes, actualizarVendedor, vendedorRegistrar } from '../api/vendedores';
+import { useLoaderData, useParams } from 'react-router-dom';
 import { formatearFecha } from '../api/general';
+import Acciones from '../components/Acciones';
+import useToast from '../hooks/useToast';
+import { useEffect } from 'react';
+import { vehiculoEliminar } from '../api/vehiculos';
 
 
 const Vendedores = () => {
 
-  const { register, handleSubmit, formState:{
+  const {id} = useParams();
+
+  const { register, handleSubmit, setValue, formState: {
     errors
-  }} = useForm();
-  const onSubmit = (data: any) => {
-    console.log(data)
+  } } = useForm<VendedorTypes>();
+  const onSubmit = async(data: VendedorTypes) => {
+    try {     
+      if (!id) {
+        const statusCode = await vendedorRegistrar(data);
+        if (statusCode === 201) {
+          showToast(`Vendedor  registrado`, 'success', 'bottom-center');
+        } else {
+          showToast('Error al registrar el vendedor', 'error', 'bottom-center');
+        }
+      } else {
+        const respuesta = await actualizarVendedor(+id, data);
+        if (respuesta) {
+          showToast(`Vendedor actualizado`, 'success', 'bottom-center');
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      showToast('Error al registrar el vendedor', 'error', 'bottom-center');
+    }
   }
 
+  const showToast = useToast();
+
+
   const vendedoresData = useLoaderData() as VendedorTypes[]
+  console.log(vendedoresData)
+
+  const eliminar = async (id: number): Promise<void> => {
+    console.log('Eliminando el ID:', id);
+
+    const seElimino = await vehiculoEliminar(id);
+    if (seElimino) showToast('Se elimino el vendedor', 'success', 'bottom-center');
+    else showToast('Error al eliminar el vendedor', 'error', 'bottom-center');
+  }
+
+  useEffect(() => {
+    if(id){
+      console.log('se detecto id')
+      const vendedorEditar = vendedoresData.find(vendedor => vendedor.id_vendedor === +id)
+      if (vendedorEditar) {
+        setValue('nombres', vendedorEditar.nombres)
+        setValue('apellidos', vendedorEditar.apellidos)
+        setValue('correo', vendedorEditar.correo)
+        setValue('tipo_identificacion', vendedorEditar.tipo_identificacion)
+        setValue('numero_identificacion', vendedorEditar.numero_identificacion)
+        setValue('celular', vendedorEditar.celular)
+        setValue('fecha_nacimiento', vendedorEditar.fecha_nacimiento.toISOString().substring(0,10))
+        setValue('direccion', vendedorEditar.direccion)
+      }
+     
+    }
+      
+  }, [id])
 
   const columnas = [
     {
@@ -45,7 +99,7 @@ const Vendedores = () => {
     },
     {
       name: 'Celular',
-      selector: ( row: VendedorTypes) => row.celular,
+      selector: (row: VendedorTypes) => row.celular,
       sortable: true
     },
     {
@@ -57,6 +111,10 @@ const Vendedores = () => {
       name: 'Dirección',
       selector: 'direccion',
       sortable: true
+    },
+    {
+      name: 'Acciones',
+      cell: (row: VendedorTypes) => <Acciones editarLink={`/registros/vendedores/${row.id_vendedor}`} eliminar={eliminar} id={row.id_vendedor} />
     }
   ];
   return (
