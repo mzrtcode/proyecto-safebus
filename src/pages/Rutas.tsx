@@ -11,6 +11,7 @@ import { RutaRegistrar, RutaType, actualizarRuta, desactivarRuta, eliminarRuta, 
 import CurrencyInput from 'react-currency-input-field';
 import useToast from '../hooks/useToast';
 import Acciones from '../components/Acciones';
+import { Options } from '../api/general';
 
 
 
@@ -27,10 +28,7 @@ interface RutasTypes {
   acciones?: JSX.Element;
 }
 
-interface Options {
-  value: string;
-  label: string;
-}
+
 
 
 

@@ -4,3 +4,8 @@ export const formatearFecha = (date: Date): string => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
+  export interface Options {
+    value: string;
+    label: string;
+  }

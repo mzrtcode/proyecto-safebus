@@ -1,21 +1,102 @@
 import Card from '../components/Card'
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import Table from '../components/Table';
-import { useLoaderData } from 'react-router-dom';
-import { VehiculoTypes } from '../api/vehiculos';
+import { useLoaderData, useParams } from 'react-router-dom';
+import { VehiculoRegistrar, VehiculoTypes, actualizarVehiculo, vehiculoEliminar, vehiculoRegistrar } from '../api/vehiculos';
+import Select, { StylesConfig } from 'react-select';
+import useToast from '../hooks/useToast';
+import Acciones from '../components/Acciones';
+import { useEffect, useState } from 'react';
+import { PropietarioTypes, propietariosLoader } from '../api/propietarios';
+import { Options } from '../api/general';
 
 
 const Vehiculos = () => {
 
-  const { register, handleSubmit, formState: {
+  const {id} = useParams();
+  const [propietariosOptions, setPropitariosOptions] = useState<Options[]>([]);
+  const { register, handleSubmit,setValue,control ,formState: {
     errors
-  }} = useForm();
+  }} = useForm<VehiculoRegistrar>();
 
-    const onSubmit = (data:any) => {
-        console.log(data)
+  const showToast = useToast();
+
+  const onSubmit = async (data:VehiculoRegistrar) => {
+    try {
+       
+      if (!id) {
+        const statusCode = await vehiculoRegistrar(data);
+        if (statusCode === 201) {
+          showToast(`Vehiculo registrado`, 'success', 'bottom-center');
+        } else {
+          showToast('Error al registrar el vehiculo', 'error', 'bottom-center');
+        }
+      } else {
+        const respuesta = await actualizarVehiculo(+id, data);
+        if (respuesta) {
+          showToast(`Vehiculo actualizado`, 'success', 'bottom-center');
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      showToast('Error al registrar el vehiculo', 'error', 'bottom-center');
     }
+  };
 
+
+    const obtenerPropietarios = async () => {
+      try {
+        const propietarios = await propietariosLoader() as PropietarioTypes[];
+        const respuesta: Options[] = propietarios.map(propietario => ({
+          value: propietario.id_propietario,
+          label: `${propietario.nombres} ${propietario.apellidos} - ${propietario.numero_identificacion}`
+        }));
+        console.log({propietarios})
+        setPropitariosOptions(respuesta);
+      } catch (error) {
+        console.error("Error al obtener propietarios:", error);
+      }
+    };
+
+    useEffect(() => {
+      obtenerPropietarios()
+    }, [])
+
+
+    const eliminar = async(id: number):Promise<void> => {
+      console.log('Eliminando el ID:', id);
+  
+      const seElimino = await vehiculoEliminar(id);
+      if(seElimino) showToast('Se elimino el vehiculo', 'success', 'bottom-center');
+      else showToast('Error al eliminar el vehiculo', 'error', 'bottom-center');
+    }
     const vehiculosData = useLoaderData() as VehiculoTypes[]
+    const customStyles = {
+      control: base => ({
+        ...base,
+        height: '42px',
+        border: '1px solid #aaa',
+        zIndex: '9999'
+      })
+    };
+    useEffect(() => {
+      if(id){
+        console.log('se detecto id')
+        const vehiculoEditar = vehiculosData.find(vehiculo => vehiculo.id_vehiculo === +id)
+        if (vehiculoEditar) {
+          setValue('id_propietario',  {label: `${vehiculoEditar.nombres_propietario} ${vehiculoEditar.apellidos_propietario} - ${vehiculoEditar.numero_identificacion_propietario}`, value: vehiculoEditar.id_propietario})
+          setValue('placa', vehiculoEditar.placa)
+          setValue('marca', vehiculoEditar.marca)
+          setValue('modelo', vehiculoEditar.modelo)
+          setValue('color', vehiculoEditar.color)
+          setValue('anio_fabricacion', vehiculoEditar.anio_fabricacion)
+          setValue('codigo_interno', vehiculoEditar.codigo_interno)
+          setValue('cantidad_puestos', vehiculoEditar.cantidad_puestos)
+        }
+       
+      }
+        
+    }, [id])
     
     const columnas = [
       {
@@ -57,6 +138,10 @@ const Vehiculos = () => {
         name: 'Cantidad de Puestos',
         selector: (row: VehiculoTypes) => row.cantidad_puestos,
         sortable: true
+      },
+      {
+        name: 'Acciones',
+        cell: (row: VehiculoTypes) => <Acciones editarLink={`/registros/vehiculos/${row.id_vehiculo}`} eliminar={eliminar} id={row.id_vehiculo} />
       }
     ];
   return (
@@ -71,10 +156,20 @@ const Vehiculos = () => {
           <div className="fields">
             <div className="input-fields">
               <label htmlFor="id_propietario">Propietario</label>
-              <input type="text" id='id_propietario' placeholder='Seleccione el propietario' {...register('id_propietario', {
-                required: true,
-                maxLength: 30
-              })} />
+              <Controller
+                name="id_propietario"
+                control={control}
+                rules={{ required: true }} // Reglas de validación
+                render={({ field }) => (
+                  <Select
+                    /* className={styles['select']} */
+                    styles={customStyles}
+                    isClearable={true}
+                    options={propietariosOptions}
+                    {...field}
+                  />
+                )}
+              />
              {
                 errors.id_propietario && <span className="input-error">Este campo es requerido</span>
               }

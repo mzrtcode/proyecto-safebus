@@ -22,7 +22,7 @@ export interface PropietarioTypes {
     try {
       const res = await axios.get("/propietarios");
       if (res.status !== 200) {
-        throw new Error("Error al obtener los datos de conductores");
+        throw new Error("Error al obtener los datos de propietarios");
       }
       
       // Convertir las fechas en formato ISO 8601 a objetos Date

@@ -51,6 +51,7 @@ const router = createBrowserRouter([
       {path: 'propietarios', element: <Propietarios/>, loader: propietariosLoader},
       {path: 'propietarios/:id', element: <Propietarios/>, loader: propietariosLoader},
       {path: 'vehiculos', element: <Vehiculos/>, loader: vehiculosLoader},
+      {path: 'vehiculos/:id', element: <Vehiculos/>, loader: vehiculosLoader},
       {path: 'agencias', element: <Agencias/>, loader: agenciasLoader},
       {path: 'vendedores', element: <Vendedores/>, loader: vendedorLoader},
       
