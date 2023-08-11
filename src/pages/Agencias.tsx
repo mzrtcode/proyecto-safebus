@@ -1,39 +1,87 @@
 import Card from '../components/Card'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
-import { useLoaderData } from 'react-router-dom';
-import { AgenciaTypes } from '../api/agencias';
+import { useLoaderData, useParams } from 'react-router-dom';
+import { AgenciaRegistrar, AgenciaTypes, actualizarAgencia, agenciaEliminar, agenciaRegistrar } from '../api/agencias';
+import Acciones from '../components/Acciones';
+import useToast from '../hooks/useToast';
+import { useEffect } from 'react';
 
 
 const Agencias = () => {
 
-  const { register, handleSubmit, formState: {
-    errors,
-  }} = useForm();
+  const { id } = useParams()
 
-    const onSubmit = (data:any) => {
-        console.log(data)
+  const { register, handleSubmit, setValue, formState: {
+    errors,
+  } } = useForm<AgenciaRegistrar>();
+
+  const onSubmit = async(data: AgenciaRegistrar) => {
+    try {
+      if (!id) {
+        const statusCode = await agenciaRegistrar(data);
+        if (statusCode === 201) {
+          showToast(`Agencia registrada`, 'success', 'bottom-center');
+        } else {
+          showToast('Error al registrar la agencia', 'error', 'bottom-center');
+        }
+      } else {
+        const respuesta = await actualizarAgencia(+id, data);
+        if (respuesta) {
+          showToast(`Agencia actualizada`, 'success', 'bottom-center');
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      showToast('Error al registrar la agencia', 'error', 'bottom-center');
+    }
+  }
+  const showToast = useToast();
+
+
+  const agenciasData = useLoaderData() as AgenciaTypes[]
+  const eliminar = async (id: number): Promise<void> => {
+    console.log('Eliminando el ID:', id);
+
+    const seElimino = await agenciaEliminar(id);
+    if (seElimino) showToast('Se elimino la agencia', 'success', 'bottom-center');
+    else showToast('Error al eliminar la agencia', 'error', 'bottom-center');
+  }
+
+  useEffect(() => {
+    if (id) {
+      console.log('se detecto id')
+      const agenciaEditar = agenciasData.find(agencia => agencia.id_agencia === +id)
+      if (agenciaEditar) {
+        setValue('nombre', agenciaEditar.nombre)
+        setValue('direccion', agenciaEditar.direccion)
+        setValue('codigo_interno', agenciaEditar.codigo_interno)
+      }
+
     }
 
-    const agenciasData = useLoaderData() as AgenciaTypes[]
-    
-    const columnas = [
-      {
-        name: 'Nombre localidad',
-        selector: (row: AgenciaTypes) => row.nombre,
-        sortable: true
-      },
-      {
-        name: 'Dirección',
-        selector: (row: AgenciaTypes) => row.direccion,
-        sortable: true
-      },
-      {
-        name: 'Código Interno',
-        selector: (row: AgenciaTypes) => row.codigo_interno,
-        sortable: true
-      }
-    ];
+  }, [id])
+  const columnas = [
+    {
+      name: 'Nombre localidad',
+      selector: (row: AgenciaTypes) => row.nombre,
+      sortable: true
+    },
+    {
+      name: 'Dirección',
+      selector: (row: AgenciaTypes) => row.direccion,
+      sortable: true
+    },
+    {
+      name: 'Código Interno',
+      selector: (row: AgenciaTypes) => row.codigo_interno,
+      sortable: true
+    },
+    {
+      name: 'Acciones',
+      cell: (row: AgenciaTypes) => <Acciones editarLink={`/registros/agencias/${row.id_agencia}`} eliminar={eliminar} id={row.id_agencia} />
+    }
+  ];
   return (
     <Card>
       <header>Registros 🏦</header>
@@ -50,7 +98,7 @@ const Agencias = () => {
                 required: true,
                 maxLength: 30
               })} />
-             {errors.nombre && <span className="input-error">Este campo es requerido</span>}
+              {errors.nombre && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
@@ -59,7 +107,7 @@ const Agencias = () => {
                 required: true,
                 maxLength: 3
               })} />
-             {errors.direccion && <span className="input-error">Este campo es requerido</span>}
+              {errors.direccion && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
@@ -68,7 +116,7 @@ const Agencias = () => {
                 required: true,
                 maxLength: 2
               })} />
-             {errors.codigo_interno && <span className="input-error">Este campo es requerido</span>}
+              {errors.codigo_interno && <span className="input-error">Este campo es requerido</span>}
             </div>
 
           </div>
@@ -81,7 +129,7 @@ const Agencias = () => {
       </form>
 
 
-      <Table datos={agenciasData} columnas={columnas} titulo='Lista de agencias registradas'/>
+      <Table datos={agenciasData} columnas={columnas} titulo='Lista de agencias registradas' />
     </Card>
   )
 }

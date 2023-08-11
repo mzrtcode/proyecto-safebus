@@ -53,7 +53,10 @@ const router = createBrowserRouter([
       {path: 'vehiculos', element: <Vehiculos/>, loader: vehiculosLoader},
       {path: 'vehiculos/:id', element: <Vehiculos/>, loader: vehiculosLoader},
       {path: 'agencias', element: <Agencias/>, loader: agenciasLoader},
+      {path: 'agencias/:id', element: <Agencias/>, loader: agenciasLoader},
       {path: 'vendedores', element: <Vendedores/>, loader: vendedorLoader},
+      {path: 'vendedores/:id', element: <Vendedores/>, loader: vendedorLoader},
+
       
 
      
