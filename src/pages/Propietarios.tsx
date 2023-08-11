@@ -1,22 +1,52 @@
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
 import Card from "../components/Card";
-import { useLoaderData } from "react-router-dom";
-import { PropietarioTypes } from "../api/propietarios";
+import { useLoaderData, useParams } from "react-router-dom";
+import { PropietarioRegistrar, PropietarioTypes, propietarioEliminar, propietarioRegistrar } from "../api/propietarios";
 import { formatearFecha } from "../api/general";
+import Acciones from "../components/Acciones";
+import useToast from "../hooks/useToast";
+import { useEffect } from "react";
 
 const Propietarios = () => {
 
+  const {id} = useParams();
 
-  const { register, handleSubmit, formState: {
+  const { register, handleSubmit,setValue, formState: {
     errors,
-  } } = useForm();
-  const onSubmit = (data: any) => {
+  } } = useForm<PropietarioRegistrar>();
+  const onSubmit = (data: PropietarioRegistrar) => {
     console.log(data)
   }
-
+  const showToast = useToast();
 
  const propietariosData = useLoaderData() as PropietarioTypes[];
+
+ const eliminar = async(id: number):Promise<void> => {
+  console.log('Eliminando el ID:', id);
+
+  const seElimino = await propietarioEliminar(id);
+  if(seElimino) showToast('Se elimino el propietario', 'success', 'bottom-center');
+  else showToast('Error al eliminar el propietario', 'error', 'bottom-center');
+}
+useEffect(() => {
+  if(id){
+    console.log('se detecto id')
+    const propietarioEditar = propietariosData.find(propietario => propietario.id_propietario === +id)
+    if (propietarioEditar) {
+      setValue('nombres', propietarioEditar.nombres)
+      setValue('apellidos', propietarioEditar.apellidos)
+      setValue('correo', propietarioEditar.correo)
+      setValue('tipo_identificacion', propietarioEditar.tipo_identificacion)
+      setValue('numero_identificacion', propietarioEditar.numero_identificacion)
+      setValue('celular', propietarioEditar.celular)
+      setValue('fecha_nacimiento', propietarioEditar.fecha_nacimiento.toISOString().substring(0,10))
+      setValue('direccion', propietarioEditar.direccion)
+    }
+   
+  }
+    
+}, [id])
 
   const columnas = [
     {
@@ -65,7 +95,7 @@ const Propietarios = () => {
     },
     {
       name: 'Acciones',
-      selector: (row: PropietarioTypes) => row.acciones
+      selector: (row: PropietarioTypes) => <Acciones editarLink={`/registros/propietarios/${row.id_propietario}`} eliminar={eliminar} id={row.id_propietario} />
     }
   ];
   return (
