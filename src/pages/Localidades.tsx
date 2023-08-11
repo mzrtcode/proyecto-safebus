@@ -3,28 +3,58 @@ import styles from './localidades.module.css'
 import Card from '../components/Card';
 import Table from '../components/Table';
 import useToast from '../hooks/useToast';
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
+import Acciones from "../components/Acciones";
+import { LocalidadRegistrar, eliminarLocalidad, localidadActualizar, localidadRegistrar } from "../api/localidades";
+import { useEffect } from "react";
 
 interface LocalidadesTypes {
     id_localidad: number;
     nombre: string;
     acronimo: string;
-  }
+    acciones?: JSX.Element;
+}
 
 const Localidades = () => {
-    
+
+    const { id } = useParams();
 
     // Uso de useLoaderData con el tipo esperado
     const localidadesData = useLoaderData() as LocalidadesTypes[];
 
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, setValue, formState: {
+        errors
+    } } = useForm<LocalidadRegistrar>();
     const showToast = useToast();
+
+
 
     const handleShowAlert = () => {
         showToast('Este es un mensaje de prueba', 'success', 'bottom-center');
     };
 
-      
+    const eliminar = async (id: number): Promise<void> => {
+        console.log('Eliminando el ID:', id);
+        const seElimino = await eliminarLocalidad(id);
+        if (seElimino) showToast('Se elimino la localidad', 'success', 'bottom-center');
+        else showToast('Error al eliminar la localidad', 'error', 'bottom-center');
+    }
+
+
+    useEffect(() => {
+        if (id) {
+            console.log('se detecto id')
+            const localidadEditar = localidadesData.find(localidad => localidad.id_localidad === +id)
+            if (localidadEditar) {
+                setValue('nombre', localidadEditar.nombre)
+                setValue('acronimo', localidadEditar.acronimo)
+            }
+
+        }
+
+    }, [id])
+
+
     const columnas = [
         {
             name: 'ID',
@@ -41,15 +71,35 @@ const Localidades = () => {
             selector: (row: LocalidadesTypes) => row.acronimo,
             sortable: true
         },
-     
+        {
+            name: 'Acciones',
+            cell: (row: LocalidadesTypes) => <Acciones editarLink={`/registros/localidades/${row.id_localidad}`} eliminar={eliminar} id={row.id_localidad} />
+        }
+
     ];
 
-
-
-
-    const onSubmit = (data:any) => {
-        console.log(data)
-    }
+    const onSubmit = async (data: LocalidadRegistrar) => {
+        try {
+            if (!id) {
+                const statusCode = await localidadRegistrar(data);
+                if (statusCode === 201) {
+                    showToast(`Localidad registrada`, 'success', 'bottom-center');
+                } else {
+                    showToast('Error al registrar localidad', 'error', 'bottom-center');
+                }
+                return;
+            }
+            
+            const respuesta = await localidadActualizar(+id, data);
+            console.log({respuesta})
+            if (respuesta) {
+                showToast(`Localidad actualizada`, 'success', 'bottom-center');
+            }
+        } catch (error) {
+            showToast('Error al realizar la operación', 'error', 'bottom-center');
+        }
+    };
+    
 
     return (
         <Card>
@@ -62,17 +112,19 @@ const Localidades = () => {
 
                     <div className={styles.fields}>
                         <div className={styles['input-fields']}>
-                            <label htmlFor="localidad">Nombre localidad</label>
+                            <label htmlFor="nombre">Nombre localidad</label>
                             <input
                                 type="text"
-                                id="localidad"
+                                id="nombre"
                                 placeholder="Ejemplo: Ciudad Central"
-                                {...register('localidad', {
+                                {...register('nombre', {
                                     required: true,
                                     maxLength: 30
                                 })}
                             />
-                            <span className={styles['input-error']}>Este campo es requerido</span>
+
+                            {errors.localidad && <span className="input-error">Este campo es requerido</span>}
+
                         </div>
 
                         <div className={styles['input-fields']}>
@@ -86,17 +138,18 @@ const Localidades = () => {
                                     maxLength: 3
                                 })}
                             />
-                            <span className={styles['input-error']}>Este campo es requerido</span>
+                            {errors.acronimo && <span className="input-error">Este campo es requerido</span>}
+
                         </div>
                     </div>
                 </div>
 
-                <button className={styles['save-button']} onClick={handleShowAlert}>
+                <button className={styles['save-button']}>
                     <span className={styles['button-text']}>Guardar</span>
                     <i className='bx bx-plus-circle'></i>
                 </button>
 
-            </form>       
+            </form>
 
             <Table datos={localidadesData} titulo="Lista de localidades registradas" columnas={columnas} />
 

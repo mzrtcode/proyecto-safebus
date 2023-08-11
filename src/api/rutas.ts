@@ -68,7 +68,9 @@ export const actualizarRuta = async (id_ruta: number, ruta: RutaActualizar) => {
       
     }
   } catch (error) {
-    console.error(error);
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
     return false
   }
 };

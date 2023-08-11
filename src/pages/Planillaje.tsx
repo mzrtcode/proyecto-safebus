@@ -4,8 +4,11 @@ import DropDownMenu from "../components/DropDownMenu"
 function Planillaje() {
   return (
     <Card>
-      Planillaje
-      <DropDownMenu/>
+      <header>Planillaje</header>
+      <div className="contenedor">
+        test
+        </div>
+      
     </Card>
   )
 }
