@@ -5,11 +5,11 @@ export interface AgenciaTypes {
     nombre: string
     codigo_interno: string
     direccion: string
-    estado: boolean
+    estado: boolean | number
     acciones?: JSX.Element
   }
 
-export type AgenciaRegistrar = Omit<AgenciaTypes, 'id_agencia'>;
+export type AgenciaRegistrar = Omit<AgenciaTypes, 'id_agencia' | 'acciones'>;
 
 
 
@@ -78,3 +78,17 @@ export const agenciasLoader = async (): Promise<AgenciaTypes[]> => {
       return false
     }
   };
+
+  export const desactivarAgencia = async (id_agencia: number, estadoActual: boolean) => {
+    try{
+      const response = await axios.put(`/agencias/${id_agencia}`, {
+        estado: !estadoActual
+      });
+      if (response.status === 200) return true;
+    }catch(error){
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      return false;
+    }
+  }

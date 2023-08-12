@@ -42,7 +42,6 @@ const Vendedores = () => {
 
 
   const vendedoresData = useLoaderData() as VendedorTypes[]
-  console.log(vendedoresData)
 
   const eliminar = async (id: number): Promise<void> => {
     console.log('Eliminando el ID:', id);

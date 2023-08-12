@@ -2,10 +2,11 @@ import Card from '../components/Card'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
 import { useLoaderData, useParams } from 'react-router-dom';
-import { AgenciaRegistrar, AgenciaTypes, actualizarAgencia, agenciaEliminar, agenciaRegistrar } from '../api/agencias';
+import { AgenciaRegistrar, AgenciaTypes, actualizarAgencia, agenciaEliminar, agenciaRegistrar, desactivarAgencia } from '../api/agencias';
 import Acciones from '../components/Acciones';
 import useToast from '../hooks/useToast';
 import { useEffect } from 'react';
+import Checkbox from '../components/Checkbox';
 
 
 const Agencias = () => {
@@ -20,6 +21,8 @@ const Agencias = () => {
     try {
       if (!id) {
         const statusCode = await agenciaRegistrar(data);
+        console.log('aaaaaaaaaaaaaaa')
+        console.log(statusCode)
         if (statusCode === 201) {
           showToast(`Agencia registrada`, 'success', 'bottom-center');
         } else {
@@ -78,6 +81,25 @@ const Agencias = () => {
       sortable: true
     },
     {
+      name: 'Estado',
+      cell: (row: AgenciaTypes) => <Checkbox initialState={row.estado === 1} onToggle={async () => {
+        const estadoAgencia = row.estado === 1
+
+        if(estadoAgencia){
+          console.log('Cambié de estado mi es ID:', row.id_agencia);
+          const seDesactivo = await desactivarAgencia(row.id_agencia, estadoAgencia)
+          if(seDesactivo) showToast('Se desactivo la agencia', 'success', 'bottom-center');
+          else showToast('Error al desactivar la agencia', 'error', 'bottom-center');
+        }else{
+          const seActivo = await desactivarAgencia(row.id_agencia, estadoAgencia)
+          if(seActivo) showToast('Se activo la agencia', 'success', 'bottom-center');
+          else showToast('Error al desactivar la agencia', 'error', 'bottom-center');
+        }
+        
+     
+      }} />,
+    },
+    {
       name: 'Acciones',
       cell: (row: AgenciaTypes) => <Acciones editarLink={`/registros/agencias/${row.id_agencia}`} eliminar={eliminar} id={row.id_agencia} />
     }
@@ -105,7 +127,6 @@ const Agencias = () => {
               <label htmlFor="direccion">Dirección</label>
               <input type="text" id='direccion' placeholder='Ingrese la dirección de la agencia' {...register('direccion', {
                 required: true,
-                maxLength: 3
               })} />
               {errors.direccion && <span className="input-error">Este campo es requerido</span>}
             </div>
