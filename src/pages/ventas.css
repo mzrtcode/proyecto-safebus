@@ -163,8 +163,8 @@ form .fields .input-fields{
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.13);
 }
 
-form button{
-  display: flex;
+button{
+  display: inline-block;
   align-items: center;
   justify-content: center;
   height: 45px;
@@ -180,12 +180,13 @@ form button{
   cursor: pointer;
 }
 
-form button:hover{
+
+button:hover{
   background-color: #265df2;
 
 }
 
-form button i{
+button i{
   margin: 0 6px ;
 }
 
@@ -194,6 +195,12 @@ form button i{
   font-size: 12px;
 }
 
+.buttons{
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 20px;
+}
 
 
 .switch {
@@ -228,6 +235,12 @@ form button i{
 .hora, .fecha{
   margin-top: 6px;
   margin-bottom: 12px;
+}
+
+.button-ventas{
+  padding: 4px;
+  width: 100px;
+  height: 100px;
 }
 
 @media screen and (max-width: 480px) {

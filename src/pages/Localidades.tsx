@@ -3,7 +3,7 @@ import styles from './localidades.module.css'
 import Card from '../components/Card';
 import Table from '../components/Table';
 import useToast from '../hooks/useToast';
-import { useLoaderData, useParams } from "react-router-dom";
+import { Link, useLoaderData, useParams } from "react-router-dom";
 import Acciones from "../components/Acciones";
 import { LocalidadRegistrar, eliminarLocalidad, localidadActualizar, localidadRegistrar } from "../api/localidades";
 import { useEffect } from "react";
@@ -22,7 +22,7 @@ const Localidades = () => {
     // Uso de useLoaderData con el tipo esperado
     const localidadesData = useLoaderData() as LocalidadesTypes[];
 
-    const { register, handleSubmit, setValue, formState: {
+    const { register, handleSubmit, setValue, reset,  formState: {
         errors
     } } = useForm<LocalidadRegistrar>();
     const showToast = useToast();
@@ -50,7 +50,7 @@ const Localidades = () => {
                 setValue('acronimo', localidadEditar.acronimo)
             }
 
-        }
+        }else reset()
 
     }, [id])
 
@@ -89,9 +89,9 @@ const Localidades = () => {
                 }
                 return;
             }
-            
+
             const respuesta = await localidadActualizar(+id, data);
-            console.log({respuesta})
+            console.log({ respuesta })
             if (respuesta) {
                 showToast(`Localidad actualizada`, 'success', 'bottom-center');
             }
@@ -99,12 +99,20 @@ const Localidades = () => {
             showToast('Error al realizar la operación', 'error', 'bottom-center');
         }
     };
-    
+
 
     return (
         <Card>
             <header>Registros 📍</header>
-
+            {
+                id &&
+                <div className="buttons">
+                    <button className="save-button">
+                        <span className="button-text"> <Link to="/registros/localidades">Nueva Localidad </Link></span>
+                        <i className='bx bx-plus-circle'></i>
+                    </button>
+                </div>
+            }
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className={`${styles.details} ${styles.personal}`}>
@@ -123,7 +131,7 @@ const Localidades = () => {
                                 })}
                             />
 
-                            {errors.localidad && <span className="input-error">Este campo es requerido</span>}
+                            {errors.nombre && <span className="input-error">Este campo es requerido</span>}
 
                         </div>
 
@@ -144,10 +152,12 @@ const Localidades = () => {
                     </div>
                 </div>
 
-                <button className={styles['save-button']}>
-                    <span className={styles['button-text']}>Guardar</span>
-                    <i className='bx bx-plus-circle'></i>
-                </button>
+                <div className="buttons">
+                    <button className={styles['save-button']}>
+                        <span className={styles['button-text']}>Guardar</span>
+                        <i className='bx bx-plus-circle'></i>
+                    </button>
+                </div>
 
             </form>
 

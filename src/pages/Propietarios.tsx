@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
 import Card from "../components/Card";
-import { useLoaderData, useParams } from "react-router-dom";
+import { Link, useLoaderData, useParams } from "react-router-dom";
 import { PropietarioRegistrar, PropietarioTypes, actualizarPropietario, propietarioEliminar, propietarioRegistrar } from "../api/propietarios";
 import { formatearFecha } from "../api/general";
 import Acciones from "../components/Acciones";
@@ -10,12 +10,12 @@ import { useEffect } from "react";
 
 const Propietarios = () => {
 
-  const {id} = useParams();
+  const { id } = useParams();
 
-  const { register, handleSubmit,setValue, formState: {
+  const { register, handleSubmit, setValue, reset , formState: {
     errors,
   } } = useForm<PropietarioRegistrar>();
-  const onSubmit = async(data: PropietarioRegistrar) => {
+  const onSubmit = async (data: PropietarioRegistrar) => {
     try {
       if (!id) {
         const statusCode = await propietarioRegistrar(data);
@@ -29,7 +29,7 @@ const Propietarios = () => {
         if (respuesta) {
           showToast(`Conductor actualizada`, 'success', 'bottom-center');
         }
-      }
+      }toISOString
     } catch (error) {
       console.error(error);
       showToast('Error al registrar el conductor', 'error', 'bottom-center');
@@ -37,33 +37,33 @@ const Propietarios = () => {
   }
   const showToast = useToast();
 
- const propietariosData = useLoaderData() as PropietarioTypes[];
+  const propietariosData = useLoaderData() as PropietarioTypes[];
 
- const eliminar = async(id: number):Promise<void> => {
-  console.log('Eliminando el ID:', id);
+  const eliminar = async (id: number): Promise<void> => {
+    console.log('Eliminando el ID:', id);
 
-  const seElimino = await propietarioEliminar(id);
-  if(seElimino) showToast('Se elimino el propietario', 'success', 'bottom-center');
-  else showToast('Error al eliminar el propietario', 'error', 'bottom-center');
-}
-useEffect(() => {
-  if(id){
-    console.log('se detecto id')
-    const propietarioEditar = propietariosData.find(propietario => propietario.id_propietario === +id)
-    if (propietarioEditar) {
-      setValue('nombres', propietarioEditar.nombres)
-      setValue('apellidos', propietarioEditar.apellidos)
-      setValue('correo', propietarioEditar.correo)
-      setValue('tipo_identificacion', propietarioEditar.tipo_identificacion)
-      setValue('numero_identificacion', propietarioEditar.numero_identificacion)
-      setValue('celular', propietarioEditar.celular)
-      setValue('fecha_nacimiento', propietarioEditar.fecha_nacimiento.toISOString().substring(0,10))
-      setValue('direccion', propietarioEditar.direccion)
-    }
-   
+    const seElimino = await propietarioEliminar(id);
+    if (seElimino) showToast('Se elimino el propietario', 'success', 'bottom-center');
+    else showToast('Error al eliminar el propietario', 'error', 'bottom-center');
   }
-    
-}, [id])
+  useEffect(() => {
+    if (id) {
+      console.log('se detecto id')
+      const propietarioEditar = propietariosData.find(propietario => propietario.id_propietario === +id)
+      if (propietarioEditar) {
+        setValue('nombres', propietarioEditar.nombres)
+        setValue('apellidos', propietarioEditar.apellidos)
+        setValue('correo', propietarioEditar.correo)
+        setValue('tipo_identificacion', propietarioEditar.tipo_identificacion)
+        setValue('numero_identificacion', propietarioEditar.numero_identificacion)
+        setValue('celular', propietarioEditar.celular)
+        setValue('fecha_nacimiento', propietarioEditar.fecha_nacimiento.toISOString().substring(0, 10))
+        setValue('direccion', propietarioEditar.direccion)
+      }
+
+    }else reset()
+
+  }, [id])
 
   const columnas = [
     {
@@ -72,7 +72,7 @@ useEffect(() => {
     },
     {
       name: 'Nombres',
-      selector:  (row: PropietarioTypes) => row.nombres,
+      selector: (row: PropietarioTypes) => row.nombres,
       sortable: true
     },
     {
@@ -118,7 +118,15 @@ useEffect(() => {
   return (
     <Card>
       <header>Registros 🙎🏻‍♂️</header>
-
+      {
+        id &&
+        <div className="buttons">
+          <button className="save-button">
+            <span className="button-text"><Link to="/registros/propietarios">Nuevo Propietario </Link></span>
+            <i className='bx bx-plus-circle'></i>
+          </button>
+        </div>
+      }
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="details personal">
           <span className="title">Propietarios</span>
@@ -129,7 +137,7 @@ useEffect(() => {
               <input type="text" id='nombres' placeholder='Ingrese sus nombres' {...register('nombres', {
                 required: true,
               })} />
-               {errors.nombres && <span className="input-error">Este campo es requerido</span>}
+              {errors.nombres && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
@@ -137,7 +145,7 @@ useEffect(() => {
               <input type="text" id='apellidos' placeholder='Ingrese sus apellidos' {...register('apellidos', {
                 required: true,
               })} />
-               {errors.apellidos && <span className="input-error">Este campo es requerido</span>}
+              {errors.apellidos && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
@@ -145,7 +153,7 @@ useEffect(() => {
               <input type="email" id='correo' placeholder='Ejemplo: usuario@usuario.com' {...register('correo', {
                 required: true,
               })} />
-               {errors.correo && <span className="input-error">Este campo es requerido</span>}
+              {errors.correo && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
@@ -169,7 +177,7 @@ useEffect(() => {
               <input type="number" id='numero_identificacion' placeholder='Ingrese el número de identificación' {...register('numero_identificacion', {
                 required: true,
               })} />
-               {errors.numero_identificacion && <span className="input-error">Este campo es requerido</span>}
+              {errors.numero_identificacion && <span className="input-error">Este campo es requerido</span>}
             </div>
 
             <div className="input-fields">
@@ -193,7 +201,7 @@ useEffect(() => {
               <input type="text" id='direccion' placeholder='Ingrese su dirección' {...register('direccion', {
                 required: true,
               })} />
-               {errors.direccion && <span className="input-error">Este campo es requerido</span>}
+              {errors.direccion && <span className="input-error">Este campo es requerido</span>}
             </div>
 
 
@@ -201,11 +209,12 @@ useEffect(() => {
         </div>
 
 
-
-        <button className="save-button">
-          <span className="button-text">Guardar</span>
-          <i className='bx bx-plus-circle'></i>
-        </button>
+        <div className="buttons">
+          <button className="save-button">
+            <span className="button-text">Guardar</span>
+            <i className='bx bx-plus-circle'></i>
+          </button>
+        </div>
       </form>
 
       <Table datos={propietariosData} columnas={columnas} titulo="Lista de propietarios registrados" />

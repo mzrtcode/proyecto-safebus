@@ -1,7 +1,7 @@
 import Card from '../components/Card'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
-import { useLoaderData, useParams } from 'react-router-dom';
+import { Link, useLoaderData, useParams } from 'react-router-dom';
 import { AgenciaRegistrar, AgenciaTypes, actualizarAgencia, agenciaEliminar, agenciaRegistrar, desactivarAgencia } from '../api/agencias';
 import Acciones from '../components/Acciones';
 import useToast from '../hooks/useToast';
@@ -13,11 +13,11 @@ const Agencias = () => {
 
   const { id } = useParams()
 
-  const { register, handleSubmit, setValue, formState: {
+  const { register, handleSubmit, setValue, reset, formState: {
     errors,
   } } = useForm<AgenciaRegistrar>();
 
-  const onSubmit = async(data: AgenciaRegistrar) => {
+  const onSubmit = async (data: AgenciaRegistrar) => {
     try {
       if (!id) {
         const statusCode = await agenciaRegistrar(data);
@@ -61,7 +61,7 @@ const Agencias = () => {
         setValue('codigo_interno', agenciaEditar.codigo_interno)
       }
 
-    }
+    }else reset()
 
   }, [id])
   const columnas = [
@@ -85,18 +85,18 @@ const Agencias = () => {
       cell: (row: AgenciaTypes) => <Checkbox initialState={row.estado === 1} onToggle={async () => {
         const estadoAgencia = row.estado === 1
 
-        if(estadoAgencia){
+        if (estadoAgencia) {
           console.log('Cambié de estado mi es ID:', row.id_agencia);
           const seDesactivo = await desactivarAgencia(row.id_agencia, estadoAgencia)
-          if(seDesactivo) showToast('Se desactivo la agencia', 'success', 'bottom-center');
+          if (seDesactivo) showToast('Se desactivo la agencia', 'success', 'bottom-center');
           else showToast('Error al desactivar la agencia', 'error', 'bottom-center');
-        }else{
+        } else {
           const seActivo = await desactivarAgencia(row.id_agencia, estadoAgencia)
-          if(seActivo) showToast('Se activo la agencia', 'success', 'bottom-center');
+          if (seActivo) showToast('Se activo la agencia', 'success', 'bottom-center');
           else showToast('Error al desactivar la agencia', 'error', 'bottom-center');
         }
-        
-     
+
+
       }} />,
     },
     {
@@ -108,7 +108,15 @@ const Agencias = () => {
     <Card>
       <header>Registros 🏦</header>
 
-
+      {
+        id &&
+        <div className="buttons">
+          <button className="save-button">
+            <span className="button-text"><Link to="/registros/agencias">Nueva Agencia </Link></span>
+            <i className='bx bx-plus-circle'></i>
+          </button>
+        </div>
+      }
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="details personal">
           <span className="title">Agencias</span>
@@ -143,10 +151,12 @@ const Agencias = () => {
           </div>
         </div>
 
-        <button className="save-button">
-          <span className="button-text">Guardar</span>
-          <i className='bx bx-plus-circle'></i>
-        </button>
+        <div className="buttons">
+          <button className="save-button">
+            <span className="button-text">Guardar</span>
+            <i className='bx bx-plus-circle'></i>
+          </button>
+        </div>
       </form>
 
 

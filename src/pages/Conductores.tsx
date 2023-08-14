@@ -5,7 +5,7 @@ import './conductores.css'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
 import { ConductorRegistrar, ConductorTypes, actualizarConductor, conductorEliminar, conductorRegistrar } from '../api/conductores';
-import { useLoaderData, useParams } from 'react-router-dom';
+import { Link, useLoaderData, useParams } from 'react-router-dom';
 import { formatearFecha } from '../api/general';
 import Acciones from '../components/Acciones';
 import useToast from '../hooks/useToast';
@@ -15,7 +15,7 @@ const Conductores = () => {
 
   const {id} = useParams();
 
-  const { register, handleSubmit,setValue, formState: {
+  const { register, handleSubmit,setValue, reset, formState: {
     errors,
   } } = useForm<ConductorRegistrar>();
   const onSubmit = async (data:ConductorRegistrar) => {
@@ -64,7 +64,7 @@ const Conductores = () => {
         setValue('direccion', conductorEditar.direccion)
       }
      
-    }
+    }else reset()
       
   }, [id])
 
@@ -123,7 +123,15 @@ const Conductores = () => {
   return (
     <Card>
       <header>Registros 🚗</header>
-
+      {
+            id && 
+            <div className="buttons">
+              <button className="save-button">
+              <span className="button-text"><Link to="/registros/conductores">Nuevo Conductor </Link></span>
+              <i className='bx bx-plus-circle'></i>
+            </button>
+            </div>
+          }
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="details personal">
           <span className="title">Conductores</span>
@@ -207,10 +215,12 @@ const Conductores = () => {
 
 
 
+        <div className="buttons">
         <button className="save-button">
           <span className="button-text">Guardar</span>
           <i className='bx bx-plus-circle'></i>
         </button>
+        </div>
       </form>
 
       <Table datos={conductoresData} columnas={columnas} titulo='Lista de concutores registrados' />

@@ -56,7 +56,8 @@ const router = createBrowserRouter([
       {path: 'agencias/:id', element: <Agencias/>, loader: agenciasLoader},
       {path: 'vendedores', element: <Vendedores/>, loader: vendedorLoader},
       {path: 'vendedores/:id', element: <Vendedores/>, loader: vendedorLoader},
-
+      {path: 'administradores', element: <Vendedores/>, loader: vendedorLoader},
+      {path: 'administradores/:id', element: <Vendedores/>, loader: vendedorLoader},
       
 
      

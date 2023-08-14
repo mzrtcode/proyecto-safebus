@@ -11,6 +11,7 @@ export interface VendedorTypes {
     celular: string
     fecha_nacimiento: Date | string
     direccion: string
+    estado: boolean | number
     acciones: JSX.Element
   }
 
@@ -91,3 +92,31 @@ export interface VendedorTypes {
       return false
     }
   };
+
+
+  export const desactivarVendedor = async (id_vendedor: number, estadoActual: boolean) => {
+    try{
+      const response = await axios.put(`/vendedores/${id_vendedor}`, {
+        estado: !estadoActual
+      });
+      if (response.status === 200) return true;
+    }catch(error){
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      return false;
+    }
+  }
+
+  export const resetearClave = async (id_vendedor: number):Promise<boolean> => {
+    try{
+      const response = await axios.post(`/vendedores/${id_vendedor}/resetear-clave`);
+      if (response.status === 200) return true;
+    }catch(error){
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      return false;
+    }
+    return false;
+  }

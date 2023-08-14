@@ -3,7 +3,7 @@ import { Controller, set, useForm } from "react-hook-form";
 import styles from './rutas.module.css'
 import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
-import { useLoaderData, useParams } from 'react-router-dom';
+import { Link, useLoaderData, useParams } from 'react-router-dom';
 import Select, { StylesConfig } from 'react-select';
 import { useEffect, useState } from 'react';
 import { LocalidadesTypes, localidadesLoader } from '../api/localidades';
@@ -12,6 +12,7 @@ import CurrencyInput from 'react-currency-input-field';
 import useToast from '../hooks/useToast';
 import Acciones from '../components/Acciones';
 import { Options } from '../api/general';
+import { el } from 'date-fns/locale';
 
 
 
@@ -37,20 +38,20 @@ const Rutas = () => {
   const { id } = useParams();
   const [localidadesOptions, setLocalidadesOptions] = useState<Options[]>([]);
   const [ruta, setRuta] = useState<RutaType>();
-  const { register, handleSubmit, control, setValue, formState: {
+  const { register, handleSubmit, control, reset , setValue, formState: {
     errors,
   } } = useForm<RutaRegistrar>();
   // Uso de useLoaderData con el tipo esperado
   const rutasData = useLoaderData() as RutasTypes[];
-  
+
   let SelectInicio = { value: 'none', label: 'Selecciona' };
-  let SelectFin =  { value: 'none', label: 'Selecciona' };
+  let SelectFin = { value: 'none', label: 'Selecciona' };
   const [costo, setCosto] = useState(0)
 
-  
+
 
   useEffect(() => {
-    if(id){
+    if (id) {
       console.log('se detecto id')
       const rutaEditar = rutasData.find(ruta => ruta.id_ruta === +id)
       if (rutaEditar) {
@@ -60,14 +61,17 @@ const Rutas = () => {
         setValue('inicio_ruta', SelectInicio)
         setValue('fin_ruta', SelectFin)
       }
-     
-    }
-      
-  }, [id])
-  
 
-  
-  
+    }else{
+      reset()
+      setCosto(0)
+    }
+
+  }, [id])
+
+
+
+
 
 
   const showToast = useToast();
@@ -93,21 +97,21 @@ const Rutas = () => {
 
 
 
-  const onSubmit = async (data:RutaRegistrar) => {
+  const onSubmit = async (data: RutaRegistrar) => {
     try {
       const inicioRutaValue = data.inicio_ruta.value;
       const finRutaValue = data.fin_ruta.value;
       const costoValue = data.costo.replace(/[$,"']/g, '');
-  
+
       const updatedData = {
         ...data,
         inicio_ruta: inicioRutaValue,
         fin_ruta: finRutaValue,
         costo: +costoValue
       };
-  
+
       console.log(updatedData);
-  
+
       if (!id) {
         const statusCode = await rutaRegistrar(updatedData);
         if (statusCode === 201) {
@@ -126,12 +130,12 @@ const Rutas = () => {
       showToast('Error al registrar la ruta', 'error', 'bottom-center');
     }
   };
-  
 
-  const eliminar = async(id: number):Promise<void> => {
+
+  const eliminar = async (id: number): Promise<void> => {
     console.log('Eliminando el ID:', id);
     const seElimino = await eliminarRuta(id);
-    if(seElimino) showToast('Se elimino la ruta', 'success', 'bottom-center');
+    if (seElimino) showToast('Se elimino la ruta', 'success', 'bottom-center');
     else showToast('Error al eliminar la ruta', 'error', 'bottom-center');
   }
 
@@ -163,18 +167,18 @@ const Rutas = () => {
       cell: (row: RutasTypes) => <Checkbox initialState={row.estado === 1} onToggle={async () => {
         const estadoRuta = row.estado === 1
 
-        if(estadoRuta){
+        if (estadoRuta) {
           console.log('Cambié de estado mi es ID:', row.id_ruta);
           const seDesactivo = await desactivarRuta(row.id_ruta, estadoRuta)
-          if(seDesactivo) showToast('Se desactivo la ruta', 'success', 'bottom-center');
+          if (seDesactivo) showToast('Se desactivo la ruta', 'success', 'bottom-center');
           else showToast('Error al desactivar la ruta', 'error', 'bottom-center');
-        }else{
+        } else {
           const seActivo = await desactivarRuta(row.id_ruta, estadoRuta)
-          if(seActivo) showToast('Se activo la ruta', 'success', 'bottom-center');
+          if (seActivo) showToast('Se activo la ruta', 'success', 'bottom-center');
           else showToast('Error al desactivar la ruta', 'error', 'bottom-center');
         }
-        
-     
+
+
       }} />,
     },
 
@@ -195,15 +199,24 @@ const Rutas = () => {
     })
   };
 
-  const handleOnValueChange = (value:number) => {
+  const handleOnValueChange = (value: number) => {
     // Actualiza el estado con el valor del costo
     setCosto(value);
   };
-  
+
 
   return (
     <Card>
       <header>Registros 🗺️</header>
+      {
+        id &&
+        <div className="buttons">
+          <button className="save-button">
+            <span className="button-text"><Link to="/registros/rutas">Nueva Ruta </Link></span>
+            <i className='bx bx-plus-circle'></i>
+          </button>
+        </div>
+      }
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={`${styles.details} ${styles.personal}`}>
@@ -253,7 +266,7 @@ const Rutas = () => {
               {errors.fin_ruta && <span className="input-error">Este campo es requerido</span>}
             </div>
 
-            
+
 
             <div className={styles['input-fields']}>
               <label htmlFor="costo">Costo</label>
@@ -277,10 +290,13 @@ const Rutas = () => {
           </div>
         </div>
 
-        <button className={styles['save-button']}>
-          <span className={styles['button-text']}>Guardar</span>
-          <i className='bx bx-plus-circle'></i>
-        </button>
+        <div className="buttons">
+          <button className={styles['save-button']}>
+            <span className={styles['button-text']}>Guardar</span>
+            <i className='bx bx-plus-circle'></i>
+          </button>
+        </div>
+
 
 
       </form>

@@ -92,7 +92,7 @@ form .fields .input-fields{
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.13);
 }
 
- form button{
+ button{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -109,14 +109,21 @@ form .fields .input-fields{
     cursor: pointer;
 }
 
-form button:hover{
+button:hover{
     background-color: #265df2;
 
 }
 
-form button i{
+button i{
     margin: 0 6px ;
 }
+
+.buttons{
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 20px;
+  }
 
 .input-error{
     color: #2031ca;

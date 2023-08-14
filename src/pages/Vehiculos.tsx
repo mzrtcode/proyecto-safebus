@@ -1,7 +1,7 @@
 import Card from '../components/Card'
 import { Controller, useForm } from "react-hook-form";
 import Table from '../components/Table';
-import { useLoaderData, useParams } from 'react-router-dom';
+import { Link, useLoaderData, useParams } from 'react-router-dom';
 import { VehiculoRegistrar, VehiculoTypes, actualizarVehiculo, vehiculoEliminar, vehiculoRegistrar } from '../api/vehiculos';
 import Select, { StylesConfig } from 'react-select';
 import useToast from '../hooks/useToast';
@@ -13,15 +13,15 @@ import { Options } from '../api/general';
 
 const Vehiculos = () => {
 
-  const {id} = useParams();
+  const { id } = useParams();
   const [propietariosOptions, setPropitariosOptions] = useState<Options[]>([]);
-  const { register, handleSubmit,setValue,control ,formState: {
+  const { register, handleSubmit, setValue, reset ,control, formState: {
     errors
-  }} = useForm<VehiculoRegistrar>();
+  } } = useForm<VehiculoRegistrar>();
 
   const showToast = useToast();
 
-  const onSubmit = async (data:VehiculoRegistrar) => {
+  const onSubmit = async (data: VehiculoRegistrar) => {
     try {
       const idPropietarioValue = data.id_propietario.value;
       const updatedData = {
@@ -30,7 +30,7 @@ const Vehiculos = () => {
       };
 
       console.log(updatedData)
-       
+
       if (!id) {
         const statusCode = await vehiculoRegistrar(updatedData);
         if (statusCode === 201) {
@@ -51,110 +51,118 @@ const Vehiculos = () => {
   };
 
 
-    const obtenerPropietarios = async () => {
-      try {
-        const propietarios = await propietariosLoader() as PropietarioTypes[];
-        const respuesta: Options[] = propietarios.map(propietario => ({
-          value: propietario.id_propietario,
-          label: `${propietario.nombres} ${propietario.apellidos} - ${propietario.numero_identificacion}`
-        }));
-        console.log({propietarios})
-        setPropitariosOptions(respuesta);
-      } catch (error) {
-        console.error("Error al obtener propietarios:", error);
-      }
-    };
-
-    useEffect(() => {
-      obtenerPropietarios()
-    }, [])
-
-
-    const eliminar = async(id: number):Promise<void> => {
-      console.log('Eliminando el ID:', id);
-  
-      const seElimino = await vehiculoEliminar(id);
-      if(seElimino) showToast('Se elimino el vehiculo', 'success', 'bottom-center');
-      else showToast('Error al eliminar el vehiculo', 'error', 'bottom-center');
+  const obtenerPropietarios = async () => {
+    try {
+      const propietarios = await propietariosLoader() as PropietarioTypes[];
+      const respuesta: Options[] = propietarios.map(propietario => ({
+        value: propietario.id_propietario,
+        label: `${propietario.nombres} ${propietario.apellidos} - ${propietario.numero_identificacion}`
+      }));
+      console.log({ propietarios })
+      setPropitariosOptions(respuesta);
+    } catch (error) {
+      console.error("Error al obtener propietarios:", error);
     }
-    const vehiculosData = useLoaderData() as VehiculoTypes[]
-    const customStyles = {
-      control: base => ({
-        ...base,
-        height: '42px',
-        border: '1px solid #aaa',
-        zIndex: '9999'
-      })
-    };
-    useEffect(() => {
-      if(id){
-        console.log('se detecto id')
-        const vehiculoEditar = vehiculosData.find(vehiculo => vehiculo.id_vehiculo === +id)
-        if (vehiculoEditar) {
-          setValue('id_propietario',  {label: `${vehiculoEditar.nombres_propietario} ${vehiculoEditar.apellidos_propietario} - ${vehiculoEditar.numero_identificacion_propietario}`, value: vehiculoEditar.id_propietario})
-          setValue('placa', vehiculoEditar.placa)
-          setValue('marca', vehiculoEditar.marca)
-          setValue('modelo', vehiculoEditar.modelo)
-          setValue('color', vehiculoEditar.color)
-          setValue('anio_fabricacion', vehiculoEditar.anio_fabricacion)
-          setValue('codigo_interno', vehiculoEditar.codigo_interno)
-          setValue('cantidad_puestos', vehiculoEditar.cantidad_puestos)
-        }
-       
+  };
+
+  useEffect(() => {
+    obtenerPropietarios()
+  }, [])
+
+
+  const eliminar = async (id: number): Promise<void> => {
+    console.log('Eliminando el ID:', id);
+
+    const seElimino = await vehiculoEliminar(id);
+    if (seElimino) showToast('Se elimino el vehiculo', 'success', 'bottom-center');
+    else showToast('Error al eliminar el vehiculo', 'error', 'bottom-center');
+  }
+  const vehiculosData = useLoaderData() as VehiculoTypes[]
+  const customStyles = {
+    control: base => ({
+      ...base,
+      height: '42px',
+      border: '1px solid #aaa',
+      zIndex: '9999'
+    })
+  };
+  useEffect(() => {
+    if (id) {
+      console.log('se detecto id')
+      const vehiculoEditar = vehiculosData.find(vehiculo => vehiculo.id_vehiculo === +id)
+      if (vehiculoEditar) {
+        setValue('id_propietario', { label: `${vehiculoEditar.nombres_propietario} ${vehiculoEditar.apellidos_propietario} - ${vehiculoEditar.numero_identificacion_propietario}`, value: vehiculoEditar.id_propietario })
+        setValue('placa', vehiculoEditar.placa)
+        setValue('marca', vehiculoEditar.marca)
+        setValue('modelo', vehiculoEditar.modelo)
+        setValue('color', vehiculoEditar.color)
+        setValue('anio_fabricacion', vehiculoEditar.anio_fabricacion)
+        setValue('codigo_interno', vehiculoEditar.codigo_interno)
+        setValue('cantidad_puestos', vehiculoEditar.cantidad_puestos)
       }
-        
-    }, [id])
-    
-    const columnas = [
-      {
-        name: 'Propietario',
-        selector: (row: VehiculoTypes) => row.id_propietario,
-        sortable: true
-      },
-      {
-        name: 'Placa',
-        selector: (row: VehiculoTypes) => row.placa,
-        sortable: true
-      },
-      {
-        name: 'Marca',
-        selector: (row: VehiculoTypes) => row.marca,
-        sortable: true
-      },
-      {
-        name: 'Modelo',
-        selector: (row: VehiculoTypes) => row.modelo,
-        sortable: true
-      },
-      {
-        name: 'Color',
-        selector: (row: VehiculoTypes) => row.color,
-        sortable: true
-      },
-      {
-        name: 'Año de Fabricación',
-        selector: (row: VehiculoTypes) => row.anio_fabricacion,
-        sortable: true
-      },
-      {
-        name: 'Código Interno',
-        selector: (row: VehiculoTypes) => row.codigo_interno,
-        sortable: true
-      },
-      {
-        name: 'Cantidad de Puestos',
-        selector: (row: VehiculoTypes) => row.cantidad_puestos,
-        sortable: true
-      },
-      {
-        name: 'Acciones',
-        cell: (row: VehiculoTypes) => <Acciones editarLink={`/registros/vehiculos/${row.id_vehiculo}`} eliminar={eliminar} id={row.id_vehiculo} />
-      }
-    ];
+
+    }else reset()
+
+  }, [id])
+
+  const columnas = [
+    {
+      name: 'Propietario',
+      selector: (row: VehiculoTypes) => row.id_propietario,
+      sortable: true
+    },
+    {
+      name: 'Placa',
+      selector: (row: VehiculoTypes) => row.placa,
+      sortable: true
+    },
+    {
+      name: 'Marca',
+      selector: (row: VehiculoTypes) => row.marca,
+      sortable: true
+    },
+    {
+      name: 'Modelo',
+      selector: (row: VehiculoTypes) => row.modelo,
+      sortable: true
+    },
+    {
+      name: 'Color',
+      selector: (row: VehiculoTypes) => row.color,
+      sortable: true
+    },
+    {
+      name: 'Año de Fabricación',
+      selector: (row: VehiculoTypes) => row.anio_fabricacion,
+      sortable: true
+    },
+    {
+      name: 'Código Interno',
+      selector: (row: VehiculoTypes) => row.codigo_interno,
+      sortable: true
+    },
+    {
+      name: 'Cantidad de Puestos',
+      selector: (row: VehiculoTypes) => row.cantidad_puestos,
+      sortable: true
+    },
+    {
+      name: 'Acciones',
+      cell: (row: VehiculoTypes) => <Acciones editarLink={`/registros/vehiculos/${row.id_vehiculo}`} eliminar={eliminar} id={row.id_vehiculo} />
+    }
+  ];
   return (
     <Card>
       <header>Registros 🚍</header>
-
+      {
+        id &&
+        <div className="buttons">
+          <button className="save-button">
+            <span className="button-text"><Link to="/registros/vehiculos">Nuevo Vehiculo </Link></span>
+            <i className='bx bx-plus-circle'></i>
+          </button>
+        </div>
+      }
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="details personal">
@@ -177,7 +185,7 @@ const Vehiculos = () => {
                   />
                 )}
               />
-             {
+              {
                 errors.id_propietario && <span className="input-error">Este campo es requerido</span>
               }
             </div>
@@ -259,10 +267,12 @@ const Vehiculos = () => {
           </div>
         </div>
 
-        <button className="save-button">
-          <span className="button-text">Guardar</span>
-          <i className='bx bx-plus-circle'></i>
-        </button>
+        <div className="buttons">
+          <button className="save-button">
+            <span className="button-text">Guardar</span>
+            <i className='bx bx-plus-circle'></i>
+          </button>
+        </div>
       </form>
 
       <Table columnas={columnas} datos={vehiculosData} titulo='Lista de vehiculos registrados' />

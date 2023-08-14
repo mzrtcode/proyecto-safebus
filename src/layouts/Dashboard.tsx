@@ -114,6 +114,7 @@ const Dashboard = () => {
                             <li><Link to="/registros/vehiculos">Vehiculos</Link></li>
                             <li><Link to="/registros/agencias">Agencias</Link></li>
                             <li><Link to="/registros/vendedores">Vendedores</Link></li>
+                            <li><Link to="/registros/administradores">Administradores</Link></li>
                         </ul>
 
                     </li>

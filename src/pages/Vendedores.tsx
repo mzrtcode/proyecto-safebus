@@ -1,24 +1,24 @@
 import Card from '../components/Card'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
-import { VendedorTypes, actualizarVendedor, vendedorRegistrar } from '../api/vendedores';
-import { useLoaderData, useParams } from 'react-router-dom';
+import { VendedorTypes, actualizarVendedor, desactivarVendedor, resetearClave, vendedorEliminar, vendedorRegistrar } from '../api/vendedores';
+import { Link, useLoaderData, useParams } from 'react-router-dom';
 import { formatearFecha } from '../api/general';
 import Acciones from '../components/Acciones';
 import useToast from '../hooks/useToast';
 import { useEffect } from 'react';
-import { vehiculoEliminar } from '../api/vehiculos';
+import Checkbox from '../components/Checkbox';
 
 
 const Vendedores = () => {
 
-  const {id} = useParams();
+  const { id } = useParams();
 
-  const { register, handleSubmit, setValue, formState: {
+  const { register, handleSubmit, setValue, reset ,formState: {
     errors
   } } = useForm<VendedorTypes>();
-  const onSubmit = async(data: VendedorTypes) => {
-    try {     
+  const onSubmit = async (data: VendedorTypes) => {
+    try {
       if (!id) {
         const statusCode = await vendedorRegistrar(data);
         if (statusCode === 201) {
@@ -46,13 +46,23 @@ const Vendedores = () => {
   const eliminar = async (id: number): Promise<void> => {
     console.log('Eliminando el ID:', id);
 
-    const seElimino = await vehiculoEliminar(id);
+    const seElimino = await vendedorEliminar(id);
     if (seElimino) showToast('Se elimino el vendedor', 'success', 'bottom-center');
     else showToast('Error al eliminar el vendedor', 'error', 'bottom-center');
   }
 
-  useEffect(() => {
+  const handleClickResetarClave = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
+    event.preventDefault();
     if(id){
+      const seReseteo = await resetearClave(+id)
+      if (seReseteo) showToast('Se reseteo la clave del vendedor', 'success', 'bottom-center');
+      else showToast('Error al resetear la clave del vendedor', 'error', 'bottom-center');
+    }
+   
+  }
+ 
+  useEffect(() => {
+    if (id) {
       console.log('se detecto id')
       const vendedorEditar = vendedoresData.find(vendedor => vendedor.id_vendedor === +id)
       if (vendedorEditar) {
@@ -62,12 +72,12 @@ const Vendedores = () => {
         setValue('tipo_identificacion', vendedorEditar.tipo_identificacion)
         setValue('numero_identificacion', vendedorEditar.numero_identificacion)
         setValue('celular', vendedorEditar.celular)
-        setValue('fecha_nacimiento', vendedorEditar.fecha_nacimiento.toISOString().substring(0,10))
+        setValue('fecha_nacimiento', vendedorEditar.fecha_nacimiento.toISOString().substring(0, 10))
         setValue('direccion', vendedorEditar.direccion)
       }
-     
-    }
-      
+
+    }else reset()
+
   }, [id])
 
   const columnas = [
@@ -112,6 +122,25 @@ const Vendedores = () => {
       sortable: true
     },
     {
+      name: 'Estado',
+      cell: (row: VendedorTypes) => <Checkbox initialState={row.estado === 1} onToggle={async () => {
+        const estadoVendedor = row.estado === 1
+
+        if (estadoVendedor) {
+          console.log('Cambié de estado mi es ID:', row.id_vendedor);
+          const seDesactivo = await desactivarVendedor(row.id_vendedor, estadoVendedor)
+          if (seDesactivo) showToast('Se desactivo el vendedor', 'success', 'bottom-center');
+          else showToast('Error al desactivar el vendedor', 'error', 'bottom-center');
+        } else {
+          const seActivo = await desactivarVendedor(row.id_vendedor, estadoVendedor)
+          if (seActivo) showToast('Se activo el vendedor', 'success', 'bottom-center');
+          else showToast('Error al desactivar el vendedor', 'error', 'bottom-center');
+        }
+
+
+      }} />,
+    },
+    {
       name: 'Acciones',
       cell: (row: VendedorTypes) => <Acciones editarLink={`/registros/vendedores/${row.id_vendedor}`} eliminar={eliminar} id={row.id_vendedor} />
     }
@@ -119,6 +148,15 @@ const Vendedores = () => {
   return (
     <Card>
       <header>Registros 🛒</header>
+      {
+            id && 
+            <div className="buttons">
+              <button className="save-button">
+              <span className="button-text"><Link to="/registros/vendedores">Nuevo Vendedor </Link> </span>
+              <i className='bx bx-plus-circle'></i>
+            </button>
+            </div>
+          }
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="details personal">
@@ -219,10 +257,19 @@ const Vendedores = () => {
 
 
 
-        <button className="save-button">
-          <span className="button-text">Guardar</span>
-          <i className='bx bx-plus-circle'></i>
-        </button>
+        <div className="buttons">
+          <button className="save-button">
+            <span className="button-text">Guardar</span>
+            <i className='bx bx-plus-circle'></i>
+          </button>
+
+          {
+            id && <button className="save-button" onClick={handleClickResetarClave}>
+              <span className="button-text">Restablecer Contraseña</span>
+              <i className='bx bx-reset' ></i>
+            </button>
+          }
+        </div>
       </form>
 
       <Table datos={vendedoresData} columnas={columnas} titulo='Lista de vendeores registrados' />
