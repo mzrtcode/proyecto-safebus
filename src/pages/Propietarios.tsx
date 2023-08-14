@@ -2,11 +2,11 @@ import { useForm } from "react-hook-form";
 import Table from '../components/Table';
 import Card from "../components/Card";
 import { Link, useLoaderData, useParams } from "react-router-dom";
-import { PropietarioRegistrar, PropietarioTypes, actualizarPropietario, propietarioEliminar, propietarioRegistrar } from "../api/propietarios";
+import { PropietarioRegistrar, PropietarioTypes, actualizarPropietario, propietarioEliminar, propietarioRegistrar, propietariosLoader } from "../api/propietarios";
 import { formatearFecha } from "../api/general";
 import Acciones from "../components/Acciones";
 import useToast from "../hooks/useToast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Propietarios = () => {
 
@@ -20,6 +20,7 @@ const Propietarios = () => {
       if (!id) {
         const statusCode = await propietarioRegistrar(data);
         if (statusCode === 201) {
+          actualizarPropietarios()
           showToast(`Conductor registrado`, 'success', 'bottom-center');
         } else {
           showToast('Error al registrar el conductor', 'error', 'bottom-center');
@@ -27,9 +28,12 @@ const Propietarios = () => {
       } else {
         const respuesta = await actualizarPropietario(+id, data);
         if (respuesta) {
+          actualizarPropietarios()
           showToast(`Conductor actualizada`, 'success', 'bottom-center');
+        }else{
+          showToast('Error al actualizar el conductor', 'error', 'bottom-center');
         }
-      }toISOString
+      }
     } catch (error) {
       console.error(error);
       showToast('Error al registrar el conductor', 'error', 'bottom-center');
@@ -38,12 +42,21 @@ const Propietarios = () => {
   const showToast = useToast();
 
   const propietariosData = useLoaderData() as PropietarioTypes[];
+  const [propietarios, setPropietarios] = useState<PropietarioTypes[]>(propietariosData)
+
+  const actualizarPropietarios = async () => {
+      const cargarNuevasRutas = await propietariosLoader();
+      setPropietarios(cargarNuevasRutas)
+  }
 
   const eliminar = async (id: number): Promise<void> => {
     console.log('Eliminando el ID:', id);
 
     const seElimino = await propietarioEliminar(id);
-    if (seElimino) showToast('Se elimino el propietario', 'success', 'bottom-center');
+    if (seElimino) {
+      actualizarPropietarios()
+      showToast('Se elimino el propietario', 'success', 'bottom-center')
+    }
     else showToast('Error al eliminar el propietario', 'error', 'bottom-center');
   }
   useEffect(() => {
@@ -217,7 +230,7 @@ const Propietarios = () => {
         </div>
       </form>
 
-      <Table datos={propietariosData} columnas={columnas} titulo="Lista de propietarios registrados" />
+      <Table datos={propietarios} columnas={columnas} titulo="Lista de propietarios registrados" />
     </Card>
   )
 }

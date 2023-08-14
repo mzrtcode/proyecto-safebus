@@ -4,12 +4,12 @@ import './conductores.css'
 
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
-import { ConductorRegistrar, ConductorTypes, actualizarConductor, conductorEliminar, conductorRegistrar } from '../api/conductores';
+import { ConductorRegistrar, ConductorTypes, actualizarConductor, conductorEliminar, conductorRegistrar, conductoresLoader } from '../api/conductores';
 import { Link, useLoaderData, useParams } from 'react-router-dom';
 import { formatearFecha } from '../api/general';
 import Acciones from '../components/Acciones';
 import useToast from '../hooks/useToast';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const Conductores = () => {
 
@@ -23,6 +23,7 @@ const Conductores = () => {
       if (!id) {
         const statusCode = await conductorRegistrar(data);
         if (statusCode === 201) {
+          actualizarConductores()
           showToast(`Conductor registrado`, 'success', 'bottom-center');
         } else {
           showToast('Error al registrar el conductor', 'error', 'bottom-center');
@@ -30,7 +31,10 @@ const Conductores = () => {
       } else {
         const respuesta = await actualizarConductor(+id, data);
         if (respuesta) {
-          showToast(`Conductor actualizada`, 'success', 'bottom-center');
+          actualizarConductores()
+          showToast(`Conductor actualizado`, 'success', 'bottom-center');
+        }else {
+          showToast('Error al actualizar el conductor', 'error', 'bottom-center')
         }
       }
     } catch (error) {
@@ -41,11 +45,21 @@ const Conductores = () => {
   const showToast = useToast();
 
   const conductoresData = useLoaderData() as ConductorTypes[];
+  const [conductores, setConductores] = useState<ConductorTypes[]>(conductoresData)
+
+  const actualizarConductores = async () => {
+      const cargatNuevosConductores = await conductoresLoader();
+      setConductores(cargatNuevosConductores)
+  }
+
   const eliminar = async(id: number):Promise<void> => {
     console.log('Eliminando el ID:', id);
 
     const seElimino = await conductorEliminar(id);
-    if(seElimino) showToast('Se elimino el conductor', 'success', 'bottom-center');
+    if(seElimino) {
+      actualizarConductores()
+      showToast('Se elimino el conductor', 'success', 'bottom-center')
+    }
     else showToast('Error al eliminar el conductor', 'error', 'bottom-center');
   }
 
@@ -223,7 +237,7 @@ const Conductores = () => {
         </div>
       </form>
 
-      <Table datos={conductoresData} columnas={columnas} titulo='Lista de concutores registrados' />
+      <Table datos={conductores} columnas={columnas} titulo='Lista de concutores registrados' />
     </Card>
   )
 }

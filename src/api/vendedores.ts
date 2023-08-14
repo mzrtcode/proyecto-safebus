@@ -19,7 +19,7 @@ export interface VendedorTypes {
 
 
 
-  export const vendedorLoader = async (): Promise<VendedorTypes[]> => {
+  export const vendedoresLoader = async (): Promise<VendedorTypes[]> => {
     try {
       const res = await axios.get("/vendedores");
       if (res.status !== 200) {

@@ -2,7 +2,7 @@ import Card from '../components/Card'
 import { Controller, useForm } from "react-hook-form";
 import Table from '../components/Table';
 import { Link, useLoaderData, useParams } from 'react-router-dom';
-import { VehiculoRegistrar, VehiculoTypes, actualizarVehiculo, vehiculoEliminar, vehiculoRegistrar } from '../api/vehiculos';
+import { VehiculoRegistrar, VehiculoTypes, actualizarVehiculo, vehiculoEliminar, vehiculoRegistrar, vehiculosLoader } from '../api/vehiculos';
 import Select, { StylesConfig } from 'react-select';
 import useToast from '../hooks/useToast';
 import Acciones from '../components/Acciones';
@@ -34,6 +34,7 @@ const Vehiculos = () => {
       if (!id) {
         const statusCode = await vehiculoRegistrar(updatedData);
         if (statusCode === 201) {
+          actualizarVehiculos()
           showToast(`Vehiculo registrado`, 'success', 'bottom-center');
         } else {
           showToast('Error al registrar el vehiculo', 'error', 'bottom-center');
@@ -41,7 +42,10 @@ const Vehiculos = () => {
       } else {
         const respuesta = await actualizarVehiculo(+id, data);
         if (respuesta) {
+          actualizarVehiculos()
           showToast(`Vehiculo actualizado`, 'success', 'bottom-center');
+        }else{
+          showToast('Error al actualizar el vehiculo', 'error', 'bottom-center');
         }
       }
     } catch (error) {
@@ -74,10 +78,21 @@ const Vehiculos = () => {
     console.log('Eliminando el ID:', id);
 
     const seElimino = await vehiculoEliminar(id);
-    if (seElimino) showToast('Se elimino el vehiculo', 'success', 'bottom-center');
+    if (seElimino) {
+      actualizarVehiculos()
+      showToast('Se elimino el vehiculo', 'success', 'bottom-center')
+    }
     else showToast('Error al eliminar el vehiculo', 'error', 'bottom-center');
   }
   const vehiculosData = useLoaderData() as VehiculoTypes[]
+  const [vehiculos, setVehiculos] = useState<RutasTypes[]>(vehiculosData)
+
+  const actualizarVehiculos = async () => {
+      const cargarNuevosVehiculos = await vehiculosLoader();
+      setVehiculos(cargarNuevosVehiculos)
+  }
+
+
   const customStyles = {
     control: base => ({
       ...base,
@@ -275,7 +290,7 @@ const Vehiculos = () => {
         </div>
       </form>
 
-      <Table columnas={columnas} datos={vehiculosData} titulo='Lista de vehiculos registrados' />
+      <Table columnas={columnas} datos={vehiculos} titulo='Lista de vehiculos registrados' />
     </Card>
   )
 }

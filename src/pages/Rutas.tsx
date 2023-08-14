@@ -7,30 +7,11 @@ import { Link, useLoaderData, useParams } from 'react-router-dom';
 import Select, { StylesConfig } from 'react-select';
 import { useEffect, useState } from 'react';
 import { LocalidadesTypes, localidadesLoader } from '../api/localidades';
-import { RutaRegistrar, RutaType, actualizarRuta, desactivarRuta, eliminarRuta, obtenerRuta, rutaRegistrar, rutasLoader } from '../api/rutas';
+import { RutaRegistrar, RutaType, RutasTypes, actualizarRuta, desactivarRuta, eliminarRuta, obtenerRuta, rutaRegistrar, rutasLoader } from '../api/rutas';
 import CurrencyInput from 'react-currency-input-field';
 import useToast from '../hooks/useToast';
 import Acciones from '../components/Acciones';
 import { Options } from '../api/general';
-import { el } from 'date-fns/locale';
-
-
-
-interface RutasTypes {
-  id_ruta: number;
-  inicio_ruta: number;
-  fin_ruta: number;
-  nombre_inicio: string,
-  nombre_fin: string,
-  acronimo_inicio: string,
-  acronimo_fin: string,
-  costo: number;
-  estado: boolean | JSX.Element;
-  acciones?: JSX.Element;
-}
-
-
-
 
 
 const Rutas = () => {
@@ -42,7 +23,14 @@ const Rutas = () => {
     errors,
   } } = useForm<RutaRegistrar>();
   // Uso de useLoaderData con el tipo esperado
-  const rutasData = useLoaderData() as RutasTypes[];
+  const rutasData:RutasTypes[] = useLoaderData() as RutasTypes[];
+  const [rutas, setRutas] = useState<RutasTypes[]>(rutasData)
+
+  const actualizarRutas = async () => {
+      const cargarNuevasRutas = await rutasLoader();
+      setRutas(cargarNuevasRutas)
+  }
+
 
   let SelectInicio = { value: 'none', label: 'Selecciona' };
   let SelectFin = { value: 'none', label: 'Selecciona' };
@@ -115,6 +103,7 @@ const Rutas = () => {
       if (!id) {
         const statusCode = await rutaRegistrar(updatedData);
         if (statusCode === 201) {
+          actualizarRutas()
           showToast(`Ruta registrada`, 'success', 'bottom-center');
         } else {
           showToast('Error al registrar la ruta', 'error', 'bottom-center');
@@ -122,6 +111,7 @@ const Rutas = () => {
       } else {
         const respuesta = await actualizarRuta(+id, updatedData);
         if (respuesta) {
+          actualizarRutas()
           showToast(`Ruta actualizada`, 'success', 'bottom-center');
         }
       }
@@ -135,7 +125,10 @@ const Rutas = () => {
   const eliminar = async (id: number): Promise<void> => {
     console.log('Eliminando el ID:', id);
     const seElimino = await eliminarRuta(id);
-    if (seElimino) showToast('Se elimino la ruta', 'success', 'bottom-center');
+    if (seElimino) {
+      actualizarRutas()
+      showToast('Se elimino la ruta', 'success', 'bottom-center')
+    }
     else showToast('Error al eliminar la ruta', 'error', 'bottom-center');
   }
 
@@ -170,7 +163,9 @@ const Rutas = () => {
         if (estadoRuta) {
           console.log('Cambié de estado mi es ID:', row.id_ruta);
           const seDesactivo = await desactivarRuta(row.id_ruta, estadoRuta)
-          if (seDesactivo) showToast('Se desactivo la ruta', 'success', 'bottom-center');
+          if (seDesactivo) {
+            showToast('Se desactivo la ruta', 'success', 'bottom-center')
+          }
           else showToast('Error al desactivar la ruta', 'error', 'bottom-center');
         } else {
           const seActivo = await desactivarRuta(row.id_ruta, estadoRuta)
@@ -301,7 +296,7 @@ const Rutas = () => {
 
       </form>
 
-      <Table datos={rutasData} titulo="Lista de rutas registradas" columnas={columnas} />
+      <Table datos={rutas} titulo="Lista de rutas registradas" columnas={columnas} />
     </Card>
   )
 }

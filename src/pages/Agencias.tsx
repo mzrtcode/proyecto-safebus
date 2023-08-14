@@ -2,10 +2,10 @@ import Card from '../components/Card'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
 import { Link, useLoaderData, useParams } from 'react-router-dom';
-import { AgenciaRegistrar, AgenciaTypes, actualizarAgencia, agenciaEliminar, agenciaRegistrar, desactivarAgencia } from '../api/agencias';
+import { AgenciaRegistrar, AgenciaTypes, actualizarAgencia, agenciaEliminar, agenciaRegistrar, agenciasLoader, desactivarAgencia } from '../api/agencias';
 import Acciones from '../components/Acciones';
 import useToast from '../hooks/useToast';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Checkbox from '../components/Checkbox';
 
 
@@ -24,6 +24,7 @@ const Agencias = () => {
         console.log('aaaaaaaaaaaaaaa')
         console.log(statusCode)
         if (statusCode === 201) {
+          actualizarAgencias()
           showToast(`Agencia registrada`, 'success', 'bottom-center');
         } else {
           showToast('Error al registrar la agencia', 'error', 'bottom-center');
@@ -31,7 +32,10 @@ const Agencias = () => {
       } else {
         const respuesta = await actualizarAgencia(+id, data);
         if (respuesta) {
+          actualizarAgencias()
           showToast(`Agencia actualizada`, 'success', 'bottom-center');
+        }else{
+          showToast('Error al actualizar la agencia', 'error', 'bottom-center');
         }
       }
     } catch (error) {
@@ -43,11 +47,22 @@ const Agencias = () => {
 
 
   const agenciasData = useLoaderData() as AgenciaTypes[]
+  const [agencias, setAgencias] = useState<AgenciaTypes[]>(agenciasData)
+
+  const actualizarAgencias = async () => {
+      const cargarNuevasAgencias = await agenciasLoader();
+      setAgencias(cargarNuevasAgencias)
+  }
+
+  
   const eliminar = async (id: number): Promise<void> => {
     console.log('Eliminando el ID:', id);
 
     const seElimino = await agenciaEliminar(id);
-    if (seElimino) showToast('Se elimino la agencia', 'success', 'bottom-center');
+    if (seElimino) {
+      actualizarAgencias()
+      showToast('Se elimino la agencia', 'success', 'bottom-center')
+    }
     else showToast('Error al eliminar la agencia', 'error', 'bottom-center');
   }
 
@@ -160,7 +175,7 @@ const Agencias = () => {
       </form>
 
 
-      <Table datos={agenciasData} columnas={columnas} titulo='Lista de agencias registradas' />
+      <Table datos={agencias} columnas={columnas} titulo='Lista de agencias registradas' />
     </Card>
   )
 }

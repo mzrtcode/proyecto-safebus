@@ -1,11 +1,16 @@
 import axios from './axios';
 
-interface RutasTypes {
-  id_ruta: number
-  inicio_ruta: string
-  fin_ruta: string
+export interface RutasTypes {
+  id_ruta: number;
+  inicio_ruta: number;
+  fin_ruta: number;
+  nombre_inicio: string,
+  nombre_fin: string,
+  acronimo_inicio: string,
+  acronimo_fin: string,
+  costo: number;
   estado: boolean | JSX.Element;
-  costo?: number
+  acciones?: JSX.Element;
 }
 
 

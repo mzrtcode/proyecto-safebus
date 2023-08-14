@@ -5,8 +5,8 @@ import Table from '../components/Table';
 import useToast from '../hooks/useToast';
 import { Link, useLoaderData, useParams } from "react-router-dom";
 import Acciones from "../components/Acciones";
-import { LocalidadRegistrar, eliminarLocalidad, localidadActualizar, localidadRegistrar } from "../api/localidades";
-import { useEffect } from "react";
+import { LocalidadRegistrar, eliminarLocalidad, localidadActualizar, localidadRegistrar, localidadesLoader } from "../api/localidades";
+import { useEffect, useState } from "react";
 
 interface LocalidadesTypes {
     id_localidad: number;
@@ -20,23 +20,26 @@ const Localidades = () => {
     const { id } = useParams();
 
     // Uso de useLoaderData con el tipo esperado
-    const localidadesData = useLoaderData() as LocalidadesTypes[];
+    const localidadesData: LocalidadesTypes[] = useLoaderData() as LocalidadesTypes[];
+    const [localidades, setlocalidades] = useState<LocalidadesTypes[]>(localidadesData)
 
-    const { register, handleSubmit, setValue, reset,  formState: {
+    const actualizarLocalidades = async () => {
+        const cargarNuevasLocalidades = await localidadesLoader();
+        setlocalidades(cargarNuevasLocalidades)
+    }
+
+    const { register, handleSubmit, setValue, reset, formState: {
         errors
     } } = useForm<LocalidadRegistrar>();
     const showToast = useToast();
 
-
-
-    const handleShowAlert = () => {
-        showToast('Este es un mensaje de prueba', 'success', 'bottom-center');
-    };
-
     const eliminar = async (id: number): Promise<void> => {
         console.log('Eliminando el ID:', id);
         const seElimino = await eliminarLocalidad(id);
-        if (seElimino) showToast('Se elimino la localidad', 'success', 'bottom-center');
+        if (seElimino) {
+            showToast('Se elimino la localidad', 'success', 'bottom-center')
+            actualizarLocalidades()
+        }
         else showToast('Error al eliminar la localidad', 'error', 'bottom-center');
     }
 
@@ -50,7 +53,7 @@ const Localidades = () => {
                 setValue('acronimo', localidadEditar.acronimo)
             }
 
-        }else reset()
+        } else reset()
 
     }, [id])
 
@@ -83,6 +86,7 @@ const Localidades = () => {
             if (!id) {
                 const statusCode = await localidadRegistrar(data);
                 if (statusCode === 201) {
+                    actualizarLocalidades()
                     showToast(`Localidad registrada`, 'success', 'bottom-center');
                 } else {
                     showToast('Error al registrar localidad', 'error', 'bottom-center');
@@ -93,6 +97,7 @@ const Localidades = () => {
             const respuesta = await localidadActualizar(+id, data);
             console.log({ respuesta })
             if (respuesta) {
+                actualizarLocalidades()
                 showToast(`Localidad actualizada`, 'success', 'bottom-center');
             }
         } catch (error) {
@@ -161,7 +166,7 @@ const Localidades = () => {
 
             </form>
 
-            <Table datos={localidadesData} titulo="Lista de localidades registradas" columnas={columnas} />
+            <Table datos={localidades} titulo="Lista de localidades registradas" columnas={columnas} />
 
         </Card>
     )

@@ -1,12 +1,12 @@
 import Card from '../components/Card'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
-import { VendedorTypes, actualizarVendedor, desactivarVendedor, resetearClave, vendedorEliminar, vendedorRegistrar } from '../api/vendedores';
+import { VendedorTypes, actualizarVendedor, desactivarVendedor, resetearClave, vendedorEliminar, vendedoresLoader, vendedorRegistrar } from '../api/vendedores';
 import { Link, useLoaderData, useParams } from 'react-router-dom';
 import { formatearFecha } from '../api/general';
 import Acciones from '../components/Acciones';
 import useToast from '../hooks/useToast';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Checkbox from '../components/Checkbox';
 
 
@@ -22,6 +22,7 @@ const Vendedores = () => {
       if (!id) {
         const statusCode = await vendedorRegistrar(data);
         if (statusCode === 201) {
+          actualizarVendedores()
           showToast(`Vendedor  registrado`, 'success', 'bottom-center');
         } else {
           showToast('Error al registrar el vendedor', 'error', 'bottom-center');
@@ -29,7 +30,10 @@ const Vendedores = () => {
       } else {
         const respuesta = await actualizarVendedor(+id, data);
         if (respuesta) {
+          actualizarVendedores()
           showToast(`Vendedor actualizado`, 'success', 'bottom-center');
+        }else{
+          showToast('Error al actualizar el vendedor', 'error', 'bottom-center');
         }
       }
     } catch (error) {
@@ -42,12 +46,23 @@ const Vendedores = () => {
 
 
   const vendedoresData = useLoaderData() as VendedorTypes[]
+  const [vendedores, setVendedores] = useState<VendedorTypes[]>(vendedoresData)
+
+  const actualizarVendedores = async () => {
+      const cargarNuevasVendedores = await vendedoresLoader();
+      setVendedores(cargarNuevasVendedores)
+  }
+
+
 
   const eliminar = async (id: number): Promise<void> => {
     console.log('Eliminando el ID:', id);
 
     const seElimino = await vendedorEliminar(id);
-    if (seElimino) showToast('Se elimino el vendedor', 'success', 'bottom-center');
+    if (seElimino) {
+      actualizarVendedores()
+      showToast('Se elimino el vendedor', 'success', 'bottom-center')
+    }
     else showToast('Error al eliminar el vendedor', 'error', 'bottom-center');
   }
 
@@ -272,7 +287,7 @@ const Vendedores = () => {
         </div>
       </form>
 
-      <Table datos={vendedoresData} columnas={columnas} titulo='Lista de vendeores registrados' />
+      <Table datos={vendedores} columnas={columnas} titulo='Lista de vendeores registrados' />
     </Card>
   )
 }
