@@ -94,11 +94,12 @@ const Localidades = () => {
                 return;
             }
 
-            const respuesta = await localidadActualizar(+id, data);
-            console.log({ respuesta })
-            if (respuesta) {
+            const seActualizo = await localidadActualizar(+id, data);
+            if (seActualizo) {
                 actualizarLocalidades()
                 showToast(`Localidad actualizada`, 'success', 'bottom-center');
+            }else{
+                showToast('Error al actualizar localidad', 'error', 'bottom-center');
             }
         } catch (error) {
             showToast('Error al realizar la operación', 'error', 'bottom-center');

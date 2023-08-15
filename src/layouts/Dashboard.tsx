@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import './dashboard.css'
 import { Link, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -6,57 +6,43 @@ import ProtectedRoute from '../ProtectedRoute';
 
 
 const Dashboard = () => {
+    const arrowProcesos =  useRef<HTMLButtonElement | null>(null);
+    const arrowRegistros =  useRef<HTMLButtonElement | null>(null);
+    const arrowAdmin =  useRef<HTMLButtonElement | null>(null);
+    const menu =  useRef<HTMLDivElement | null>(null);
+    const sideBar =  useRef<HTMLDivElement | null>(null);
 
-    function toggleMenu(): void {
-        const menuToggle = document.querySelector('.menu') as HTMLElement | null;
-        menuToggle?.classList.toggle('active');
-    }
 
-    useEffect(() => {
-        
-        const handleArrowClick = (e: Event) => {
-            const arrowParent = (e.target as HTMLElement).parentElement?.parentElement;
-            console.log(arrowParent);
-            if (arrowParent) {
-                arrowParent.classList.toggle("showMenu");
+
+    const handleArrowClick = (arrowRef: React.RefObject<HTMLButtonElement>) => {
+        if (arrowRef.current) {
+            const parentElement = arrowRef.current.parentElement?.parentElement;
+            if (parentElement) {
+                parentElement.classList.toggle("showMenu");
+                console.log(parentElement)
             }
-        };
-
-        const handleSidebarBtnClick = () => {
-            const sidebar = document.querySelector(".sidebar");
-            if (sidebar) {
-                sidebar.classList.toggle("close");
-            }
-        };
-
-
-        const arrowList = document.querySelectorAll('.arrow');
-        arrowList.forEach((arrow) => {
-            arrow.addEventListener('click', handleArrowClick);
-        });
-
-        const sidebarBtn = document.querySelector(".bx-menu");
-        if (sidebarBtn) {
-            sidebarBtn.addEventListener("click", handleSidebarBtnClick);
         }
+    }; 
 
-        return () => {
-            arrowList.forEach((arrow) => {
-                arrow.removeEventListener('click', handleArrowClick);
-            });
+    //Menu desplegable del usuario
+    const handleToggleMenu = (menuRef: React.RefObject<HTMLDivElement>)  => () =>{
+        if (menuRef.current) {
+            menuRef.current.classList.toggle('active');
+        }
+    } 
 
-            if (sidebarBtn) {
-                sidebarBtn.removeEventListener("click", handleSidebarBtnClick);
-            }
-        };
-    }, []);
-    
+    const handleSideBarBTN = (sideBarRef: React.RefObject<HTMLDivElement>) => {
+        console.log('sideabar')
+        if (sideBarRef.current) {
+            sideBarRef.current.classList.toggle('close');
+        }
+    };
 
     const { usuario, cerrarSesion } = useAuth()
 
     return (
         <ProtectedRoute>
-            <div className="sidebar">
+            <div ref={sideBar} className="sidebar">
 
                 <div className="logo-details">
                     <i className='bx bxs-bus'></i>
@@ -85,7 +71,7 @@ const Dashboard = () => {
                                 <i className='bx bx-collection procesos-icon'></i>
                                 <span className="link_name">Procesos</span>
                             </a>
-                            <i className='bx bxs-chevron-down arrow'></i>
+                            <i ref={arrowProcesos} onClick={()=>{handleArrowClick(arrowProcesos)}} className='bx bxs-chevron-down arrow'></i>
                         </div>
 
                         <ul className="sub-menu">
@@ -102,7 +88,7 @@ const Dashboard = () => {
                                 <i className='bx bx-add-to-queue registros-icon'></i>
                                 <span className="link_name">Registros</span>
                             </a>
-                            <i className='bx bxs-chevron-down arrow'></i>
+                            <i ref={arrowRegistros} onClick={()=>{handleArrowClick(arrowRegistros)}}  className='bx bxs-chevron-down arrow'></i>
                         </div>
                         <ul className="sub-menu">
                             <li><a className="link_name" href="#">Registros</a></li>
@@ -137,7 +123,7 @@ const Dashboard = () => {
                                 <i className='bx bx-key administrador-icon' ></i>
                                 <span className="link_name">Admin</span>
                             </a>
-                            <i className='bx bxs-chevron-down arrow'></i>
+                            <i ref={arrowAdmin} onClick={()=>{handleArrowClick(arrowAdmin)}}  className='bx bxs-chevron-down arrow'></i>
                         </div>
                         <ul className="sub-menu">
                             <li><a className="link_name" href="#">Administrador</a></li>
@@ -167,13 +153,13 @@ const Dashboard = () => {
 
             <section className="home-section">
                 <div className="home-content">
-                    <i className='bx bx-menu'></i>
+                    <i onClick={()=>{handleSideBarBTN(sideBar)}}  className='bx bx-menu'></i>
 
                     <div className="action" >
-                        <div className="profile" onClick={toggleMenu} >
+                        <div  className="profile" onClick={handleToggleMenu(menu)} >
                             <img src="https://avatars.githubusercontent.com/u/71569136?s=400&u=2e359df633e9b41446484680f36f8c36943dd7fc&v=4" alt="Foto Perfil" />
                         </div>
-                        <div className="menu">
+                        <div ref={menu} className="menu">
                             <h3>{usuario?.nombres} <br /><span>{usuario?.rol}</span></h3>
                             <ul>
                                 <li>

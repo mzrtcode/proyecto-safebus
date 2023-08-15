@@ -12,6 +12,7 @@ export type LocalidadRegistrar = Omit<LocalidadesTypes, 'id_localidad'>;
 export const localidadesLoader = async (): Promise<LocalidadesTypes[]> => {
   try {
     const res = await axios.get("/localidades");
+    console.log(res)
     if (res.status !== 200) {
       throw new Error("Error al obtener los datos de localidades");
     }

@@ -109,10 +109,12 @@ const Rutas = () => {
           showToast('Error al registrar la ruta', 'error', 'bottom-center');
         }
       } else {
-        const respuesta = await actualizarRuta(+id, updatedData);
-        if (respuesta) {
+        const seActualizo = await actualizarRuta(+id, updatedData);
+        if (seActualizo) {
           actualizarRutas()
           showToast(`Ruta actualizada`, 'success', 'bottom-center');
+        }else{
+          showToast('Error al actualizar la ruta', 'error', 'bottom-center');
         }
       }
     } catch (error) {
