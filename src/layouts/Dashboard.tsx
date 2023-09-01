@@ -160,7 +160,7 @@ const Dashboard = () => {
                             <img src="https://avatars.githubusercontent.com/u/71569136?s=400&u=2e359df633e9b41446484680f36f8c36943dd7fc&v=4" alt="Foto Perfil" />
                         </div>
                         <div ref={menu} className="menu">
-                            <h3>{usuario?.nombres} <br /><span>{usuario?.rol}</span></h3>
+                            <h3>{`${usuario?.nombres} ${usuario?.apellidos}` } <br /><span>{usuario?.rol}</span></h3>
                             <ul>
                                 <li>
                                     <i className='bx bx-user-circle'></i>
