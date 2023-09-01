@@ -1,0 +1,129 @@
+header{
+    position: relative;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+ header::before{
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    height: 3px;
+    width: 27px;
+    background-color: #4070f4;
+}
+
+ form .details{
+    margin-top: 30px;
+}
+
+ form .title{
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 6px 0;
+    color: #333;
+}
+ form{
+    position: relative;
+    margin-top: 16px;
+    /* min-height: 490px; */
+}
+
+
+ form .fields{
+   display: grid;
+   gap: 15px;
+   grid-template-columns: 1fr 1fr 1fr;
+
+}
+
+
+form .fields .input-fields{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    margin: 4px 0;
+}
+
+.input-fields label{
+    font-size: 12px;
+    font-weight: 500;
+    color: #2e2e2e;
+}
+.input-fields input{
+    outline: none;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 100%;
+    color: #333;
+    font-weight: 400;
+    border: 1px solid #aaa;
+    padding:  0 15px;
+    height: 42px;
+    margin: 8px 0;
+}
+
+.input-fields input:is(:focus, :valid){
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.13);
+}
+
+ form button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    max-width: 200px;
+    width: 100%;
+    border: none;
+    outline: none;
+    color: #fff;
+    border-radius: 5px;
+    /* margin: 25px 0; */
+    background-color: #4070f4;
+    transition: all 0.3s linear;
+    cursor: pointer;
+}
+
+form button:hover{
+    background-color: #265df2;
+
+}
+
+form button i{
+    margin: 0 6px ;
+}
+
+.input-error{
+    color: #2031ca;
+    font-size: 12px;
+}
+
+
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+
+.select{
+    outline: none;
+
+    height: 42px;
+    margin: 8px 0;
+}
+
+@media screen and (max-width: 480px) {
+    form .fields {
+      display: grid;
+      gap: 15px;
+      grid-template-columns: 1fr;
+      grid-auto-flow: row;
+    }
+  }
