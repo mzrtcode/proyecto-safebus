@@ -26,6 +26,8 @@ import { vehiculosLoader } from './api/vehiculos';
 import { agenciasLoader } from './api/agencias';
 import { vendedoresLoader } from './api/vendedores';
 import Planillaje from './pages/Planillaje';
+import Administradores from './pages/Administradores';
+import { administradoresLoader } from './api/administradores';
 
 
 const router = createBrowserRouter([
@@ -56,8 +58,8 @@ const router = createBrowserRouter([
       {path: 'agencias/:id', element: <Agencias/>, loader: agenciasLoader},
       {path: 'vendedores', element: <Vendedores/>, loader: vendedoresLoader},
       {path: 'vendedores/:id', element: <Vendedores/>, loader: vendedoresLoader},
-      {path: 'administradores', element: <Vendedores/>, loader: vendedoresLoader},
-      {path: 'administradores/:id', element: <Vendedores/>, loader: vendedoresLoader},
+      {path: 'administradores', element: <Administradores/>, loader: administradoresLoader},
+      {path: 'administradores/:id', element: <Administradores/>, loader: administradoresLoader},
       
 
      
