@@ -85,7 +85,7 @@ const Vehiculos = () => {
     else showToast('Error al eliminar el vehiculo', 'error', 'bottom-center');
   }
   const vehiculosData = useLoaderData() as VehiculoTypes[]
-  const [vehiculos, setVehiculos] = useState<RutasTypes[]>(vehiculosData)
+  const [vehiculos, setVehiculos] = useState<VehiculoTypes[]>(vehiculosData)
 
   const actualizarVehiculos = async () => {
       const cargarNuevosVehiculos = await vehiculosLoader();
