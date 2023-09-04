@@ -5,6 +5,11 @@ import DateTimeComponent from '../components/DateTimeComponent'
 import Table from '../components/Table'
 import { useForm, SubmitHandler, set } from "react-hook-form";
 import { useEffect, useState } from 'react';
+import Badge from '../components/Badge'
+import CardPlanilla from '../components/CardPlanilla'
+import { PlanillajeTypes } from '../api/planillaje'
+import { useLoaderData } from 'react-router-dom'
+import ContenedorPlanillas from '../components/ContenedorPlanillas'
 
 type Inputs = {
     agencia: string,
@@ -77,6 +82,8 @@ const columnas = [
 ];
 
 const Ventas = () => {
+
+    const planillasData: PlanillajeTypes[] = useLoaderData() as PlanillajeTypes[];
 
     const {
         register,
@@ -162,7 +169,7 @@ const Ventas = () => {
 
                                 </div>
 
-                               
+
 
 
                                 <div className="input-fields">
@@ -200,7 +207,7 @@ const Ventas = () => {
 
                                 </div>
 
-                                 <div className="input-fields">
+                                <div className="input-fields">
                                     <label htmlFor="conductor">Conductor</label>
                                     <input
                                         type="text"
@@ -253,138 +260,8 @@ const Ventas = () => {
 
                     </div>
                     <div className="izquierda">
-                        <div className="planilla seleccionado">
-                            <div className="planilla-info">
-                                <span className="ruta">TEST - TEST</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
 
-                            <div className="planilla_estado">
-                                <span className="estado pendiente">Pendiente</span>
-                            </div>
-                        </div>
-
-                        <div className="planilla">
-                            <div className="planilla-info">
-                                <span className="ruta">TIMBIO - POPAYAN</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
-
-                            <div className="planilla_estado">
-                                <span className="estado despachado">Despachado</span>
-                            </div>
-                        </div>
-
-                        <div className="planilla">
-                            <div className="planilla-info">
-                                <span className="ruta">EL BORDO - ROSAS</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
-
-                            <div className="planilla_estado">
-                                <span className="estado despachado">Despachado</span>
-                            </div>
-                        </div>
-
-                        <div className="planilla">
-                            <div className="planilla-info">
-                                <span className="ruta">CALI - EL TAMBO</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
-
-                            <div className="planilla_estado">
-                                <span className="estado despachado">Despachado</span>
-                            </div>
-                        </div>
-
-                        <div className="planilla">
-                            <div className="planilla-info">
-                                <span className="ruta">CALI - EL TAMBO</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
-
-                            <div className="planilla_estado">
-                                <span className="estado despachado">Despachado</span>
-                            </div>
-                        </div>
-
-                        <div className="planilla">
-                            <div className="planilla-info">
-                                <span className="ruta">CALI - EL TAMBO</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
-
-                            <div className="planilla_estado">
-                                <span className="estado despachado">Despachado</span>
-                            </div>
-                        </div>
-
-                        <div className="planilla">
-                            <div className="planilla-info">
-                                <span className="ruta">CALI - EL TAMBO</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
-
-                            <div className="planilla_estado">
-                                <span className="estado despachado">Despachado</span>
-                            </div>
-                        </div>
-
-                        <div className="planilla">
-                            <div className="planilla-info">
-                                <span className="ruta">CALI - EL TAMBO</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
-
-                            <div className="planilla_estado">
-                                <span className="estado despachado">Despachado</span>
-                            </div>
-                        </div>
-
-                        <div className="planilla">
-                            <div className="planilla-info">
-                                <span className="ruta">CALI - EL TAMBO</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
-
-                            <div className="planilla_estado">
-                                <span className="estado despachado">Despachado</span>
-                            </div>
-                        </div>
-
-                        <div className="planilla">
-                            <div className="planilla-info">
-                                <span className="ruta">CALI - EL TAMBO</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
-
-                            <div className="planilla_estado">
-                                <span className="estado despachado">Despachado</span>
-                            </div>
-                        </div>
-
-                        <div className="planilla">
-                            <div className="planilla-info">
-                                <span className="ruta">CALI - EL TAMBO</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
-
-                            <div className="planilla_estado">
-                                <span className="estado despachado">Despachado</span>
-                            </div>
-                        </div>
-
-                        <div className="planilla">
-                            <div className="planilla-info">
-                                <span className="ruta">CALI - EL TAMBO</span>
-                                <span className="vehiculo">Vehiculo: 3060</span>
-                            </div>
-
-                            <div className="planilla_estado">
-                                <span className="estado despachado">Despachado</span>
-                            </div>
-
-                        </div>
+                        <ContenedorPlanillas planillas={planillasData}/>
 
 
                     </div>
