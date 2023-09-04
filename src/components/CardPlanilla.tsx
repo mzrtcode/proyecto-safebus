@@ -1,19 +1,33 @@
 import styles from './cardPlanilla.module.css'; // Importa el módulo CSS
 import Badge from './Badge';
 
-const CardPlanilla = () => {
+interface CardPlanillaProps {
+  ruta: string;
+  vehiculo: string | number;
+  seleccionado?: boolean;
+  despachado?: boolean;
+}
+
+const CardPlanilla = (props: CardPlanillaProps) => {
+  const { ruta, vehiculo, seleccionado = false, despachado = true } = props;
+
   return (
-    <div className={styles.planilla + ' ' + styles.seleccionado}>
+    <div className={`${styles.planilla} ${seleccionado ? styles.seleccionado : ''}`}>
       <div className={styles['planilla-info']}>
-        <span className={styles.ruta}>TESTING - TESTING</span>
-        <span className={styles.vehiculo}>Vehiculo: XXXX</span>
+        <span className={styles.ruta}>{ruta}</span>
+        <span className={styles.vehiculo}>Vehiculo: {vehiculo}</span>
       </div>
 
       <div className={styles.planilla_estado}>
-        <Badge texto='Nuevo' color='morado' />
+        {despachado ? (
+          <Badge texto='Despachado' color='verde' />
+        ) : (
+          <Badge texto='Pendiente' color='morado' />
+        )}
       </div>
     </div>
   );
 };
 
 export default CardPlanilla;
+
