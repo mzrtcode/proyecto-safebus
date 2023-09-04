@@ -1,0 +1,47 @@
+.planilla{
+ 
+
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: 0.3s;
+    padding-left: 8px;
+}
+
+.planilla:hover{
+  background: linear-gradient(to right, #9418db 8px, transparent 8px);
+}
+
+
+.planilla-info .ruta{
+    width: 100%;
+    font-weight: 600;
+    font-size: 15px;
+    display: block;
+}
+
+.planilla-info .vehiculo{
+    
+    width: 100%;
+    display: block;
+    font-size: 14px;
+    color: #979797;
+}
+
+.planilla.seleccionado{
+  background: linear-gradient(to right, #9418db 8px, #F5F6F8 8px);
+}
+
+.planilla .planilla_estado{
+    width: 100px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.planilla-info{
+  padding: 10px;
+}
