@@ -28,6 +28,7 @@ import { vendedoresLoader } from './api/vendedores';
 import Planillaje from './pages/Planillaje';
 import Administradores from './pages/Administradores';
 import { administradoresLoader } from './api/administradores';
+import { planillajeLoader } from './api/planillaje';
 
 
 const router = createBrowserRouter([
@@ -70,7 +71,7 @@ const router = createBrowserRouter([
     path: "/procesos",
     element: <Dashboard/> ,
     children: [
-      {path: 'ventas', element: <Ventas/> },
+      {path: 'ventas', element: <Ventas/>, loader: planillajeLoader},
       {path: 'planillaje', element: <Planillaje/> },
     ]
   },
