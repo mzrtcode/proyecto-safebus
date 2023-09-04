@@ -9,12 +9,16 @@ import { VehiculoTypes, vehiculosLoader } from "../api/vehiculos";
 import styles from './planillaje.module.css'
 import Select, { StylesConfig } from 'react-select';
 import { Options } from "../api/general";
+import { useAuth } from "../context/AuthContext";
+import ContenedorPlanillas from "../components/ContenedorPlanillas";
 
 function Planillaje() {
 
   const { register, handleSubmit, setValue, reset, control, formState: {
     errors,
   } } = useForm<PlanillajeTypes>();
+
+  const { usuario } = useAuth()
 
   const [rutas, setRutas] = useState<Options[]>()
   const [agencias, setAgencias] = useState<AgenciaTypes[]>()
@@ -78,7 +82,26 @@ function Planillaje() {
   }
 
   const onSubmit = async (data: PlanillajeTypes) => {
-    console.log(data);
+    try{
+      const idAgenciaValue = data.id_agencia?.value;
+      const idRutaValue = data.id_ruta?.value;
+      const idConductorValue = data.id_conductor?.value;
+      const idVehiculoValue = data.id_vehiculo?.value;
+
+      const updatedData = {
+        ...data,
+        id_ruta: idRutaValue,
+        id_conductor: idConductorValue,
+        id_agencia: idAgenciaValue,
+        id_vehiculo: idVehiculoValue,
+        id_vendedor: usuario?.id_usuario
+      }
+
+      console.log(updatedData)
+
+    }catch(e){
+      console.log(e)
+    }
   }
 
   useEffect(() => {
@@ -94,7 +117,7 @@ function Planillaje() {
       ...base,
       height: '42px',
       border: '1px solid #aaa',
-      zIndex: '9999'
+     /*  zIndex: '9999' */
     })
   };
 
@@ -199,8 +222,10 @@ function Planillaje() {
             <span className="button-text">Guardar</span>
             <i className='bx bx-plus-circle'></i>
           </button>
+
         </div>
       </form>
+
 
     </Card>
   )
