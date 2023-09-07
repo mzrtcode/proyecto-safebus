@@ -1,0 +1,21 @@
+.btn{
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    max-width: 150px;
+    width: 100%;
+    border: none;
+    outline: none;
+    color: #fff;
+    border-radius: 5px;
+    /* margin: 25px 0; */
+    background-color: #4070f4;
+    transition: all 0.3s linear;
+    cursor: pointer;
+  }
+
+.desactivado{
+    background-color: #cfcfcf;
+    transition: none;
+}

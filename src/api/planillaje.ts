@@ -12,7 +12,19 @@ export interface PlanillajeTypes {
   codigo_interno_vehiculo: string;
   nombre_agencia: string;
   hora_salida: Date | null;
+  cantidad_puestos_vehiculo: number;
+  precio_ruta: number
   viaje_completado: boolean
+}
+
+export interface PlanillaRegistrar {
+  id_ruta: number;
+  id_conductor: number;
+  id_vendedor: number;
+  id_vehiculo: number;
+  id_agencia: number;
+  viaje_completado?: boolean;
+  hora_salida?: Date | null;
 }
 
 
@@ -30,3 +42,22 @@ export const planillajeLoader = async (): Promise<PlanillajeTypes[]> => {
     return []; // Devuelve un array vacío en caso de error.
   }
 };
+
+export const planillaRegistrar = async (planilla: PlanillaRegistrar): Promise<number> => {
+  const response = await axios.post('/planillas', planilla);
+  return response.status; // Devuelve el código de estado de la respuesta
+
+};
+
+export const despacharPlanilla = async (id_planilla: number): Promise<number> => {
+  const response = await axios.post(`/planillas/despachar/${id_planilla}`);
+  return response.status; // Devuelve el código de estado de la respuesta
+};
+
+export const eliminarPlanilla = async (id_planilla: number): Promise<number> => {
+  const response = await axios.post(`/planillas/${id_planilla}`);
+  return response.status; // Devuelve el código de estado de la respuesta
+};
+
+
+

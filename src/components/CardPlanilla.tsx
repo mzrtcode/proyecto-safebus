@@ -6,13 +6,15 @@ interface CardPlanillaProps {
   vehiculo: string | number;
   seleccionado?: boolean;
   despachado?: boolean;
+  onClick?: () => void;
 }
 
 const CardPlanilla = (props: CardPlanillaProps) => {
-  const { ruta, vehiculo, seleccionado = false, despachado = true } = props;
+  const { ruta, vehiculo, seleccionado = false, despachado = true, onClick } = props;
+
 
   return (
-    <div className={`${styles.planilla} ${seleccionado ? styles.seleccionado : ''}`}>
+    <div className={`${styles.planilla} ${seleccionado ? styles.seleccionado : ''}`} onClick={onClick}>
       <div className={styles['planilla-info']}>
         <span className={styles.ruta}>{ruta}</span>
         <span className={styles.vehiculo}>Vehiculo: {vehiculo}</span>

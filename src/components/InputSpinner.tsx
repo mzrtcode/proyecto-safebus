@@ -1,11 +1,12 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import styles from './InputSpinner.module.css';
 
 interface InputSpinnerProps {
-  onChange: (counter:number) => void;
+  onChange: (counter: number) => void;
+  maxCounter?: number; // Nueva propiedad para el número máximo permitido
 }
 
-const InputSpinner: React.FC<InputSpinnerProps> = ({onChange}) => {
+const InputSpinner: React.FC<InputSpinnerProps> = ({ onChange, maxCounter = Infinity }) => {
   const [counter, setCounter] = useState(1);
 
   const handleMinusClick = () => {
@@ -15,7 +16,7 @@ const InputSpinner: React.FC<InputSpinnerProps> = ({onChange}) => {
   };
 
   const handlePlusClick = () => {
-    const newCounter = counter + 1;
+    const newCounter = counter + 1 > maxCounter ? maxCounter : counter + 1;
     setCounter(newCounter);
     onChange(newCounter);
   };

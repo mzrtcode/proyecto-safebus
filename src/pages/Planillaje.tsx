@@ -1,6 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
 import Card from "../components/Card"
-import { PlanillajeTypes } from "../api/planillaje";
+import { PlanillaRegistrar, PlanillajeTypes, despacharPlanilla, planillaRegistrar } from "../api/planillaje";
 import { useEffect, useState } from "react";
 import { AgenciaTypes, agenciasLoader, obtenerAgencia } from "../api/agencias";
 import { ConductorTypes, conductoresLoader } from "../api/conductores";
@@ -9,6 +9,7 @@ import { VehiculoTypes, vehiculosLoader } from "../api/vehiculos";
 import styles from './planillaje.module.css'
 import Select, { StylesConfig } from 'react-select';
 import { Options } from "../api/general";
+import useToast from '../hooks/useToast';
 import { useAuth } from "../context/AuthContext";
 import ContenedorPlanillas from "../components/ContenedorPlanillas";
 
@@ -16,7 +17,7 @@ function Planillaje() {
 
   const { register, handleSubmit, setValue, reset, control, formState: {
     errors,
-  } } = useForm<PlanillajeTypes>();
+  } } = useForm<PlanillaRegistrar>();
 
   const { usuario } = useAuth()
 
@@ -81,7 +82,7 @@ function Planillaje() {
     }
   }
 
-  const onSubmit = async (data: PlanillajeTypes) => {
+  const onSubmit = async (data: PlanillaRegistrar) => {
     try{
       const idAgenciaValue = data.id_agencia?.value;
       const idRutaValue = data.id_ruta?.value;
@@ -97,12 +98,21 @@ function Planillaje() {
         id_vendedor: usuario?.id_usuario
       }
 
-      console.log(updatedData)
+      const statusCode = await planillaRegistrar(updatedData)
+      if (statusCode === 201) {
+        showToast(`Planilla registrada`, 'success', 'bottom-center');
+      } else {
+        showToast('Error al registrar la planilla', 'error', 'bottom-center');
+      }
+      
 
     }catch(e){
       console.log(e)
+      showToast('Error al registrar la planilla', 'error', 'bottom-center');
     }
   }
+  const showToast = useToast();
+
 
   useEffect(() => {
     obtenerRutas();
@@ -131,7 +141,7 @@ function Planillaje() {
           <div className="fields">
 
             <div className="input-fields">
-              <label htmlFor="inicioRuta">Ruta</label>
+              <label htmlFor="id_ruta">Ruta</label>
 
 
               <Controller

@@ -2,7 +2,7 @@ import { FC, createContext, ReactNode, useState, useContext, useEffect } from "r
 import { loginRequest, verifyTokenRequest } from "../api/auth";
 import { usuarioLogin } from "../api/auth.d";
 import Cookies from 'js-cookie';
-import { set } from "react-hook-form";
+import { PlanillajeTypes } from "../api/planillaje";
 
 interface AuthContextType {
     usuario: any; // Cambiar 'any' por el tipo de dato que representa al usuario
@@ -10,7 +10,10 @@ interface AuthContextType {
     iniciarSesion: (usuario: usuarioLogin) => Promise<void>;
     loading: boolean;
     errors: boolean;
+    planilla: PlanillajeTypes;
+    asignarPlanilla: (planillaActual: PlanillajeTypes) => void;
     cerrarSesion: () => Promise<void>;
+    
 }
 
 
@@ -31,6 +34,22 @@ export const useAuth = () => {
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const [usuario, setUsuario] = useState(null)
+    const [planilla, setPlanilla] = useState<PlanillajeTypes>({
+        id_planilla: 0,
+        inicio_ruta: 'N/A',
+        fin_ruta: 'N/A',
+        nombre_conductor: 'N/A',
+        apellido_conductor: 'N/A',
+        nombre_vendedor: 'N/A',
+        apellido_vendedor: 'N/A',
+        numero_placa_vehiculo: 'N/A',
+        codigo_interno_vehiculo: 'N/A',
+        nombre_agencia: 'N/A',
+        hora_salida: null,
+        cantidad_puestos_vehiculo: 0,
+        precio_ruta: 0,
+        viaje_completado: false
+    })
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [loading, setLoading] = useState<boolean>(true)
     const [errors, setErrors] = useState(false);
@@ -54,6 +73,10 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setUsuario(null);
       }
 
+       
+      const asignarPlanilla =  (planillaActual: PlanillajeTypes):void =>{
+        setPlanilla(planillaActual);
+      }
 
     useEffect(() => {
         async function checkLogin() {
@@ -99,7 +122,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }, [errors]);
 
     return (
-        <AuthContext.Provider value={{ usuario: usuario, isAuthenticated, iniciarSesion, loading, errors, cerrarSesion }}>
+        <AuthContext.Provider value={{ usuario: usuario, isAuthenticated, iniciarSesion, loading, errors, cerrarSesion, planilla, asignarPlanilla }}>
             {children}
         </AuthContext.Provider>
     );

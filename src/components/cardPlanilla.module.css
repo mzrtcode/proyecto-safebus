@@ -1,6 +1,4 @@
 .planilla{
- 
-
     width: 100%;
     height: 80px;
     display: flex;
@@ -8,10 +6,12 @@
     justify-content: space-between;
     transition: 0.3s;
     padding-left: 8px;
+    transition: all 0.3s linear;
 }
 
 .planilla:hover{
   background: linear-gradient(to right, #9418db 8px, transparent 8px);
+  transition: all 0.3s linear;
 }
 
 
@@ -32,6 +32,7 @@
 
 .planilla.seleccionado{
   background: linear-gradient(to right, #9418db 8px, #F5F6F8 8px);
+  transition: all 0.3s linear;
 }
 
 .planilla .planilla_estado{

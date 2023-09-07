@@ -1,15 +1,18 @@
 import Card from '../components/Card'
 import './ventas.css'
+import styles from './ventas.module.css'
 import InputSpinner from '../components/InputSpinner'
 import DateTimeComponent from '../components/DateTimeComponent'
 import Table from '../components/Table'
 import { useForm, SubmitHandler, set } from "react-hook-form";
 import { useEffect, useState } from 'react';
-import Badge from '../components/Badge'
-import CardPlanilla from '../components/CardPlanilla'
-import { PlanillajeTypes } from '../api/planillaje'
+import { PlanillajeTypes, despacharPlanilla, eliminarPlanilla, planillajeLoader } from '../api/planillaje'
 import { useLoaderData } from 'react-router-dom'
 import ContenedorPlanillas from '../components/ContenedorPlanillas'
+import { useAuth } from '../context/AuthContext'
+import { TiquetesVendidos, obtenerTiquetesVendedidosPorPlanillaId } from '../api/tiquetes'
+import { formatoHoraAmPm } from '../utils/utils'
+import useToast from '../hooks/useToast'
 
 type Inputs = {
     agencia: string,
@@ -21,31 +24,7 @@ type Inputs = {
     valorTiquete: number
 }
 
-const datos = [
-    {
-        numeroTiquete: 1,
-        ruta: 'Ciudad Central - Ciudad del Este',
-        pasajeros: 10,
-        total: 100,
-        hora: '10:00 AM'
-    },
-    {
-        numeroTiquete: 2,
-        ruta: 'Pueblo Nuevo - Ciudad del Oeste',
-        pasajeros: 5,
-        total: 50,
-        hora: '11:30 AM'
-    },
-    {
-        numeroTiquete: 3,
-        ruta: 'Villa del Sol - Ciudad del Norte',
-        pasajeros: 7,
-        total: 70,
-        hora: '12:15 PM'
-    },
-];
-
-interface Localidades {
+interface TiqueteInfo {
     numeroTiquete: number;
     ruta: string,
     pasajeros: number;
@@ -56,34 +35,93 @@ interface Localidades {
 const columnas = [
     {
         name: 'Numero tiquete',
-        selector: (row: Localidades) => row.numeroTiquete,
+        selector: (row: TiqueteInfo) => row.numeroTiquete,
         sortable: true
     },
     {
         name: 'Ruta',
-        selector: (row: Localidades) => row.ruta,
+        selector: (row: TiqueteInfo) => row.ruta,
         sortable: true
     },
     {
         name: 'Pasajeros',
-        selector: (row: Localidades) => row.pasajeros,
+        selector: (row: TiqueteInfo) => row.pasajeros,
         sortable: true
     },
     {
         name: 'Total',
-        selector: (row: Localidades) => row.total,
+        selector: (row: TiqueteInfo) => row.total,
         sortable: true
     },
     {
         name: 'Hora',
-        selector: (row: Localidades) => row.hora,
+        selector: (row: TiqueteInfo) => row.hora,
         sortable: true
     }
 ];
 
 const Ventas = () => {
+    const showToast = useToast();
+
+    const { planilla: planillaEstado } = useAuth();
+    const [tiquetesVendidos, setTiquetesVendidos] = useState<TiqueteInfo>();
+
+    const obtenerTiquetesVendidos = async (id_ruta: number) => {
+        try {
+            const tiquetes = await obtenerTiquetesVendedidosPorPlanillaId(id_ruta) as TiquetesVendidos[];
+            console.log({ tiquetes });
+
+            // Inicializar la variable para la suma total de puestos ocupados
+            let sumaPuestosOcupados = 0;
+            const tiquetesTabla = tiquetes.map(tiquete => {
+                sumaPuestosOcupados += tiquete.puestos_vendidos; // Actualizar la suma total
+                return {
+                    numeroTiquete: tiquete.id_tiquete,
+                    ruta: `${planillaEstado.inicio_ruta} - ${planillaEstado.fin_ruta}`,
+                    pasajeros: tiquete.puestos_vendidos,
+                    total: tiquete.puestos_vendidos * planillaEstado.precio_ruta,
+                    hora: formatoHoraAmPm(tiquete.fecha_hora)
+                };
+            });
+
+            // Calcular puestos vacíos y si está lleno después de procesar todos los tiquetes
+            const puestosVacios = planillaEstado.cantidad_puestos_vehiculo - sumaPuestosOcupados;
+            const estaLleno = sumaPuestosOcupados === planillaEstado.cantidad_puestos_vehiculo;
+
+
+            // Crear un objeto con las actualizaciones
+            const updatedDetallesVenta = {
+                ...detallesVenta,
+                puestosVacios,
+                estaLleno,
+                estaDespachado: planillaEstado.viaje_completado,
+                puestosOcupados: sumaPuestosOcupados,
+            };
+
+            setDetallesVenta(updatedDetallesVenta);
+
+
+            setTiquetesVendidos(tiquetesTabla);
+        } catch (error) {
+            console.error("Error al obtener los tiquetes:", error);
+        }
+    };
+
+
+
+    useEffect(() => {
+        obtenerTiquetesVendidos(planillaEstado.id_planilla)
+    }, [planillaEstado.id_planilla])
+
 
     const planillasData: PlanillajeTypes[] = useLoaderData() as PlanillajeTypes[];
+    const [planillas, setPlanillas] = useState<PlanillajeTypes[]>(planillasData);
+
+
+    const actualizarPlanillas = async () =>{
+        const planillasActualizadas = await planillajeLoader();
+        setPlanillas(planillasActualizadas)
+    }
 
     const {
         register,
@@ -93,32 +131,66 @@ const Ventas = () => {
     } = useForm<Inputs>();
 
     const [detallesVenta, setDetallesVenta] = useState({
-        valorTiquete: 3500,
-        totalPuestosVehiculo: 30,
-        puestosOcupados: 11,
+        valorTiquete: 0,
+        puestosOcupados: 0,
+        puestosVacios: 0,
         precioTotal: 0,
+        cantidadTiquetes: 1,
+        estaLleno: false,
+        estaDespachado: planillaEstado.viaje_completado
+
     })
 
-    const actualizarPrecioTotal = (cantidad: number) => {
-        const precioTotal = cantidad * detallesVenta.valorTiquete;
-        setDetallesVenta((detallesVenta) => ({ ...detallesVenta, precioTotal }));
-        setValue('total', precioTotal);
+    const actualizarCantidadPuestos = (cantidad: number) => {
+        setDetallesVenta((detallesVenta) => ({ ...detallesVenta, cantidadTiquetes: cantidad }));
     };
 
+    const despacharVehiculo = async (id_planilla: number) => {
+        const status_code = await despacharPlanilla(id_planilla)
+        if (status_code === 200){
+            actualizarPlanillas()
+            showToast(`Vehiculo despachado`, 'success', 'bottom-center');
+        }else{
+            showToast('Error en la operacion', 'error', 'bottom-center');
+        }
 
+    }
+
+    const establecerValoresFormulario = () => {
+        if (planillaEstado.id_planilla !== 0) {
+            setValue('agencia', planillaEstado.nombre_agencia);
+            setValue('ruta', `${planillaEstado.inicio_ruta} ${planillaEstado.fin_ruta}`);
+            setValue('vehiculo', planillaEstado.codigo_interno_vehiculo);
+            setValue('conductor', `${planillaEstado.nombre_conductor} ${planillaEstado.apellido_conductor}`);
+            setValue('total', planillaEstado.precio_ruta * detallesVenta.cantidadTiquetes);
+            setValue('puestos', (detallesVenta.puestosOcupados + "/" + planillaEstado.cantidad_puestos_vehiculo));
+            setValue('valorTiquete', planillaEstado.precio_ruta);
+        } else {
+            setValue('agencia', 'N/A');
+            setValue('ruta', 'N/A');
+            setValue('vehiculo', 'N/A');
+            setValue('conductor', 'N/A');
+            setValue('total', 0);
+            setValue('puestos', (0 + "/" + 0));
+            setValue('valorTiquete', 0);
+        }
+    }
+
+    const anularPlanilla = async (id_planilla: number) =>{
+        const statusCode = await eliminarPlanilla(id_planilla);
+        if(statusCode === 204){
+            actualizarPlanillas()
+            showToast(`Planilla eliminada`, 'success', 'bottom-center');
+        }else{
+            showToast(`Error al eliminar planilla`, 'error', 'bottom-center')
+        }
+    }
 
 
     useEffect(() => {
-        setValue('agencia', 'Terminal Popayan');
-        setValue('ruta', 'Popayan - Cali');
-        setValue('vehiculo', '3060');
-        setValue('conductor', 'Daniel Perez Gomez');
-        setValue('total', detallesVenta.valorTiquete);
-        setValue('puestos', (detallesVenta.puestosOcupados + "/" + detallesVenta.totalPuestosVehiculo));
-        setValue('valorTiquete', detallesVenta.valorTiquete);
+        establecerValoresFormulario()
 
-    }, [])
-
+    }, [detallesVenta])
 
 
     return (
@@ -246,22 +318,26 @@ const Ventas = () => {
 
                                 <label htmlFor="">Cantidad puestos</label>
 
-                                <InputSpinner onChange={actualizarPrecioTotal} />
+                                <InputSpinner onChange={actualizarCantidadPuestos} maxCounter={detallesVenta.puestosVacios}/>
 
 
 
-                                <button>Crear tiquete</button>
-                                <button>Despachar</button>
-                                <button>Anular Planilla</button>
+                                <button className={`${styles.btn} ${detallesVenta.estaDespachado || detallesVenta.estaLleno ? styles.desactivado : ''}`}>Crear tiquete</button>
+                                <button className={`${styles.btn} ${detallesVenta.estaDespachado ? styles.desactivado : ''}`} onClick={() =>{despacharVehiculo(planillaEstado.id_planilla)}}>Despachar</button>
+                                <button className={`${styles.btn}`} onClick={()=>{anularPlanilla(planillaEstado.id_planilla)}}>Anular Planilla</button>
+
+                                <p>Esta despachado: {Boolean(detallesVenta.estaDespachado).toString()}</p>
+<p>Esta lleno: {Boolean(detallesVenta.estaLleno).toString()}</p>
+
 
                             </div>
                         </div>
-                        <Table columnas={columnas} datos={datos} titulo='Tiquetes Vendidos' />
+                        <Table columnas={columnas} datos={tiquetesVendidos} titulo='Tiquetes Vendidos' />
 
                     </div>
                     <div className="izquierda">
 
-                        <ContenedorPlanillas planillas={planillasData}/>
+                        <ContenedorPlanillas planillas={planillas} />
 
 
                     </div>
