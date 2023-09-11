@@ -21,7 +21,6 @@ const Agencias = () => {
     try {
       if (!id) {
         const statusCode = await agenciaRegistrar(data);
-        console.log('aaaaaaaaaaaaaaa')
         console.log(statusCode)
         if (statusCode === 201) {
           actualizarAgencias()
@@ -97,16 +96,16 @@ const Agencias = () => {
     },
     {
       name: 'Estado',
-      cell: (row: AgenciaTypes) => <Checkbox initialState={row.estado === 1} onToggle={async () => {
-        const estadoAgencia = row.estado === 1
+      cell: (row: AgenciaTypes) => <Checkbox initialState={row.estado} onToggle={async () => {
 
-        if (estadoAgencia) {
+
+        if (row.estado === true) {
           console.log('Cambié de estado mi es ID:', row.id_agencia);
-          const seDesactivo = await desactivarAgencia(row.id_agencia, estadoAgencia)
+          const seDesactivo = await desactivarAgencia(row.id_agencia, row.estado)
           if (seDesactivo) showToast('Se desactivo la agencia', 'success', 'bottom-center');
           else showToast('Error al desactivar la agencia', 'error', 'bottom-center');
-        } else {
-          const seActivo = await desactivarAgencia(row.id_agencia, estadoAgencia)
+        } else if (row.estado === false){
+          const seActivo = await desactivarAgencia(row.id_agencia, row.estado)
           if (seActivo) showToast('Se activo la agencia', 'success', 'bottom-center');
           else showToast('Error al desactivar la agencia', 'error', 'bottom-center');
         }

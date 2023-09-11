@@ -138,16 +138,16 @@ const Vendedores = () => {
     },
     {
       name: 'Estado',
-      cell: (row: VendedorTypes) => <Checkbox initialState={row.estado === 1} onToggle={async () => {
-        const estadoVendedor = row.estado === 1
+      cell: (row: VendedorTypes) => <Checkbox initialState={row.estado} onToggle={async () => {
+      
 
-        if (estadoVendedor) {
+        if (row.estado === true) {
           console.log('Cambié de estado mi es ID:', row.id_vendedor);
-          const seDesactivo = await desactivarVendedor(row.id_vendedor, estadoVendedor)
+          const seDesactivo = await desactivarVendedor(row.id_vendedor, row.estado)
           if (seDesactivo) showToast('Se desactivo el vendedor', 'success', 'bottom-center');
           else showToast('Error al desactivar el vendedor', 'error', 'bottom-center');
-        } else {
-          const seActivo = await desactivarVendedor(row.id_vendedor, estadoVendedor)
+        } else if(row.estado === false) {
+          const seActivo = await desactivarVendedor(row.id_vendedor, row.estado)
           if (seActivo) showToast('Se activo el vendedor', 'success', 'bottom-center');
           else showToast('Error al desactivar el vendedor', 'error', 'bottom-center');
         }

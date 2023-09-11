@@ -11,7 +11,7 @@ export interface administradorTypes {
     celular: string
     fecha_nacimiento: Date | string
     direccion: string
-    estado: boolean | number
+    estado: boolean
     acciones: JSX.Element
   }
 

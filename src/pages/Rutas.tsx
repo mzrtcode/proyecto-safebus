@@ -165,18 +165,18 @@ const Rutas = () => {
 
     {
       name: 'Estado',
-      cell: (row: RutasTypes) => <Checkbox initialState={row.estado === 1} onToggle={async () => {
-        const estadoRuta = row.estado === 1
+      cell: (row: RutasTypes) => <Checkbox initialState={row.estado} onToggle={async () => {
+        
 
-        if (estadoRuta) {
+        if (row.estado === true) {
           console.log('Cambié de estado mi es ID:', row.id_ruta);
-          const seDesactivo = await desactivarRuta(row.id_ruta, estadoRuta)
+          const seDesactivo = await desactivarRuta(row.id_ruta, row.estado)
           if (seDesactivo) {
             showToast('Se desactivo la ruta', 'success', 'bottom-center')
           }
           else showToast('Error al desactivar la ruta', 'error', 'bottom-center');
-        } else {
-          const seActivo = await desactivarRuta(row.id_ruta, estadoRuta)
+        } else if(row.estado === false) {
+          const seActivo = await desactivarRuta(row.id_ruta, row.estado)
           if (seActivo) showToast('Se activo la ruta', 'success', 'bottom-center');
           else showToast('Error al desactivar la ruta', 'error', 'bottom-center');
         }

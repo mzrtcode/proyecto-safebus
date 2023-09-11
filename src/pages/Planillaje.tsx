@@ -11,7 +11,6 @@ import Select, { StylesConfig } from 'react-select';
 import { Options } from "../api/general";
 import useToast from '../hooks/useToast';
 import { useAuth } from "../context/AuthContext";
-import ContenedorPlanillas from "../components/ContenedorPlanillas";
 
 function Planillaje() {
 
@@ -29,7 +28,8 @@ function Planillaje() {
   const obtenerRutas = async () => {
     try {
       const rutas = await rutasLoader() as RutasTypes[];
-      const respuesta: Options[] = rutas.map(ruta => ({
+      const rutasActivas = rutas.filter(ruta => ruta.estado === true)
+      const respuesta: Options[] = rutasActivas.map(ruta => ({
         value: ruta.id_ruta,
         label: ruta.nombre_inicio + ' - ' + ruta.nombre_fin
       }));
@@ -43,7 +43,8 @@ function Planillaje() {
   const obtenerAgencias = async () => {
     try {
       const agencias = await agenciasLoader() as AgenciaTypes[];
-      const respuesta: Options[] = agencias.map(agencia => ({
+      const agenciasActivas = agencias.filter(agencia => agencia.estado === true)
+      const respuesta: Options[] = agenciasActivas.map(agencia => ({
         value: agencia.id_agencia,
         label: agencia.nombre
       }));

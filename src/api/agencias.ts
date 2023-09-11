@@ -5,7 +5,7 @@ export interface AgenciaTypes {
     nombre: string
     codigo_interno: string
     direccion: string
-    estado: boolean | number
+    estado: boolean 
     acciones?: JSX.Element
   }
 

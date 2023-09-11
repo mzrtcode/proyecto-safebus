@@ -138,16 +138,15 @@ const Administradores = () => {
     },
     {
       name: 'Estado',
-      cell: (row: administradorTypes) => <Checkbox initialState={row.estado === 1} onToggle={async () => {
-        const estadoadministrador = row.estado === 1
+      cell: (row: administradorTypes) => <Checkbox initialState={row.estado} onToggle={async () => {
 
-        if (estadoadministrador) {
+        if (row.estado === true) {
           console.log('Cambié de estado mi es ID:', row.id_administrador);
-          const seDesactivo = await desactivarAdministrador(row.id_administrador, estadoadministrador)
+          const seDesactivo = await desactivarAdministrador(row.id_administrador, row.estado)
           if (seDesactivo) showToast('Se desactivo el administrador', 'success', 'bottom-center');
           else showToast('Error al desactivar el administrador', 'error', 'bottom-center');
-        } else {
-          const seActivo = await desactivarAdministrador(row.id_administrador, estadoadministrador)
+        } else if (row.estado === false) {
+          const seActivo = await desactivarAdministrador(row.id_administrador, row.estado)
           if (seActivo) showToast('Se activo el administrador', 'success', 'bottom-center');
           else showToast('Error al desactivar el administrador', 'error', 'bottom-center');
         }
