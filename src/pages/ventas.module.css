@@ -19,3 +19,8 @@
     background-color: #cfcfcf;
     transition: none;
 }
+
+.contenedor_botones{
+  display: flex;
+  justify-content: space-between;
+}

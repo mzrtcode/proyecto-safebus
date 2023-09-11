@@ -89,6 +89,12 @@ const Rutas = () => {
     try {
       const inicioRutaValue = data.inicio_ruta.value;
       const finRutaValue = data.fin_ruta.value;
+
+      if(inicioRutaValue === finRutaValue){
+        showToast(`Las localidades deben ser diferentes`, 'warning', 'bottom-center');
+        return
+      }
+      
       const costoValue = data.costo.replace(/[$,"']/g, '');
 
       const updatedData = {

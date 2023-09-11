@@ -10,7 +10,7 @@ import { PlanillajeTypes, despacharPlanilla, eliminarPlanilla, planillajeLoader 
 import { useLoaderData } from 'react-router-dom'
 import ContenedorPlanillas from '../components/ContenedorPlanillas'
 import { useAuth } from '../context/AuthContext'
-import { TiquetesVendidos, obtenerTiquetesVendedidosPorPlanillaId } from '../api/tiquetes'
+import { TiquetesVendidos, obtenerTiquetesVendedidosPorPlanillaId, registrarTiquete } from '../api/tiquetes'
 import { formatoHoraAmPm } from '../utils/utils'
 import useToast from '../hooks/useToast'
 
@@ -186,6 +186,23 @@ const Ventas = () => {
         }
     }
 
+    const crearTiquete = async(id_planilla: number, puestos_vendidos: number) =>{
+        const tiquete = {
+            id_planilla,
+            puestos_vendidos
+        }
+        console.log({id_planilla})
+
+
+        const statusCode = await registrarTiquete(tiquete);
+        if(statusCode === 201){
+            obtenerTiquetesVendidos(planillaEstado.id_planilla)
+            showToast(`Tiquete Vendido`, 'success', 'bottom-center');
+        }else{
+            showToast(`Error al registrar el tiquete`, 'error', 'bottom-center')
+        }
+    }
+
 
     useEffect(() => {
         establecerValoresFormulario()
@@ -322,12 +339,14 @@ const Ventas = () => {
 
 
 
-                                <button className={`${styles.btn} ${detallesVenta.estaDespachado || detallesVenta.estaLleno ? styles.desactivado : ''}`}>Crear tiquete</button>
+                                <div className={styles.contenedor_botones}>
+                                <button className={`${styles.btn} ${detallesVenta.estaDespachado || detallesVenta.estaLleno ? styles.desactivado : ''}`} onClick={()=>{crearTiquete(planillaEstado.id_planilla, detallesVenta.cantidadTiquetes)}}>Crear tiquete</button>
                                 <button className={`${styles.btn} ${detallesVenta.estaDespachado ? styles.desactivado : ''}`} onClick={() =>{despacharVehiculo(planillaEstado.id_planilla)}}>Despachar</button>
                                 <button className={`${styles.btn}`} onClick={()=>{anularPlanilla(planillaEstado.id_planilla)}}>Anular Planilla</button>
 
+                                </div>
                                 <p>Esta despachado: {Boolean(detallesVenta.estaDespachado).toString()}</p>
-<p>Esta lleno: {Boolean(detallesVenta.estaLleno).toString()}</p>
+                                <p>Esta lleno: {Boolean(detallesVenta.estaLleno).toString()}</p>
 
 
                             </div>
