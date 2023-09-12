@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useRef } from 'react'
 import './dashboard.css'
 import { Link, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -6,30 +6,30 @@ import ProtectedRoute from '../ProtectedRoute';
 
 
 const Dashboard = () => {
-    const arrowProcesos =  useRef<HTMLButtonElement | null>(null);
-    const arrowRegistros =  useRef<HTMLButtonElement | null>(null);
-    const arrowAdmin =  useRef<HTMLButtonElement | null>(null);
-    const menu =  useRef<HTMLDivElement | null>(null);
-    const sideBar =  useRef<HTMLDivElement | null>(null);
+    const arrowProcesos = useRef<HTMLButtonElement | null>(null);
+    const arrowRegistros = useRef<HTMLButtonElement | null>(null);
+    const arrowAdmin = useRef<HTMLButtonElement | null>(null);
+    const menu = useRef<HTMLDivElement | null>(null);
+    const sideBar = useRef<HTMLDivElement | null>(null);
 
 
 
-    const handleArrowClick = (arrowRef: React.RefObject<HTMLButtonElement>) => {
-        if (arrowRef.current) {
+    const handleArrowClick = (arrowRef: React.RefObject<HTMLButtonElement> | null) => {
+        if (arrowRef !== null && arrowRef.current) {
             const parentElement = arrowRef.current.parentElement?.parentElement;
             if (parentElement) {
                 parentElement.classList.toggle("showMenu");
                 console.log(parentElement)
             }
         }
-    }; 
+    };
 
     //Menu desplegable del usuario
-    const handleToggleMenu = (menuRef: React.RefObject<HTMLDivElement>)  => () =>{
+    const handleToggleMenu = (menuRef: React.RefObject<HTMLDivElement>) => () => {
         if (menuRef.current) {
             menuRef.current.classList.toggle('active');
         }
-    } 
+    }
 
     const handleSideBarBTN = (sideBarRef: React.RefObject<HTMLDivElement>) => {
         console.log('sideabar')
@@ -40,6 +40,87 @@ const Dashboard = () => {
 
     const { usuario, cerrarSesion } = useAuth()
 
+    interface MenuItem {
+        name: string;
+        icon: string;
+        sublinks: {
+            name: string;
+            link: string;
+        }[];
+        color: string;
+        rol: ('administrador' | 'vendedor')[];
+        handleArrowClick: React.RefObject<HTMLButtonElement> | null;
+    }
+
+
+    const menuItems: MenuItem[] = [
+        {
+            name: "Dashboard",
+            icon: "bx bx-grid-alt dashboard-icon",
+            sublinks: [{ name: "Dashboard", link: "#" }],
+            color: "blue",
+            rol: ['administrador'],
+            handleArrowClick: null,
+        },
+        {
+            name: "Procesos",
+            icon: "bx bx-collection procesos-icon",
+            sublinks: [
+                { name: "Ventas", link: "/procesos/ventas" },
+                { name: "Planillaje", link: "/procesos/planillaje" },
+            ],
+            handleArrowClick: arrowProcesos,
+            rol: ['vendedor'],
+            color: "green",
+        },
+        {
+            name: "Registros",
+            icon: "bx bx-add-to-queue registros-icon",
+            sublinks: [
+                { name: "Localidades", link: "/registros/localidades" },
+                { name: "Rutas", link: "/registros/rutas" },
+                { name: "Conductores", link: "/registros/conductores" },
+                { name: "Propietarios", link: "/registros/propietarios" },
+                { name: "Vehiculos", link: "/registros/vehiculos" },
+                { name: "Agencias", link: "/registros/agencias" },
+                { name: "Vendedores", link: "/registros/vendedores" },
+                { name: "Administradores", link: "/registros/administradores" },
+            ],
+            handleArrowClick: arrowRegistros,
+            rol: ['administrador'],
+            color: "red",
+        },
+        {
+            name: "Reportes",
+            icon: "bx bx-pie-chart-alt-2 estadisticas-icon",
+            sublinks: [{ name: "Reportes", link: "#" }],
+            color: "purple",
+            rol: ['administrador'],
+            handleArrowClick: null,
+        },
+        {
+            name: "Admin",
+            icon: "bx bx-key administrador-icon",
+            sublinks: [
+                { name: "Admin 1", link: "#" },
+                { name: "Admin 2", link: "#" },
+            ],
+            handleArrowClick: arrowAdmin,
+            rol: ['administrador'],
+            color: "orange",
+        },
+        {
+            name: "Configurar",
+            icon: "bx bx-cog configurar-icon",
+            sublinks: [{ name: "Configurar", link: "#" }],
+            color: "pink",
+            rol: ['administrador', 'vendedor'],
+            handleArrowClick: null,
+        },
+    ];
+
+
+
     return (
         <ProtectedRoute>
             <div ref={sideBar} className="sidebar">
@@ -49,118 +130,65 @@ const Dashboard = () => {
                     <span className="logo_name">SafeBus</span>
                 </div>
 
-
                 <ul className="nav-links">
+  {menuItems
+    .filter((menuItem) => {
+      // Verifica si usuario existe y si su rol está permitido en menuItem.rol
+      return usuario ? menuItem.rol.includes(usuario.rol) : true;
+    })
+    .map((menuItem, index) => (
+      <li key={index}>
+        {menuItem.sublinks.length > 0 ? (
+          <div className="icon-link">
+            <a href="#">
+              <i className={menuItem.icon}></i>
+              <span className="link_name">{menuItem.name}</span>
+            </a>
+            {menuItem.handleArrowClick && (
+              <i
+                ref={menuItem.handleArrowClick}
+                onClick={() => {
+                  handleArrowClick(menuItem.handleArrowClick);
+                }}
+                className="bx bxs-chevron-down arrow"
+              ></i>
+            )}
+          </div>
+        ) : (
+          <a href="#">
+            <i className={menuItem.icon}></i>
+            <span className="link_name">{menuItem.name}</span>
+          </a>
+        )}
+        {menuItem.sublinks.length > 0 && (
+          <ul className="sub-menu">
+            {menuItem.sublinks.map((sublink, subIndex) => (
+              <li key={subIndex}>
+                <Link to={sublink.link}>{sublink.name}</Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </li>
+    ))}
+</ul>
 
 
-                    <li>
-                        <a href="#">
-                            <i className='bx bx-grid-alt dashboard-icon'></i>
-                            <span className="link_name">Dashboard</span>
-                        </a>
 
-                        <ul className="sub-menu blank">
-                            <li><a className="link_name" href="#">Dashboard</a></li>
-                        </ul>
-                    </li>
-
-
-                    <li>
-                        <div className="icon-link">
-                            <a href="#">
-                                <i className='bx bx-collection procesos-icon'></i>
-                                <span className="link_name">Procesos</span>
-                            </a>
-                            <i ref={arrowProcesos} onClick={()=>{handleArrowClick(arrowProcesos)}} className='bx bxs-chevron-down arrow'></i>
-                        </div>
-
-                        <ul className="sub-menu">
-                            <li><a className="link_name" href="#">Procesos</a></li>
-                            <li><Link to={"/procesos/ventas"}>Ventas</Link></li>
-                            <li><Link to={"/procesos/planillaje"}>Planillaje</Link></li>
-                        </ul>
-                    </li>
-
-
-                    <li>
-                        <div className="icon-link">
-                            <a href="#">
-                                <i className='bx bx-add-to-queue registros-icon'></i>
-                                <span className="link_name">Registros</span>
-                            </a>
-                            <i ref={arrowRegistros} onClick={()=>{handleArrowClick(arrowRegistros)}}  className='bx bxs-chevron-down arrow'></i>
-                        </div>
-                        <ul className="sub-menu">
-                            <li><a className="link_name" href="#">Registros</a></li>
-
-                            <li> <Link to={"/registros/localidades"}>Localidades</Link> </li>
-                            <li><Link to="/registros/rutas">Rutas</Link></li>
-                            <li><Link to="/registros/conductores">Conductores</Link></li>
-                            <li><Link to="/registros/propietarios">Propietarios</Link></li>
-                            <li><Link to="/registros/vehiculos">Vehiculos</Link></li>
-                            <li><Link to="/registros/agencias">Agencias</Link></li>
-                            <li><Link to="/registros/vendedores">Vendedores</Link></li>
-                            <li><Link to="/registros/administradores">Administradores</Link></li>
-                        </ul>
-
-                    </li>
-
-                    <li>
-                        <a href="#">
-                            <i className='bx bx-pie-chart-alt-2 estadisticas-icon'></i>
-                            <span className="link_name">Reportes</span>
-                        </a>
-
-                        <ul className="sub-menu blank">
-                            <li><a className="link_name" href="#">Reportes</a></li>
-                        </ul>
-                    </li>
-
-
-                    <li>
-                        <div className="icon-link">
-                            <a href="#">
-                                <i className='bx bx-key administrador-icon' ></i>
-                                <span className="link_name">Admin</span>
-                            </a>
-                            <i ref={arrowAdmin} onClick={()=>{handleArrowClick(arrowAdmin)}}  className='bx bxs-chevron-down arrow'></i>
-                        </div>
-                        <ul className="sub-menu">
-                            <li><a className="link_name" href="#">Administrador</a></li>
-                            <li><a href="#">Admin 1</a></li>
-                            <li><a href="#">Admin 2</a></li>
-                        </ul>
-
-                    </li>
-
-
-                    <li>
-                        <a href="#">
-                            <i className='bx bx-cog configurar-icon'></i>
-                            <span className="link_name">Configurar</span>
-                        </a>
-
-                        <ul className="sub-menu blank">
-                            <li><a className="link_name" href="#">Configurar</a></li>
-                        </ul>
-                    </li>
-
-
-                </ul>
 
 
             </div>
 
             <section className="home-section">
                 <div className="home-content">
-                    <i onClick={()=>{handleSideBarBTN(sideBar)}}  className='bx bx-menu'></i>
+                    <i onClick={() => { handleSideBarBTN(sideBar) }} className='bx bx-menu'></i>
 
                     <div className="action" >
-                        <div  className="profile" onClick={handleToggleMenu(menu)} >
+                        <div className="profile" onClick={handleToggleMenu(menu)} >
                             <img src="https://avatars.githubusercontent.com/u/71569136?s=400&u=2e359df633e9b41446484680f36f8c36943dd7fc&v=4" alt="Foto Perfil" />
                         </div>
                         <div ref={menu} className="menu">
-                            <h3>{`${usuario?.nombres} ${usuario?.apellidos}` } <br /><span>{usuario?.rol}</span></h3>
+                            <h3>{`${usuario?.nombres} ${usuario?.apellidos}`} <br /><span>{usuario?.rol}</span></h3>
                             <ul>
                                 <li>
                                     <i className='bx bx-user-circle'></i>
@@ -189,7 +217,7 @@ const Dashboard = () => {
 
                                 <li>
                                     <i className='bx bx-log-out-circle' ></i>
-                                    <a href="#" onClick={()=>{cerrarSesion()}}>Cerrar sesión</a>
+                                    <a href="#" onClick={() => { cerrarSesion() }}>Cerrar sesión</a>
                                 </li>
 
                             </ul>
