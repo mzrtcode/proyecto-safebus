@@ -1,0 +1,34 @@
+
+
+@page {
+    size: 320px 540px; /* Establece el tamaño de página en 320 x 566 píxeles */
+    margin: 0; /* Define los márgenes como 0 para aprovechar todo el espacio */
+  }
+
+.texto-centrado{
+    text-align: center;
+}
+.tiquete {
+    font-family: 'Lucida Console', monospace;
+    padding: 12px;
+    width: 3.36in;
+    height: 5.60in;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0;
+    box-sizing: border-box;
+    line-height: 1.2;
+    font-size: 9pt;
+}
+
+
+.cabecera{
+  /*   background-color: #f0e68c; */
+    text-align: center;
+}
+
+span{
+    display: flex;
+    justify-content: space-between;
+}
