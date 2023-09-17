@@ -4,15 +4,19 @@ import styles from './ventas.module.css'
 import InputSpinner from '../components/InputSpinner'
 import DateTimeComponent from '../components/DateTimeComponent'
 import Table from '../components/Table'
-import { useForm, SubmitHandler, set } from "react-hook-form";
-import { useEffect, useState } from 'react';
+import { useForm } from "react-hook-form";
+import { useEffect, useRef, useState } from 'react';
 import { PlanillajeTypes, despacharPlanilla, eliminarPlanilla, planillajeLoader } from '../api/planillaje'
 import { useLoaderData } from 'react-router-dom'
 import ContenedorPlanillas from '../components/ContenedorPlanillas'
 import { useAuth } from '../context/AuthContext'
 import { TiquetesVendidos, obtenerTiquetesVendedidosPorPlanillaId, registrarTiquete } from '../api/tiquetes'
-import { formatoHoraAmPm } from '../utils/utils'
+import { formatoHoraAmPm, obtenerFechaYHoraActual } from '../utils/utils'
 import useToast from '../hooks/useToast'
+import Tiquete, { TiqueteProps } from '../components/Tiquete'
+import { useReactToPrint } from "react-to-print";
+import { obtenerEmpresa } from '../api/empresa'
+
 
 type Inputs = {
     agencia: string,
@@ -63,13 +67,15 @@ const columnas = [
 const Ventas = () => {
     const showToast = useToast();
 
-    const { planilla: planillaEstado } = useAuth();
+
+
+    const { planilla: planillaEstado, empresa : empresaEstado, asignarEmpresa } = useAuth();
     const [tiquetesVendidos, setTiquetesVendidos] = useState<TiqueteInfo>();
 
     const obtenerTiquetesVendidos = async (id_ruta: number) => {
         try {
             const tiquetes = await obtenerTiquetesVendedidosPorPlanillaId(id_ruta) as TiquetesVendidos[];
-            console.log({ tiquetes });
+            console.log(planillaEstado);
 
             // Inicializar la variable para la suma total de puestos ocupados
             let sumaPuestosOcupados = 0;
@@ -77,7 +83,7 @@ const Ventas = () => {
                 sumaPuestosOcupados += tiquete.puestos_vendidos; // Actualizar la suma total
                 return {
                     numeroTiquete: tiquete.id_tiquete,
-                    ruta: `${planillaEstado.inicio_ruta} - ${planillaEstado.fin_ruta}`,
+                    ruta: `${planillaEstado.acronimo_inicio} - ${planillaEstado.acronimo_fin}`,
                     pasajeros: tiquete.puestos_vendidos,
                     total: tiquete.puestos_vendidos * planillaEstado.precio_ruta,
                     hora: formatoHoraAmPm(tiquete.fecha_hora)
@@ -111,14 +117,23 @@ const Ventas = () => {
 
     useEffect(() => {
         obtenerTiquetesVendidos(planillaEstado.id_planilla)
+        obtenerDatosEmpresa();
+        setDatosTiquete(generarDatosTiquete());
     }, [planillaEstado.id_planilla])
 
 
     const planillasData: PlanillajeTypes[] = useLoaderData() as PlanillajeTypes[];
     const [planillas, setPlanillas] = useState<PlanillajeTypes[]>(planillasData);
 
+    const obtenerDatosEmpresa = async () => {
+        const datos = await obtenerEmpresa();
 
-    const actualizarPlanillas = async () =>{
+        if(datos !== null){
+            asignarEmpresa(datos);
+        }
+    }
+
+    const actualizarPlanillas = async () => {
         const planillasActualizadas = await planillajeLoader();
         setPlanillas(planillasActualizadas)
     }
@@ -147,10 +162,10 @@ const Ventas = () => {
 
     const despacharVehiculo = async (id_planilla: number) => {
         const status_code = await despacharPlanilla(id_planilla)
-        if (status_code === 200){
+        if (status_code === 200) {
             actualizarPlanillas()
             showToast(`Vehiculo despachado`, 'success', 'bottom-center');
-        }else{
+        } else {
             showToast('Error en la operacion', 'error', 'bottom-center');
         }
 
@@ -176,29 +191,30 @@ const Ventas = () => {
         }
     }
 
-    const anularPlanilla = async (id_planilla: number) =>{
+    const anularPlanilla = async (id_planilla: number) => {
         const statusCode = await eliminarPlanilla(id_planilla);
-        if(statusCode === 204){
+        if (statusCode === 204) {
             actualizarPlanillas()
             showToast(`Planilla eliminada`, 'success', 'bottom-center');
-        }else{
+        } else {
             showToast(`Error al eliminar planilla`, 'error', 'bottom-center')
         }
     }
 
-    const crearTiquete = async(id_planilla: number, puestos_vendidos: number) =>{
+    const crearTiquete = async (id_planilla: number, puestos_vendidos: number) => {
+        handlePrint();
         const tiquete = {
             id_planilla,
             puestos_vendidos
         }
-        console.log({id_planilla})
+        console.log({ id_planilla })
 
 
         const statusCode = await registrarTiquete(tiquete);
-        if(statusCode === 201){
+        if (statusCode === 201) {
             obtenerTiquetesVendidos(planillaEstado.id_planilla)
             showToast(`Tiquete Vendido`, 'success', 'bottom-center');
-        }else{
+        } else {
             showToast(`Error al registrar el tiquete`, 'error', 'bottom-center')
         }
     }
@@ -209,6 +225,42 @@ const Ventas = () => {
 
     }, [detallesVenta])
 
+    const tiqueteRef = useRef(null);
+
+    const handlePrint = useReactToPrint({
+        content: () => tiqueteRef.current,
+    });
+
+    
+    const generarDatosTiquete = () => {
+        
+        const datosTiquete = {
+            razon_social: empresaEstado.razon_social,
+            nit: empresaEstado.nit,
+            telefono: empresaEstado.telefono,
+            direccion: empresaEstado.direccion,
+            direccionAgencia: 'Calle Agencia 123',
+            fecha: 'Jun 09/2023',
+            numeroTiquete: '11111123',
+            agencia: '01 Popayan-Agencia',
+            despachador: planillaEstado.nombre_vendedor,
+            horaSalida: '19:24',
+            ruta: `${planillaEstado.inicio_ruta} - ${planillaEstado.fin_ruta}`,
+            tarifa: planillaEstado.precio_ruta,
+            vehiculoPlaca: planillaEstado.numero_placa_vehiculo,
+            vehiculoCodigo: planillaEstado.codigo_interno_vehiculo,
+            pasajes: detallesVenta.cantidadTiquetes,
+            total: planillaEstado.precio_ruta * detallesVenta.cantidadTiquetes,
+            aseguradora: 'Sura',
+            numeroPoliza: '123456789',
+            fechaImpresion: obtenerFechaYHoraActual(),
+            mensaje: '* Gracias por su compra *',
+            webEmpresa: 'www.empresa.com'
+        }
+        return datosTiquete;
+    }
+    
+    const [datosTiquete, setDatosTiquete] = useState(generarDatosTiquete());
 
     return (
         <>
@@ -335,19 +387,16 @@ const Ventas = () => {
 
                                 <label htmlFor="">Cantidad puestos</label>
 
-                                <InputSpinner onChange={actualizarCantidadPuestos} maxCounter={detallesVenta.puestosVacios}/>
+                                <InputSpinner onChange={actualizarCantidadPuestos} maxCounter={detallesVenta.puestosVacios} />
 
 
 
                                 <div className={styles.contenedor_botones}>
-                                <button className={`${styles.btn} ${detallesVenta.estaDespachado || detallesVenta.estaLleno ? styles.desactivado : ''}`} onClick={()=>{crearTiquete(planillaEstado.id_planilla, detallesVenta.cantidadTiquetes)}}>Crear tiquete</button>
-                                <button className={`${styles.btn} ${detallesVenta.estaDespachado ? styles.desactivado : ''}`} onClick={() =>{despacharVehiculo(planillaEstado.id_planilla)}}>Despachar</button>
-                                <button className={`${styles.btn}`} onClick={()=>{anularPlanilla(planillaEstado.id_planilla)}}>Anular Planilla</button>
+                                    <button className={`${styles.btn} ${detallesVenta.estaDespachado || detallesVenta.estaLleno ? styles.desactivado : ''}`} onClick={() => { crearTiquete(planillaEstado.id_planilla, detallesVenta.cantidadTiquetes) }}>Crear tiquete</button>
+                                    <button className={`${styles.btn} ${detallesVenta.estaDespachado ? styles.desactivado : ''}`} onClick={() => { despacharVehiculo(planillaEstado.id_planilla) }}>Despachar</button>
+                                    <button className={`${styles.btn}`} onClick={() => { anularPlanilla(planillaEstado.id_planilla) }}>Anular Planilla</button>
 
                                 </div>
-                                <p>Esta despachado: {Boolean(detallesVenta.estaDespachado).toString()}</p>
-                                <p>Esta lleno: {Boolean(detallesVenta.estaLleno).toString()}</p>
-
 
                             </div>
                         </div>
@@ -365,6 +414,10 @@ const Ventas = () => {
 
 
                 </div>
+                <div ref={tiqueteRef} >
+                    <Tiquete datos={ datosTiquete } />
+                </div>
+
             </Card>
         </>
     )

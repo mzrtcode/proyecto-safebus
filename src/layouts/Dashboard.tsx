@@ -57,9 +57,9 @@ const Dashboard = () => {
         {
             name: "Dashboard",
             icon: "bx bx-grid-alt dashboard-icon",
-            sublinks: [{ name: "Dashboard", link: "#" }],
+            sublinks: [{name: 'Dashboard', link: '/dashboard'}],
             color: "blue",
-            rol: ['administrador'],
+            rol: ['administrador', 'vendedor'],
             handleArrowClick: null,
         },
         {
@@ -131,47 +131,47 @@ const Dashboard = () => {
                 </div>
 
                 <ul className="nav-links">
-  {menuItems
-    .filter((menuItem) => {
-      // Verifica si usuario existe y si su rol está permitido en menuItem.rol
-      return usuario ? menuItem.rol.includes(usuario.rol) : true;
-    })
-    .map((menuItem, index) => (
-      <li key={index}>
-        {menuItem.sublinks.length > 0 ? (
-          <div className="icon-link">
-            <a href="#">
-              <i className={menuItem.icon}></i>
-              <span className="link_name">{menuItem.name}</span>
-            </a>
-            {menuItem.handleArrowClick && (
-              <i
-                ref={menuItem.handleArrowClick}
-                onClick={() => {
-                  handleArrowClick(menuItem.handleArrowClick);
-                }}
-                className="bx bxs-chevron-down arrow"
-              ></i>
-            )}
-          </div>
-        ) : (
-          <a href="#">
-            <i className={menuItem.icon}></i>
-            <span className="link_name">{menuItem.name}</span>
-          </a>
-        )}
-        {menuItem.sublinks.length > 0 && (
-          <ul className="sub-menu">
-            {menuItem.sublinks.map((sublink, subIndex) => (
-              <li key={subIndex}>
-                <Link to={sublink.link}>{sublink.name}</Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </li>
-    ))}
-</ul>
+                    {menuItems
+                        .filter((menuItem) => {
+                            // Verifica si usuario existe y si su rol está permitido en menuItem.rol
+                            return usuario ? menuItem.rol.includes(usuario.rol) : true;
+                        })
+                        .map((menuItem, index) => (
+                            <li key={index}>
+                                {menuItem.sublinks.length > 1 ? (
+                                    <div className="icon-link">
+                                        <a href="#">
+                                            <i className={menuItem.icon}></i>
+                                            <span className="link_name">{menuItem.name}</span>
+                                        </a>
+                                        {menuItem.handleArrowClick && (
+                                            <i
+                                                ref={menuItem.handleArrowClick}
+                                                onClick={() => {
+                                                    handleArrowClick(menuItem.handleArrowClick);
+                                                }}
+                                                className="bx bxs-chevron-down arrow"
+                                            ></i>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <Link to={menuItem.sublinks[0].link}>
+                                        <i className={menuItem.icon}></i>
+                                        <span className="link_name">{menuItem.name}</span>
+                                    </Link>
+                                )}
+                                {menuItem.sublinks.length > 0 && (
+                                    <ul className="sub-menu">
+                                        {menuItem.sublinks.map((sublink, subIndex) => (
+                                            <li key={subIndex}>
+                                                <Link to={sublink.link}>{sublink.name}</Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </li>
+                        ))}
+                </ul>
 
 
 
