@@ -29,6 +29,7 @@ import Planillaje from './pages/Planillaje';
 import Administradores from './pages/Administradores';
 import { administradoresLoader } from './api/administradores';
 import { planillajeLoader } from './api/planillaje';
+import path from 'path';
 
 
 const router = createBrowserRouter([
@@ -79,6 +80,12 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage/>
+  },
+
+  {
+    path: "/dashboard",
+    element: <Dashboard/>,
+    children: [{path: '', element:  <Card><h2>Dashboard ✨✨✨</h2></Card>}]
   }
 
  

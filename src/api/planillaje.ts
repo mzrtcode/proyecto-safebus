@@ -14,7 +14,9 @@ export interface PlanillajeTypes {
   hora_salida: Date | null;
   cantidad_puestos_vehiculo: number;
   precio_ruta: number
-  viaje_completado: boolean
+  viaje_completado: boolean,
+  acronimo_inicio: string,
+  acronimo_fin: string
 }
 
 export interface PlanillaRegistrar {

@@ -3,6 +3,7 @@ import { loginRequest, verifyTokenRequest } from "../api/auth";
 import { usuarioLogin } from "../api/auth.d";
 import Cookies from 'js-cookie';
 import { PlanillajeTypes } from "../api/planillaje";
+import { EmpresaTypes } from "../api/empresa";
 
 interface AuthContextType {
     usuario: any; // Cambiar 'any' por el tipo de dato que representa al usuario
@@ -12,6 +13,8 @@ interface AuthContextType {
     errors: boolean;
     planilla: PlanillajeTypes;
     asignarPlanilla: (planillaActual: PlanillajeTypes) => void;
+    empresa: EmpresaTypes;
+    asignarEmpresa: (empresaActual: EmpresaTypes) => void;
     cerrarSesion: () => Promise<void>;
     
 }
@@ -48,8 +51,23 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         hora_salida: null,
         cantidad_puestos_vehiculo: 0,
         precio_ruta: 0,
-        viaje_completado: false
+        viaje_completado: false,
+        acronimo_inicio: 'N/A',
+        acronimo_fin: 'N/A'
     })
+
+    const [empresa, setEmpresa] = useState<EmpresaTypes>({
+        nit: '010100101',
+        razon_social: 'Razon Social',
+        direccion: 'CLL 1 # 1 - 1',
+        telefono: '1234567890',
+        ciudad: 'Bogota',
+    });
+
+    const asignarEmpresa =  (empresaActual: EmpresaTypes):void =>{
+        setEmpresa(empresaActual);
+      }
+
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [loading, setLoading] = useState<boolean>(true)
     const [errors, setErrors] = useState(false);
@@ -122,7 +140,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }, [errors]);
 
     return (
-        <AuthContext.Provider value={{ usuario: usuario, isAuthenticated, iniciarSesion, loading, errors, cerrarSesion, planilla, asignarPlanilla }}>
+        <AuthContext.Provider value={{ usuario: usuario, isAuthenticated, iniciarSesion, loading, errors, cerrarSesion, planilla, asignarPlanilla, asignarEmpresa, empresa }}>
             {children}
         </AuthContext.Provider>
     );
