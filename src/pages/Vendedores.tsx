@@ -8,13 +8,14 @@ import Acciones from '../components/Acciones';
 import useToast from '../hooks/useToast';
 import { useEffect, useState } from 'react';
 import Checkbox from '../components/Checkbox';
+import styles from './vendedores.module.css'
 
 
 const Vendedores = () => {
 
   const { id } = useParams();
 
-  const { register, handleSubmit, setValue, reset ,formState: {
+  const { register, handleSubmit, setValue, reset, formState: {
     errors
   } } = useForm<VendedorTypes>();
   const onSubmit = async (data: VendedorTypes) => {
@@ -32,7 +33,7 @@ const Vendedores = () => {
         if (respuesta) {
           actualizarVendedores()
           showToast(`Vendedor actualizado`, 'success', 'bottom-center');
-        }else{
+        } else {
           showToast('Error al actualizar el vendedor', 'error', 'bottom-center');
         }
       }
@@ -49,8 +50,8 @@ const Vendedores = () => {
   const [vendedores, setVendedores] = useState<VendedorTypes[]>(vendedoresData)
 
   const actualizarVendedores = async () => {
-      const cargarNuevasVendedores = await vendedoresLoader();
-      setVendedores(cargarNuevasVendedores)
+    const cargarNuevasVendedores = await vendedoresLoader();
+    setVendedores(cargarNuevasVendedores)
   }
 
 
@@ -66,16 +67,16 @@ const Vendedores = () => {
     else showToast('Error al eliminar el vendedor', 'error', 'bottom-center');
   }
 
-  const handleClickResetarClave = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
+  const handleClickResetarClave = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
-    if(id){
+    if (id) {
       const seReseteo = await resetearClave(+id)
       if (seReseteo) showToast('Se reseteo la clave del vendedor', 'success', 'bottom-center');
       else showToast('Error al resetear la clave del vendedor', 'error', 'bottom-center');
     }
-   
+
   }
- 
+
   useEffect(() => {
     if (id) {
       console.log('se detecto id')
@@ -91,7 +92,7 @@ const Vendedores = () => {
         setValue('direccion', vendedorEditar.direccion)
       }
 
-    }else reset()
+    } else reset()
 
   }, [id])
 
@@ -139,14 +140,14 @@ const Vendedores = () => {
     {
       name: 'Estado',
       cell: (row: VendedorTypes) => <Checkbox initialState={row.estado} onToggle={async () => {
-      
+
 
         if (row.estado === true) {
           console.log('Cambié de estado mi es ID:', row.id_vendedor);
           const seDesactivo = await desactivarVendedor(row.id_vendedor, row.estado)
           if (seDesactivo) showToast('Se desactivo el vendedor', 'success', 'bottom-center');
           else showToast('Error al desactivar el vendedor', 'error', 'bottom-center');
-        } else if(row.estado === false) {
+        } else if (row.estado === false) {
           const seActivo = await desactivarVendedor(row.id_vendedor, row.estado)
           if (seActivo) showToast('Se activo el vendedor', 'success', 'bottom-center');
           else showToast('Error al desactivar el vendedor', 'error', 'bottom-center');
@@ -162,53 +163,66 @@ const Vendedores = () => {
   ];
   return (
     <Card>
-      <header>Registros 🛒</header>
-      {
-            id && 
-            <div className="buttons">
-              <button className="save-button">
-              <span className="button-text"><Link to="/registros/vendedores">Nuevo Vendedor </Link> </span>
-              <i className='bx bx-plus-circle'></i>
-            </button>
-            </div>
-          }
+      <header className={styles.header}>Registros 🛒</header>
+      {id && (
+        <div className={styles.buttons}>
+          <button className={styles["save-button"]}>
+            <span className={styles["button-text"]}><Link to="/registros/vendedores">Nuevo Vendedor</Link></span>
+            <i className='bx bx-plus-circle'></i>
+          </button>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="details personal">
-          <span className="title">Vendedores</span>
-
-          <div className="fields">
-            <div className="input-fields">
+        <div className={styles.details}>
+          <span className={styles.title}>Vendedores</span>
+          <div className={styles.fields}>
+            <div className={styles["input-fields"]}>
               <label htmlFor="nombres">Nombres</label>
-              <input type="text" id='nombres' placeholder='Ingrese sus nombres' {...register('nombres', {
-                required: true,
-              })} />
+              <input
+                type="text"
+                id="nombres"
+                placeholder="Ingrese sus nombres"
+                {...register('nombres', {
+                  required: true,
+                })}
+              />
               {
-                errors.nombres && <span className="input-error">Este campo es requerido</span>
+                errors.nombres && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="apellidos">Apellidos</label>
-              <input type="text" id='apellidos' placeholder='Ingrese sus apellidos' {...register('apellidos', {
-                required: true,
-              })} />
+              <input
+                type="text"
+                id="apellidos"
+                placeholder="Ingrese sus apellidos"
+                {...register('apellidos', {
+                  required: true,
+                })}
+              />
               {
-                errors.apellidos && <span className="input-error">Este campo es requerido</span>
+                errors.apellidos && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="correo">Correo</label>
-              <input type="email" id='correo' placeholder='Ejemplo: usuario@usuario.com' {...register('correo', {
-                required: true,
-              })} />
+              <input
+                type="email"
+                id="correo"
+                placeholder="Ejemplo: usuario@usuario.com"
+                {...register('correo', {
+                  required: true,
+                })}
+              />
               {
-                errors.correo && <span className="input-error">Este campo es requerido</span>
+                errors.correo && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="tipo_identificacion">Tipo de identificacion:</label>
 
               <select id="tipo_identificacion" {...register('tipo_identificacion', {
@@ -222,73 +236,92 @@ const Vendedores = () => {
               </select>
 
               {
-                errors.tipo_identificacion && <span className="input-error">Este campo es requerido</span>
+                errors.tipo_identificacion && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="numero_identificacion">Número de Identificación</label>
-              <input type="number" id='numero_identificacion' placeholder='Ingrese el número de identificación' {...register('numero_identificacion', {
-                required: true,
-              })} />
+              <input
+                type="number"
+                id="numero_identificacion"
+                placeholder="Ingrese el número de identificación"
+                {...register('numero_identificacion', {
+                  required: true,
+                })}
+              />
               {
-                errors.numero_identificacion && <span className="input-error">Este campo es requerido</span>
+                errors.numero_identificacion && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="celular">Celular</label>
-              <input type="text" id='celular' placeholder='Ingrese su número de celular' {...register('celular', {
-                required: true,
-              })} />
+              <input
+                type="text"
+                id="celular"
+                placeholder="Ingrese su número de celular"
+                {...register('celular', {
+                  required: true,
+                })}
+              />
               {
-                errors.celular && <span className="input-error">Este campo es requerido</span>
+                errors.celular && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="fecha_nacimiento">Fecha de Nacimiento</label>
-              <input type="date" id='fecha_nacimiento' placeholder='Ingrese su fecha de nacimiento' {...register('fecha_nacimiento', {
-                required: true,
-              })} />
+              <input
+                type="date"
+                id="fecha_nacimiento"
+                placeholder="Ingrese su fecha de nacimiento"
+                {...register('fecha_nacimiento', {
+                  required: true,
+                })}
+              />
               {
-                errors.fecha_nacimiento && <span className="input-error">Este campo es requerido</span>
+                errors.fecha_nacimiento && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="direccion">Dirección</label>
-              <input type="text" id='direccion' placeholder='Ingrese su dirección' {...register('direccion', {
-                required: true,
-              })} />
+              <input
+                type="text"
+                id="direccion"
+                placeholder="Ingrese su dirección"
+                {...register('direccion', {
+                  required: true,
+                })}
+              />
               {
-                errors.direccion && <span className="input-error">Este campo es requerido</span>
+                errors.direccion && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
-
-
           </div>
         </div>
 
-
-
-        <div className="buttons">
-          <button className="save-button">
-            <span className="button-text">Guardar</span>
+        <div className={styles.buttons}>
+          <button className={styles["save-button"]}>
+            <span className={styles["button-text"]}>Guardar</span>
             <i className='bx bx-plus-circle'></i>
           </button>
 
           {
-            id && <button className="save-button" onClick={handleClickResetarClave}>
-              <span className="button-text">Restablecer Contraseña</span>
-              <i className='bx bx-reset' ></i>
-            </button>
+            id && (
+              <button className={styles["save-button"]} onClick={handleClickResetarClave}>
+                <span className={styles["button-text"]}>Restablecer Contraseña</span>
+                <i className='bx bx-reset'></i>
+              </button>
+            )
           }
         </div>
       </form>
 
       <Table datos={vendedores} columnas={columnas} titulo='Lista de vendeores registrados' />
     </Card>
+
   )
 }
 

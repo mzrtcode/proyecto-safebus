@@ -1,3 +1,4 @@
+import styles from './planilla.module.css'
 type Datos = {
     ruta: string,
     vehiculo: string,
@@ -6,20 +7,21 @@ type Datos = {
 
 type PlanillaProps = {
     datos: Datos;
-  };
+};
 
 const Planilla = ({ datos }: PlanillaProps) => {
     return (
-        <div className="planilla"> {/* seleccionado */}
-            <div className="planilla-info">
-                <span className="ruta">{datos.ruta}</span>
-                <span className="vehiculo">{datos.vehiculo}</span>
+        <div className={styles.planilla}> {/* seleccionado */}
+            <div className={styles["planilla-info"]}>
+                <span className={styles.ruta}>{datos.ruta}</span>
+                <span className={styles.vehiculo}>{datos.vehiculo}</span>
             </div>
 
-            <div className="planilla_estado">
-                <span className="estado despachado">{datos.estado}</span> {/* pendiente despachado */}
+            <div className={styles["planilla_estado"]}>
+                <span className={`${styles.estado} ${datos.estado === "despachado" ? styles.despachado : ""}`}>{datos.estado}</span> {/* pendiente despachado */}
             </div>
         </div>
+
     )
 }
 export default Planilla

@@ -112,11 +112,13 @@ const Localidades = () => {
             <header>Registros 📍</header>
             {
                 id &&
-                <div className="buttons">
-                    <button className="save-button">
-                        <span className="button-text"> <Link to="/registros/localidades">Nueva Localidad </Link></span>
+                <div className={styles.buttons}>
+                    <button className={styles["save-button"]}>
+                        <span className={styles['button-text']}> <Link to="/registros/localidades">Nueva Localidad </Link></span>
                         <i className='bx bx-plus-circle'></i>
                     </button>
+
+                    
                 </div>
             }
 
@@ -158,7 +160,7 @@ const Localidades = () => {
                     </div>
                 </div>
 
-                <div className="buttons">
+                <div className={styles.buttons}>
                     <button className={styles['save-button']}>
                         <span className={styles['button-text']}>Guardar</span>
                         <i className='bx bx-plus-circle'></i>

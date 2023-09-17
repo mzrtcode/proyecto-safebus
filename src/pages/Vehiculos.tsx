@@ -3,19 +3,20 @@ import { Controller, useForm } from "react-hook-form";
 import Table from '../components/Table';
 import { Link, useLoaderData, useParams } from 'react-router-dom';
 import { VehiculoRegistrar, VehiculoTypes, actualizarVehiculo, vehiculoEliminar, vehiculoRegistrar, vehiculosLoader } from '../api/vehiculos';
-import Select, { StylesConfig } from 'react-select';
+import Select from 'react-select';
 import useToast from '../hooks/useToast';
 import Acciones from '../components/Acciones';
 import { useEffect, useState } from 'react';
 import { PropietarioTypes, propietariosLoader } from '../api/propietarios';
 import { Options } from '../api/general';
+import styles from './vehiculos.module.css'
 
 
 const Vehiculos = () => {
 
   const { id } = useParams();
   const [propietariosOptions, setPropitariosOptions] = useState<Options[]>([]);
-  const { register, handleSubmit, setValue, reset ,control, formState: {
+  const { register, handleSubmit, setValue, reset, control, formState: {
     errors
   } } = useForm<VehiculoRegistrar>();
 
@@ -44,7 +45,7 @@ const Vehiculos = () => {
         if (respuesta) {
           actualizarVehiculos()
           showToast(`Vehiculo actualizado`, 'success', 'bottom-center');
-        }else{
+        } else {
           showToast('Error al actualizar el vehiculo', 'error', 'bottom-center');
         }
       }
@@ -88,8 +89,8 @@ const Vehiculos = () => {
   const [vehiculos, setVehiculos] = useState<VehiculoTypes[]>(vehiculosData)
 
   const actualizarVehiculos = async () => {
-      const cargarNuevosVehiculos = await vehiculosLoader();
-      setVehiculos(cargarNuevosVehiculos)
+    const cargarNuevosVehiculos = await vehiculosLoader();
+    setVehiculos(cargarNuevosVehiculos)
   }
 
 
@@ -116,7 +117,7 @@ const Vehiculos = () => {
         setValue('cantidad_puestos', vehiculoEditar.cantidad_puestos)
       }
 
-    }else reset()
+    } else reset()
 
   }, [id])
 
@@ -168,23 +169,21 @@ const Vehiculos = () => {
   ];
   return (
     <Card>
-      <header>Registros 🚍</header>
-      {
-        id &&
-        <div className="buttons">
-          <button className="save-button">
-            <span className="button-text"><Link to="/registros/vehiculos">Nuevo Vehiculo </Link></span>
+      <header className={styles.header}>Registros 🚍</header>
+      {id && (
+        <div className={styles.buttons}>
+          <button className={styles["save-button"]}>
+            <span className={styles["button-text"]}><Link to="/registros/vehiculos">Nuevo Vehiculo</Link></span>
             <i className='bx bx-plus-circle'></i>
           </button>
         </div>
-      }
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="details personal">
-          <span className="title">Vehiculos</span>
-
-          <div className="fields">
-            <div className="input-fields">
+        <div className={styles.details}>
+          <span className={styles.title}>Vehiculos</span>
+          <div className={styles.fields}>
+            <div className={styles["input-fields"]}>
               <label htmlFor="id_propietario">Propietario</label>
               <Controller
                 name="id_propietario"
@@ -192,7 +191,6 @@ const Vehiculos = () => {
                 rules={{ required: true }} // Reglas de validación
                 render={({ field }) => (
                   <Select
-                    /* className={styles['select']} */
                     styles={customStyles}
                     isClearable={true}
                     options={propietariosOptions}
@@ -201,90 +199,124 @@ const Vehiculos = () => {
                 )}
               />
               {
-                errors.id_propietario && <span className="input-error">Este campo es requerido</span>
+                errors.id_propietario && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="placa">Placa</label>
-              <input type="text" id='placa' placeholder='Ingrese la placa del vehículo' {...register('placa', {
-                required: true,
-                maxLength: 6
-              })} />
+              <input
+                type="text"
+                id="placa"
+                placeholder="Ingrese la placa del vehículo"
+                {...register('placa', {
+                  required: true,
+                  maxLength: 6
+                })}
+              />
               {
-                errors.placa && <span className="input-error">Este campo es requerido</span>
+                errors.placa && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="marca">Marca</label>
-              <input type="text" id='marca' placeholder='Ingrese la marca del vehículo' {...register('marca', {
-                required: true,
-              })} />
+              <input
+                type="text"
+                id="marca"
+                placeholder="Ingrese la marca del vehículo"
+                {...register('marca', {
+                  required: true,
+                })}
+              />
               {
-                errors.marca && <span className="input-error">Este campo es requerido</span>
+                errors.marca && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="modelo">Modelo</label>
-              <input type="text" id='modelo' placeholder='Ingrese el modelo del vehículo' {...register('modelo', {
-                required: true,
-              })} />
+              <input
+                type="text"
+                id="modelo"
+                placeholder="Ingrese el modelo del vehículo"
+                {...register('modelo', {
+                  required: true,
+                })}
+              />
               {
-                errors.modelo && <span className="input-error">Este campo es requerido</span>
+                errors.modelo && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="color">Color</label>
-              <input type="text" id='color' placeholder='Ingrese el color del vehículo' {...register('color', {
-                required: true,
-              })} />
+              <input
+                type="text"
+                id="color"
+                placeholder="Ingrese el color del vehículo"
+                {...register('color', {
+                  required: true,
+                })}
+              />
               {
-                errors.color && <span className="input-error">Este campo es requerido</span>
+                errors.color && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="anio_fabricacion">Año de Fabricación</label>
-              <input type="number" min="1900" max="2099" id='anio_fabricacion' placeholder='Ingrese el año de fabricación' {...register('anio_fabricacion', {
-                required: true,
-              })} />
+              <input
+                type="number"
+                min="1900"
+                max="2099"
+                id="anio_fabricacion"
+                placeholder="Ingrese el año de fabricación"
+                {...register('anio_fabricacion', {
+                  required: true,
+                })}
+              />
               {
-                errors.anio_fabricacion && <span className="input-error">Este campo es requerido</span>
+                errors.anio_fabricacion && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="codigo_interno">Código Interno</label>
-              <input type="text" id='acronimo' placeholder='Ingrese el código interno' {...register('codigo_interno', {
-                required: true,
-              })} />
+              <input
+                type="text"
+                id="acronimo"
+                placeholder="Ingrese el código interno"
+                {...register('codigo_interno', {
+                  required: true,
+                })}
+              />
               {
-                errors.codigo_interno && <span className="input-error">Este campo es requerido</span>
+                errors.codigo_interno && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="cantidad_puestos">Cantidad puestos</label>
-              <input type="number" id='cantidad_puestos' placeholder='Ingrese el numero de puestos' {...register('cantidad_puestos', {
-                required: true,
-                maxLength: 3
-              })} />
+              <input
+                type="number"
+                id="cantidad_puestos"
+                placeholder="Ingrese el numero de puestos"
+                {...register('cantidad_puestos', {
+                  required: true,
+                  maxLength: 3
+                })}
+              />
               {
-                errors.cantidad_puestos && <span className="input-error">Este campo es requerido</span>
+                errors.cantidad_puestos && <span className={styles["input-error"]}>Este campo es requerido</span>
               }
             </div>
-
           </div>
         </div>
 
-        <div className="buttons">
-          <button className="save-button">
-            <span className="button-text">Guardar</span>
+        <div className={styles.buttons}>
+          <button className={styles["save-button"]}>
+            <span className={styles["button-text"]}>Guardar</span>
             <i className='bx bx-plus-circle'></i>
           </button>
         </div>
@@ -292,6 +324,7 @@ const Vehiculos = () => {
 
       <Table columnas={columnas} datos={vehiculos} titulo='Lista de vehiculos registrados' />
     </Card>
+
   )
 }
 

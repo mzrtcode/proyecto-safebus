@@ -7,12 +7,13 @@ import { formatearFecha } from "../api/general";
 import Acciones from "../components/Acciones";
 import useToast from "../hooks/useToast";
 import { useEffect, useState } from "react";
+import styles from './propietarios.module.css'
 
 const Propietarios = () => {
 
   const { id } = useParams();
 
-  const { register, handleSubmit, setValue, reset , formState: {
+  const { register, handleSubmit, setValue, reset, formState: {
     errors,
   } } = useForm<PropietarioRegistrar>();
   const onSubmit = async (data: PropietarioRegistrar) => {
@@ -30,7 +31,7 @@ const Propietarios = () => {
         if (respuesta) {
           actualizarPropietarios()
           showToast(`Conductor actualizada`, 'success', 'bottom-center');
-        }else{
+        } else {
           showToast('Error al actualizar el conductor', 'error', 'bottom-center');
         }
       }
@@ -45,8 +46,8 @@ const Propietarios = () => {
   const [propietarios, setPropietarios] = useState<PropietarioTypes[]>(propietariosData)
 
   const actualizarPropietarios = async () => {
-      const cargarNuevasRutas = await propietariosLoader();
-      setPropietarios(cargarNuevasRutas)
+    const cargarNuevasRutas = await propietariosLoader();
+    setPropietarios(cargarNuevasRutas)
   }
 
   const eliminar = async (id: number): Promise<void> => {
@@ -74,7 +75,7 @@ const Propietarios = () => {
         setValue('direccion', propietarioEditar.direccion)
       }
 
-    }else reset()
+    } else reset()
 
   }, [id])
 
@@ -130,101 +131,132 @@ const Propietarios = () => {
   ];
   return (
     <Card>
-      <header>Registros 🙎🏻‍♂️</header>
-      {
-        id &&
-        <div className="buttons">
-          <button className="save-button">
-            <span className="button-text"><Link to="/registros/propietarios">Nuevo Propietario </Link></span>
+      <header className={styles.header}>Registros 🙎🏻‍♂️</header>
+      {id && (
+        <div className={styles.buttons}>
+          <button className={styles["save-button"]}>
+            <span className={styles["button-text"]}><Link to="/registros/propietarios">Nuevo Propietario</Link></span>
             <i className='bx bx-plus-circle'></i>
           </button>
         </div>
-      }
+      )}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="details personal">
-          <span className="title">Propietarios</span>
-
-          <div className="fields">
-            <div className="input-fields">
+        <div className={styles.details}>
+          <span className={styles.title}>Propietarios</span>
+          <div className={styles.fields}>
+            <div className={styles["input-fields"]}>
               <label htmlFor="nombres">Nombres</label>
-              <input type="text" id='nombres' placeholder='Ingrese sus nombres' {...register('nombres', {
-                required: true,
-              })} />
-              {errors.nombres && <span className="input-error">Este campo es requerido</span>}
+              <input
+                type="text"
+                id="nombres"
+                placeholder="Ingrese sus nombres"
+                {...register('nombres', {
+                  required: true,
+                })}
+              />
+              {errors.nombres && <span className={styles["input-error"]}>Este campo es requerido</span>}
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="apellidos">Apellidos</label>
-              <input type="text" id='apellidos' placeholder='Ingrese sus apellidos' {...register('apellidos', {
-                required: true,
-              })} />
-              {errors.apellidos && <span className="input-error">Este campo es requerido</span>}
+              <input
+                type="text"
+                id="apellidos"
+                placeholder="Ingrese sus apellidos"
+                {...register('apellidos', {
+                  required: true,
+                })}
+              />
+              {errors.apellidos && <span className={styles["input-error"]}>Este campo es requerido</span>}
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="correo">Correo</label>
-              <input type="email" id='correo' placeholder='Ejemplo: usuario@usuario.com' {...register('correo', {
-                required: true,
-              })} />
-              {errors.correo && <span className="input-error">Este campo es requerido</span>}
+              <input
+                type="email"
+                id="correo"
+                placeholder="Ejemplo: usuario@usuario.com"
+                {...register('correo', {
+                  required: true,
+                })}
+              />
+              {errors.correo && <span className={styles["input-error"]}>Este campo es requerido</span>}
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="tipo_identificacion">Tipo de identificacion:</label>
-
-              <select id="tipo_identificacion" {...register('tipo_identificacion', {
-                required: true,
-              })} >
+              <select
+                id="tipo_identificacion"
+                {...register('tipo_identificacion', {
+                  required: true,
+                })}
+              >
                 <option value="">Seleccionar</option>
                 <option value="C.C.">C.C.</option>
                 <option value="T.I.">T.I.</option>
                 <option value="C.E.">C.E.</option>
                 <option value="Pasp.">Pasp.</option>
               </select>
-
-              {errors.tipo_identificacion && <span className="input-error">Este campo es requerido</span>}
+              {errors.tipo_identificacion && <span className={styles["input-error"]}>Este campo es requerido</span>}
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="numero_identificacion">Número de Identificación</label>
-              <input type="number" id='numero_identificacion' placeholder='Ingrese el número de identificación' {...register('numero_identificacion', {
-                required: true,
-              })} />
-              {errors.numero_identificacion && <span className="input-error">Este campo es requerido</span>}
+              <input
+                type="number"
+                id="numero_identificacion"
+                placeholder="Ingrese el número de identificación"
+                {...register('numero_identificacion', {
+                  required: true,
+                })}
+              />
+              {errors.numero_identificacion && <span className={styles["input-error"]}>Este campo es requerido</span>}
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="celular">Celular</label>
-              <input type="text" id='celular' placeholder='Ingrese su número de celular' {...register('celular', {
-                required: true,
-              })} />
-              {errors.celular && <span className="input-error">Este campo es requerido</span>}
+              <input
+                type="text"
+                id="celular"
+                placeholder="Ingrese su número de celular"
+                {...register('celular', {
+                  required: true,
+                })}
+              />
+              {errors.celular && <span className={styles["input-error"]}>Este campo es requerido</span>}
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="fecha_nacimiento">Fecha de Nacimiento</label>
-              <input type="date" id='fecha_nacimiento' placeholder='Ingrese su fecha de nacimiento' {...register('fecha_nacimiento', {
-                required: true,
-              })} />
-              {errors.fecha_nacimiento && <span className="input-error">Este campo es requerido</span>}
+              <input
+                type="date"
+                id="fecha_nacimiento"
+                placeholder="Ingrese su fecha de nacimiento"
+                {...register('fecha_nacimiento', {
+                  required: true,
+                })}
+              />
+              {errors.fecha_nacimiento && <span className={styles["input-error"]}>Este campo es requerido</span>}
             </div>
 
-            <div className="input-fields">
+            <div className={styles["input-fields"]}>
               <label htmlFor="direccion">Dirección</label>
-              <input type="text" id='direccion' placeholder='Ingrese su dirección' {...register('direccion', {
-                required: true,
-              })} />
-              {errors.direccion && <span className="input-error">Este campo es requerido</span>}
+              <input
+                type="text"
+                id="direccion"
+                placeholder="Ingrese su dirección"
+                {...register('direccion', {
+                  required: true,
+                })}
+              />
+              {errors.direccion && <span className={styles["input-error"]}>Este campo es requerido</span>}
             </div>
-
-
           </div>
         </div>
 
-
-        <div className="buttons">
-          <button className="save-button">
-            <span className="button-text">Guardar</span>
+        <div className={styles.buttons}>
+          <button className={styles["save-button"]}>
+            <span className={styles["button-text"]}>Guardar</span>
             <i className='bx bx-plus-circle'></i>
           </button>
         </div>
@@ -232,6 +264,7 @@ const Propietarios = () => {
 
       <Table datos={propietarios} columnas={columnas} titulo="Lista de propietarios registrados" />
     </Card>
+
   )
 }
 

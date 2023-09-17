@@ -104,7 +104,6 @@ form .fields .input-fields{
     color: #fff;
     border-radius: 5px;
     /* margin: 25px 0; */
-    background-color: #4070f4;
     transition: all 0.3s linear;
     cursor: pointer;
 }
@@ -120,10 +119,13 @@ button i{
 
 .buttons{
     display: flex;
-    justify-content: flex-end;
-    gap: 16px;
-    margin-top: 20px;
-  }
+    justify-content: end;
+}
+
+.save-button{
+    display: flex;
+}
+
 
 .input-error{
     color: #2031ca;

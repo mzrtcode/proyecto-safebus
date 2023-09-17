@@ -213,8 +213,8 @@ const Rutas = () => {
       <header>Registros 🗺️</header>
       {
         id &&
-        <div className="buttons">
-          <button className="save-button">
+        <div className={styles.buttons}>
+           <button className={styles["save-button"]}>
             <span className="button-text"><Link to="/registros/rutas">Nueva Ruta </Link></span>
             <i className='bx bx-plus-circle'></i>
           </button>
@@ -293,7 +293,7 @@ const Rutas = () => {
           </div>
         </div>
 
-        <div className="buttons">
+        <div className={styles.buttons}>
           <button className={styles['save-button']}>
             <span className={styles['button-text']}>Guardar</span>
             <i className='bx bx-plus-circle'></i>

@@ -123,8 +123,7 @@
 
 .form .button input{
     border: none;
-    background-color: #4070f4;
-    color: #fff;
+    color: #ffffff;
     letter-spacing: 1px;
     font-size: 16px;
     font-weight: 500;
@@ -144,6 +143,10 @@
     padding: 8px;
     color: #721c24;
     justify-content: center;
+}
+
+.button input{
+    background-color: #3a6bf1;
 }
 
 .button input:hover{

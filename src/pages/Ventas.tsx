@@ -1,5 +1,4 @@
 import Card from '../components/Card'
-import './ventas.css'
 import styles from './ventas.module.css'
 import InputSpinner from '../components/InputSpinner'
 import DateTimeComponent from '../components/DateTimeComponent'
@@ -69,7 +68,7 @@ const Ventas = () => {
 
 
 
-    const { planilla: planillaEstado, empresa : empresaEstado, asignarEmpresa } = useAuth();
+    const { planilla: planillaEstado, empresa: empresaEstado, asignarEmpresa } = useAuth();
     const [tiquetesVendidos, setTiquetesVendidos] = useState<TiqueteInfo>();
 
     const obtenerTiquetesVendidos = async (id_ruta: number) => {
@@ -128,7 +127,7 @@ const Ventas = () => {
     const obtenerDatosEmpresa = async () => {
         const datos = await obtenerEmpresa();
 
-        if(datos !== null){
+        if (datos !== null) {
             asignarEmpresa(datos);
         }
     }
@@ -231,9 +230,9 @@ const Ventas = () => {
         content: () => tiqueteRef.current,
     });
 
-    
+
     const generarDatosTiquete = () => {
-        
+
         const datosTiquete = {
             razon_social: empresaEstado.razon_social,
             nit: empresaEstado.nit,
@@ -259,167 +258,120 @@ const Ventas = () => {
         }
         return datosTiquete;
     }
-    
+
     const [datosTiquete, setDatosTiquete] = useState(generarDatosTiquete());
 
     return (
-        <>
-            <Card>
-                <header>Ventas</header>
-                <div className="contenedor">
-                    <div className="derecha">
-
-                        <div className="main">
-
-                            <div className="main-left">
-                                <div className="input-fields">
-                                    <label htmlFor="agencia">Agencia</label>
-                                    <input
-                                        type="text"
-                                        id="agencia"
-                                        placeholder="Nombre de la agencia"
-                                        disabled
-                                        {...register("agencia")}
-                                    />
-
-                                </div>
-
-                                <div className="input-fields">
-                                    <label htmlFor="ruta">Ruta</label>
-                                    <input
-                                        type="text"
-                                        id="ruta"
-                                        placeholder="Nombre de la ruta"
-                                        disabled
-                                        {...register("ruta")}
-
-                                    />
-
-                                </div>
-
-                                <div className="input-fields">
-                                    <label htmlFor="vehiculo">Vehiculo</label>
-                                    <input
-                                        type="text"
-                                        id="vehiculo"
-                                        placeholder="Codigo del vehiculo"
-                                        disabled
-                                        {...register("vehiculo")}
-
-                                    />
-
-                                </div>
-
-
-
-
-                                <div className="input-fields">
-                                    <label htmlFor="total">TOTAL</label>
-                                    <input
-                                        type="number"
-                                        id="total"
-                                        placeholder="Valor total"
-                                        disabled
-                                        {...register("total")}
-
-                                    />
-
-                                </div>
+        <Card>
+            <header className={styles.header}>Ventas</header>
+            <div className={styles.contenedor}>
+                <div className={styles.derecha}>
+                    <div className={styles.main}>
+                        <div className={styles["main-left"]}>
+                            <div className={styles["input-fields"]}>
+                                <label htmlFor="agencia">Agencia</label>
+                                <input
+                                    type="text"
+                                    id="agencia"
+                                    placeholder="Nombre de la agencia"
+                                    disabled
+                                    {...register("agencia")}
+                                />
                             </div>
-
-
-                            <div className="main-right">
-                                <div className="input-fields">
-
-                                    <div className="grupo">
-
-                                        <div className="hora">
-                                            <label className='hora-titulo' htmlFor="inicioRuta">Hora</label>
-                                            <DateTimeComponent type="time" />
-                                        </div>
-                                        <div className="fecha">
-                                            <label className='fecha-titulo' htmlFor="inicioRuta">Fecha</label>
-                                            <DateTimeComponent type="date" />
-
-                                        </div>
-                                    </div>
-
-
-
-                                </div>
-
-                                <div className="input-fields">
-                                    <label htmlFor="conductor">Conductor</label>
-                                    <input
-                                        type="text"
-                                        id="conductor"
-                                        placeholder="Nombre del conductor"
-                                        disabled
-                                        {...register("conductor")}
-
-                                    />
-
-                                </div>
-
-                                <div className="input-fields">
-                                    <label htmlFor="puestos">P Ocupados / Disponibles</label>
-                                    <input
-                                        type="text"
-                                        id="inicioRuta"
-                                        placeholder="Puestos Ocupados"
-                                        disabled
-                                        {...register("puestos")}
-
-                                    />
-
-                                </div>
-
-                                <div className="input-fields">
-                                    <label htmlFor="valorTiquete">Valor tiquete</label>
-                                    <input
-                                        type="number"
-                                        id="valorTiquete"
-                                        placeholder="Valor tiquete"
-                                        {...register("valorTiquete")}
-                                    />
-
-                                </div>
-
-                                <label htmlFor="">Cantidad puestos</label>
-
-                                <InputSpinner onChange={actualizarCantidadPuestos} maxCounter={detallesVenta.puestosVacios} />
-
-
-
-                                <div className={styles.contenedor_botones}>
-                                    <button className={`${styles.btn} ${detallesVenta.estaDespachado || detallesVenta.estaLleno ? styles.desactivado : ''}`} onClick={() => { crearTiquete(planillaEstado.id_planilla, detallesVenta.cantidadTiquetes) }}>Crear tiquete</button>
-                                    <button className={`${styles.btn} ${detallesVenta.estaDespachado ? styles.desactivado : ''}`} onClick={() => { despacharVehiculo(planillaEstado.id_planilla) }}>Despachar</button>
-                                    <button className={`${styles.btn}`} onClick={() => { anularPlanilla(planillaEstado.id_planilla) }}>Anular Planilla</button>
-
-                                </div>
-
+                            <div className={styles["input-fields"]}>
+                                <label htmlFor="ruta">Ruta</label>
+                                <input
+                                    type="text"
+                                    id="ruta"
+                                    placeholder="Nombre de la ruta"
+                                    disabled
+                                    {...register("ruta")}
+                                />
+                            </div>
+                            <div className={styles["input-fields"]}>
+                                <label htmlFor="vehiculo">Vehiculo</label>
+                                <input
+                                    type="text"
+                                    id="vehiculo"
+                                    placeholder="Codigo del vehiculo"
+                                    disabled
+                                    {...register("vehiculo")}
+                                />
+                            </div>
+                            <div className={styles["input-fields"]}>
+                                <label htmlFor="total">TOTAL</label>
+                                <input
+                                    type="number"
+                                    id="total"
+                                    placeholder="Valor total"
+                                    disabled
+                                    {...register("total")}
+                                />
                             </div>
                         </div>
-                        <Table columnas={columnas} datos={tiquetesVendidos} titulo='Tiquetes Vendidos' />
-
+                        <div className={styles["main-right"]}>
+                            <div className={styles["input-fields"]}>
+                                <div className={styles.grupo}>
+                                    <div className={styles.hora}>
+                                        <label className={styles["hora-titulo"]} htmlFor="inicioRuta">Hora</label>
+                                        <DateTimeComponent type="time" />
+                                    </div>
+                                    <div className={styles.fecha}>
+                                        <label className={styles["fecha-titulo"]} htmlFor="inicioRuta">Fecha</label>
+                                        <DateTimeComponent type="date" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles["input-fields"]}>
+                                <label htmlFor="conductor">Conductor</label>
+                                <input
+                                    type="text"
+                                    id="conductor"
+                                    placeholder="Nombre del conductor"
+                                    disabled
+                                    {...register("conductor")}
+                                />
+                            </div>
+                            <div className={styles["input-fields"]}>
+                                <label htmlFor="puestos">P Ocupados / Disponibles</label>
+                                <input
+                                    type="text"
+                                    id="inicioRuta"
+                                    placeholder="Puestos Ocupados"
+                                    disabled
+                                    {...register("puestos")}
+                                />
+                            </div>
+                            <div className={styles["input-fields"]}>
+                                <label htmlFor="valorTiquete">Valor tiquete</label>
+                                <input
+                                    type="number"
+                                    id="valorTiquete"
+                                    placeholder="Valor tiquete"
+                                    {...register("valorTiquete")}
+                                />
+                            </div>
+                            <label htmlFor="">Cantidad puestos</label>
+                            <InputSpinner onChange={actualizarCantidadPuestos} maxCounter={detallesVenta.puestosVacios} />
+                            <div className={styles.contenedor_botones}>
+                                <button className={`${styles.btn} ${detallesVenta.estaDespachado || detallesVenta.estaLleno ? styles.desactivado : ''}`} onClick={() => { crearTiquete(planillaEstado.id_planilla, detallesVenta.cantidadTiquetes) }}>Crear tiquete</button>
+                                <button className={`${styles.btn} ${detallesVenta.estaDespachado ? styles.desactivado : ''}`} onClick={() => { despacharVehiculo(planillaEstado.id_planilla) }}>Despachar</button>
+                                <button className={styles.btn} onClick={() => { anularPlanilla(planillaEstado.id_planilla) }}>Anular Planilla</button>
+                            </div>
+                        </div>
                     </div>
-                    <div className="izquierda">
-
-                        <ContenedorPlanillas planillas={planillas} />
-
-
-                    </div>
-
-
-
-
+                    <Table columnas={columnas} datos={tiquetesVendidos} titulo='Tiquetes Vendidos' />
                 </div>
-                <div ref={tiqueteRef} >
-                    <Tiquete datos={ datosTiquete } />
+                <div className={styles.izquierda}>
+                    <ContenedorPlanillas planillas={planillas} />
                 </div>
+            </div>
+            <div ref={tiqueteRef}>
+                <Tiquete datos={datosTiquete} />
+            </div>
+        </Card>
 
-            </Card>
-        </>
+
     )
 }
 

@@ -83,7 +83,6 @@ form .fields .input-fields{
     color: #fff;
     border-radius: 5px;
     /* margin: 25px 0; */
-    background-color: #4070f4;
     transition: all 0.3s linear;
     cursor: pointer;
 }
@@ -118,6 +117,16 @@ form button i{
     height: 42px;
     margin: 8px 0;
 }
+
+.buttons{
+    display: flex;
+    justify-content: end;
+}
+
+.save-button{
+    display: flex;
+}
+
 
 @media screen and (max-width: 480px) {
     form .fields {

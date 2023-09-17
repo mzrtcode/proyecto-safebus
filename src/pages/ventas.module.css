@@ -1,26 +1,230 @@
-.btn{
-    display: inline-block;
-    align-items: center;
-    justify-content: center;
-    height: 45px;
-    max-width: 150px;
-    width: 100%;
-    border: none;
-    outline: none;
-    color: #fff;
-    border-radius: 5px;
-    /* margin: 25px 0; */
-    background-color: #4070f4;
-    transition: all 0.3s linear;
-    cursor: pointer;
+.contenedor {
+  display: grid;
+  grid-template-columns: 368px 1fr;
+  grid-template-areas: "izquierda derecha";
+  margin-top: 16px;
+}
+
+.izquierda,
+.derecha {
+  border: 1px solid #ccc;
+  
+}
+  .izquierda {
+    grid-area: izquierda;
+  }
+  
+  .derecha {
+    grid-area: derecha;
+    padding: 12px;
   }
 
+
+header{
+  position: relative;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+header::before{
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 3px;
+  width: 27px;
+  background-color: #4070f4;
+}
+
+form .details{
+  margin-top: 30px;
+}
+
+form .title{
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 6px 0;
+  color: #333;
+}
+form{
+  position: relative;
+  margin-top: 16px;
+  /* min-height: 490px; */
+}
+
+
+form .fields{
+ display: grid;
+ gap: 15px;
+ grid-template-columns: 1fr 1fr 1fr;
+
+}
+
+
+form .fields .input-fields{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin: 4px 0;
+}
+
+.input-fields label{
+  font-size: 12px;
+  font-weight: 500;
+  color: #2e2e2e;
+}
+.input-fields input{
+  outline: none;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 100%;
+  color: #333;
+  font-weight: 400;
+  border: 1px solid #E2E2E5;
+  padding:  0 15px;
+  height: 42px;
+  margin: 8px 0;
+}
+
+.input-fields input:is(:focus, :valid){
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.13);
+}
+
+button{
+  display: inline-block;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  max-width: 200px;
+  width: 100%;
+  border: none;
+  outline: none;
+  color: #fff;
+  border-radius: 5px;
+  /* margin: 25px 0; */
+  background-color: #4070f4;
+  transition: all 0.3s linear;
+  cursor: pointer;
+}
+
+
+button:hover{
+  background-color: #265df2;
+
+}
+
+button i{
+  margin: 0 6px ;
+}
+
+.input-error{
+  color: #2031ca;
+  font-size: 12px;
+}
+
+.buttons{
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.titulos{
+  display: flex;
+  margin-top: 20px;
+  justify-content: space-between;
+}
+
+.fecha-titulo{
+  display: flex;
+  margin-bottom: 22px;
+  justify-content: space-between;
+}
+
+.hora-titulo{
+  display: flex;
+  margin-bottom: 16px;
+  justify-content: space-between;
+}
+
+.grupo{
+  display: flex;
+  justify-content: space-between;
+}
+.hora, .fecha{
+  margin-top: 6px;
+  margin-bottom: 12px;
+}
+
+.button-ventas{
+  padding: 4px;
+  width: 100px;
+  height: 100px;
+}
+
+@media screen and (max-width: 480px) {
+  form .fields {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: 1fr;
+    grid-auto-flow: row;
+  }
+}
+
+
+.main{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "left right";
+  gap: 16px;
+}
+
+.main .left{
+  grid-area: left;
+  padding: 10px;
+}
+
+.main .right{
+  grid-area: right;
+  padding: 10px;
+}
+
+
+
+.btn{
+  display: inline-block;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  max-width: 150px;
+  width: 100%;
+  border: none;
+  outline: none;
+  color: #fff;
+  border-radius: 5px;
+  /* margin: 25px 0; */
+  background-color: #4070f4;
+  transition: all 0.3s linear;
+  cursor: pointer;
+}
+
 .desactivado{
-    background-color: #cfcfcf;
-    transition: none;
+  background-color: #cfcfcf;
+  transition: none;
 }
 
 .contenedor_botones{
-  display: flex;
-  justify-content: space-between;
+display: flex;
+justify-content: space-between;
 }
