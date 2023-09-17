@@ -15,7 +15,7 @@ import Vehiculos from './pages/Vehiculos';
 import Agencias from './pages/Agencias';
 import Vendedores from './pages/Vendedores';
 import Ventas from './pages/Ventas';
-import Card from './components/Card';
+import CardContainer from './components/CardContainer';
 import LoginPage from './pages/LoginPage';
 import { AuthProvider } from './context/AuthContext';
 import { localidadesLoader } from './api/localidades';
@@ -30,6 +30,7 @@ import Administradores from './pages/Administradores';
 import { administradoresLoader } from './api/administradores';
 import { planillajeLoader } from './api/planillaje';
 import path from 'path';
+import Estadisticas from './pages/Estadisticas';
 
 
 const router = createBrowserRouter([
@@ -37,7 +38,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <Dashboard/> ,
     children: [
-      {path: '/', element: <Card><h2>🚧 Dashboard en proceso 🚧 <br />🦆🦆🦆🦆🦆🦆🦆🦆🦆🦆🦆🦆</h2></Card> },
+      {path: '/', element:  <Estadisticas/> },
      
     ]
   },
@@ -85,7 +86,7 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard/>,
-    children: [{path: '', element:  <Card><h2>Dashboard ✨✨✨</h2></Card>}]
+    children: [{path: '', element:  <Estadisticas/>}]
   }
 
  

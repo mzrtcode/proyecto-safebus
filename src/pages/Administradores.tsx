@@ -1,4 +1,4 @@
-import Card from '../components/Card'
+import CardContainer from '../components/CardContainer'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
 import { administradorTypes, actualizarAdministrador, desactivarAdministrador, resetearClave, administradorEliminar, administradoresLoader, administradorRegistrar } from '../api/administradores';
@@ -160,7 +160,7 @@ const Administradores = () => {
     }
   ];
   return (
-    <Card>
+    <CardContainer>
       <header className={styles.header}>Registros 🛒</header>
       {id && (
         <div className={styles.buttons}>
@@ -318,7 +318,7 @@ const Administradores = () => {
       </form>
 
       <Table datos={administradores} columnas={columnas} titulo='Lista de administradores registrados' />
-    </Card>
+    </CardContainer>
 
   )
 }

@@ -1,4 +1,4 @@
-import Card from '../components/Card'
+import CardContainer from '../components/CardContainer'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
 import { Link, useLoaderData, useParams } from 'react-router-dom';
@@ -119,7 +119,7 @@ const Agencias = () => {
     }
   ];
   return (
-    <Card>
+    <CardContainer>
       <header className={styles.header}>Registros 🏦</header>
       {id && (
         <div className={styles.buttons}>
@@ -186,7 +186,7 @@ const Agencias = () => {
       </form>
 
       <Table datos={agencias} columnas={columnas} titulo='Lista de agencias registradas' />
-    </Card>
+    </CardContainer>
 
   )
 }

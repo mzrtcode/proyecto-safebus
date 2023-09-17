@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
-import Card from "../components/Card";
+import CardContainer from "../components/CardContainer";
 import { Link, useLoaderData, useParams } from "react-router-dom";
 import { PropietarioRegistrar, PropietarioTypes, actualizarPropietario, propietarioEliminar, propietarioRegistrar, propietariosLoader } from "../api/propietarios";
 import { formatearFecha } from "../api/general";
@@ -130,7 +130,7 @@ const Propietarios = () => {
     }
   ];
   return (
-    <Card>
+    <CardContainer>
       <header className={styles.header}>Registros 🙎🏻‍♂️</header>
       {id && (
         <div className={styles.buttons}>
@@ -263,7 +263,7 @@ const Propietarios = () => {
       </form>
 
       <Table datos={propietarios} columnas={columnas} titulo="Lista de propietarios registrados" />
-    </Card>
+    </CardContainer>
 
   )
 }

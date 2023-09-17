@@ -1,4 +1,4 @@
-import Card from '../components/Card'
+import CardContainer from '../components/CardContainer'
 import styles from './ventas.module.css'
 import InputSpinner from '../components/InputSpinner'
 import DateTimeComponent from '../components/DateTimeComponent'
@@ -262,7 +262,7 @@ const Ventas = () => {
     const [datosTiquete, setDatosTiquete] = useState(generarDatosTiquete());
 
     return (
-        <Card>
+        <CardContainer>
             <header className={styles.header}>Ventas</header>
             <div className={styles.contenedor}>
                 <div className={styles.derecha}>
@@ -369,7 +369,7 @@ const Ventas = () => {
             <div ref={tiqueteRef}>
                 <Tiquete datos={datosTiquete} />
             </div>
-        </Card>
+        </CardContainer>
 
 
     )

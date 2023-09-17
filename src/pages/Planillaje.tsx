@@ -1,5 +1,5 @@
 import { Controller, useForm } from "react-hook-form";
-import Card from "../components/Card"
+import CardContainer from "../components/CardContainer"
 import { PlanillaRegistrar, PlanillajeTypes, despacharPlanilla, planillaRegistrar } from "../api/planillaje";
 import { useEffect, useState } from "react";
 import { AgenciaTypes, agenciasLoader, obtenerAgencia } from "../api/agencias";
@@ -133,7 +133,7 @@ function Planillaje() {
   };
 
   return (
-    <Card>
+    <CardContainer>
       <header>Planillaje</header>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="details personal">
@@ -238,7 +238,7 @@ function Planillaje() {
       </form>
 
 
-    </Card>
+    </CardContainer>
   )
 }
 export default Planillaje

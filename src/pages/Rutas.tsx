@@ -1,4 +1,4 @@
-import Card from '../components/Card'
+import CardContainer from '../components/CardContainer'
 import { Controller, set, useForm } from "react-hook-form";
 import styles from './rutas.module.css'
 import Table from '../components/Table';
@@ -209,7 +209,7 @@ const Rutas = () => {
 
 
   return (
-    <Card>
+    <CardContainer>
       <header>Registros 🗺️</header>
       {
         id &&
@@ -305,7 +305,7 @@ const Rutas = () => {
       </form>
 
       <Table datos={rutas} titulo="Lista de rutas registradas" columnas={columnas} />
-    </Card>
+    </CardContainer>
   )
 }
 

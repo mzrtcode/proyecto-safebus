@@ -1,7 +1,11 @@
-.card-container{
-    min-height: 100%;
+.Card{
+    display: flex;
+    justify-content: space-between;
     background-color: #fff;
-    padding: 30px;
+    margin: 0 auto;
+    padding: 16px;
+    border-radius: 10px;
+    width: 100%;
     font-family: 'Poppins', sans-serif;
 
 }

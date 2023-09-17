@@ -1,15 +1,15 @@
-import styles from './card.module.css';
+import styles from './card.module.css'
 
 interface CardProps {
-  children: React.ReactNode;
-}
+    children: React.ReactNode;
+  }
 
 const Card = ({ children }: CardProps) => {
   return (
-    <div className={styles['card-container']}>
-      {children}
+    <div className={styles.Card}>
+        {children}
     </div>
-  );
+  )
 }
 
-export default Card;
+export default Card

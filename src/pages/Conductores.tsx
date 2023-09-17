@@ -1,4 +1,4 @@
-import Card from '../components/Card'
+import CardContainer from '../components/CardContainer'
 import styles from './conductores.module.css'
 
 
@@ -135,7 +135,7 @@ const Conductores = () => {
     }
   ];
   return (
-    <Card>
+    <CardContainer>
       <header className={styles.header}>Registros 🚗</header>
       {id && (
         <div className={styles.buttons}>
@@ -268,7 +268,7 @@ const Conductores = () => {
       </form>
 
       <Table datos={conductores} columnas={columnas} titulo='Lista de conductores registrados' />
-    </Card>
+    </CardContainer>
 
   )
 }

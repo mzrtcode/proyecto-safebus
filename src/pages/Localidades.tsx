@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import styles from './localidades.module.css'
-import Card from '../components/Card';
+import CardContainer from '../components/CardContainer';
 import Table from '../components/Table';
 import useToast from '../hooks/useToast';
 import { Link, useLoaderData, useParams } from "react-router-dom";
@@ -108,7 +108,7 @@ const Localidades = () => {
 
 
     return (
-        <Card>
+        <CardContainer>
             <header>Registros 📍</header>
             {
                 id &&
@@ -171,7 +171,7 @@ const Localidades = () => {
 
             <Table datos={localidades} titulo="Lista de localidades registradas" columnas={columnas} />
 
-        </Card>
+        </CardContainer>
     )
 }
 

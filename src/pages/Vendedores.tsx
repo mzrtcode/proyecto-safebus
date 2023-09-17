@@ -1,4 +1,4 @@
-import Card from '../components/Card'
+import CardContainer from '../components/CardContainer'
 import { useForm } from "react-hook-form";
 import Table from '../components/Table';
 import { VendedorTypes, actualizarVendedor, desactivarVendedor, resetearClave, vendedorEliminar, vendedoresLoader, vendedorRegistrar } from '../api/vendedores';
@@ -162,7 +162,7 @@ const Vendedores = () => {
     }
   ];
   return (
-    <Card>
+    <CardContainer>
       <header className={styles.header}>Registros 🛒</header>
       {id && (
         <div className={styles.buttons}>
@@ -320,7 +320,7 @@ const Vendedores = () => {
       </form>
 
       <Table datos={vendedores} columnas={columnas} titulo='Lista de vendeores registrados' />
-    </Card>
+    </CardContainer>
 
   )
 }
