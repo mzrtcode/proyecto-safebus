@@ -1,0 +1,41 @@
+.titulo {
+    font-size: 16px;
+}
+
+.valor {
+    font-weight: 500;
+    font-size: 20px;
+
+}
+
+.texto-rojo{
+    color: #FF5722;
+}
+
+.texto-verde{
+    color: #00d25b;
+}
+
+.texto-azul{
+    color: #2196F3 ;
+}
+
+.texto-morado{
+    color: #8f5fe8;
+}
+
+.wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 90%;
+    margin: 0 auto;
+}
+
+
+section {
+    display: flex;
+    flex-direction: column;
+   /*  background-color: bisque; */
+    text-align: center;
+}
