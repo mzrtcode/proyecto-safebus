@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styles from './acciones.module.css'
 
 interface AccionesProps {
@@ -9,12 +9,12 @@ interface AccionesProps {
 
 
 const Acciones: React.FC<AccionesProps> = ({ editarLink, eliminar, id }) => {
-
+  const navigate = useNavigate();
 
   return (
     <div className={styles.acciones}>
       <span className={styles.editar}>
-        <Link to={editarLink}> <i className='bx bxs-pencil' /> </Link>
+      <i className='bx bxs-pencil' onClick={()=> navigate(editarLink)} /> 
       </span>
       <span className={styles.eliminar} onClick={()=>{eliminar(id)}}>
         <i className='bx bx-minus-circle' />
