@@ -122,7 +122,9 @@ function Planillaje() {
     obtenerConductores();
     obtenerVehiculos();
     obtenerAgencias();
+    setDatosPlanilla(generarDatosPlanilla());
   }, [])
+
 
 
   const customStyles = {
@@ -134,12 +136,13 @@ function Planillaje() {
     })
   };
 
+
   const { planilla: planillaEstado, empresa: empresaEstado, asignarEmpresa } = useAuth();
 
   const generarDatosPlanilla = () => {
 
     const datosTiquete = {
-      razon_social: "ff",
+      razon_social: empresaEstado.razon_social,
       nit: empresaEstado.nit,
       telefono: empresaEstado.telefono,
       direccion: empresaEstado.direccion,
@@ -163,7 +166,7 @@ function Planillaje() {
     }
     return datosTiquete;
   }
-  const [datosTiquete, setDatosTiquete] = useState(generarDatosPlanilla());
+  const [datosPlanilla, setDatosPlanilla] = useState(generarDatosPlanilla());
 
 
   return (
@@ -265,6 +268,9 @@ function Planillaje() {
           </button>
         </div>
       </form>
+      <div>
+        <Planilla datos={datosPlanilla} />
+      </div>
     </CardContainer>
 
   )
