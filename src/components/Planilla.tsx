@@ -1,6 +1,6 @@
-import styles from './tiquete.module.css'
+import styles from './planilla.module.css'
 
-export type TiqueteProps = {
+export type PlanillaProps = {
     datos: {
     razon_social: string
     nit: string
@@ -26,7 +26,7 @@ export type TiqueteProps = {
     }
 }
 
-const Planilla: React.FC<TiqueteProps> = ({ datos }) => {
+const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
 
     const { razon_social,
          nit,

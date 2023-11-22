@@ -1,69 +1,32 @@
-.planilla{
- 
-
-    width: 100%;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: 0.3s;
-    padding-left: 8px;
+@page {
+  size: 320px 540px; /* Establece el tamaño de página en 320 x 566 píxeles */
+  margin: 0; /* Define los márgenes como 0 para aprovechar todo el espacio */
 }
 
-.planilla:hover{
-  background: linear-gradient(to right, #9418db 8px, transparent 8px);
+.texto-centrado{
+  text-align: center;
+}
+.tiquete {
+  font-family: 'Lucida Console', monospace;
+  padding: 12px;
+  width: 3.36in;
+  height: 5.60in;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0;
+  box-sizing: border-box;
+  line-height: 1.2;
+  font-size: 9pt;
 }
 
 
-.planilla-info .ruta{
-    width: 100%;
-    font-weight: 600;
-    font-size: 15px;
-    display: block;
+.cabecera{
+/*   background-color: #f0e68c; */
+  text-align: center;
 }
 
-.planilla-info .vehiculo{
-    
-    width: 100%;
-    display: block;
-    font-size: 14px;
-    color: #979797;
-}
-
-.planilla.seleccionado{
-  background: linear-gradient(to right, #9418db 8px, #F5F6F8 8px);
-}
-
-.planilla .planilla_estado{
-    width: 100px;
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-    font-size: 14px;
-}
-
-.planilla-info{
-  padding: 10px;
-}
-
-.estado.despachado{
-  padding: 2px;
-  background-color: #5cb85c;
-  border-radius: 10px;
-  color: #fff;
-  font-size: 80%;
-  font-weight: 700;
-  padding: 0.2em 0.6em 0.3em;
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-}
-
-.estado.pendiente{
-  padding: 2px;
-  background-color: #9418db;
-  border-radius: 10px;
-  color: #fff;
-  font-size: 80%;
-  font-weight: 700;
-  padding: 0.2em 0.6em 0.3em;
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+span{
+  display: flex;
+  justify-content: space-between;
 }
