@@ -15,7 +15,6 @@ import Vehiculos from './pages/Vehiculos';
 import Agencias from './pages/Agencias';
 import Vendedores from './pages/Vendedores';
 import Ventas from './pages/Ventas';
-import CardContainer from './components/CardContainer';
 import LoginPage from './pages/LoginPage';
 import { AuthProvider } from './context/AuthContext';
 import { localidadesLoader } from './api/localidades';
@@ -82,12 +81,6 @@ const router = createBrowserRouter([
     path: "/login",
     element: <LoginPage/>
   },
-
-  {
-    path: "/dashboard",
-    element: <Dashboard/>,
-    children: [{path: '', element:  <Estadisticas/>}]
-  }
 
  
 ]);

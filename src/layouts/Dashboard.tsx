@@ -57,7 +57,7 @@ const Dashboard = () => {
         {
             name: "Dashboard",
             icon: "bx bx-grid-alt dashboard-icon",
-            sublinks: [{name: 'Dashboard', link: '/dashboard'}],
+            sublinks: [{name: 'Dashboard', link: '/'}],
             color: "blue",
             rol: ['administrador', 'vendedor'],
             handleArrowClick: null,

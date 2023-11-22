@@ -11,6 +11,8 @@ import Select, { StylesConfig } from 'react-select';
 import { Options } from "../api/general";
 import useToast from '../hooks/useToast';
 import { useAuth } from "../context/AuthContext";
+import Planilla from "../components/Planilla";
+import { obtenerFechaYHoraActual } from "../utils/utils";
 
 function Planillaje() {
 
@@ -84,7 +86,7 @@ function Planillaje() {
   }
 
   const onSubmit = async (data: PlanillaRegistrar) => {
-    try{
+    try {
       const idAgenciaValue = data.id_agencia?.value;
       const idRutaValue = data.id_ruta?.value;
       const idConductorValue = data.id_conductor?.value;
@@ -105,9 +107,9 @@ function Planillaje() {
       } else {
         showToast('Error al registrar la planilla', 'error', 'bottom-center');
       }
-      
 
-    }catch(e){
+
+    } catch (e) {
       console.log(e)
       showToast('Error al registrar la planilla', 'error', 'bottom-center');
     }
@@ -121,29 +123,60 @@ function Planillaje() {
     obtenerVehiculos();
     obtenerAgencias();
   }, [])
-  
+
 
   const customStyles = {
     control: base => ({
       ...base,
       height: '42px',
       border: '1px solid #aaa',
-     /*  zIndex: '9999' */
+      /*  zIndex: '9999' */
     })
   };
 
+  const { planilla: planillaEstado, empresa: empresaEstado, asignarEmpresa } = useAuth();
+
+  const generarDatosPlanilla = () => {
+
+    const datosTiquete = {
+      razon_social: "ff",
+      nit: empresaEstado.nit,
+      telefono: empresaEstado.telefono,
+      direccion: empresaEstado.direccion,
+      direccionAgencia: 'Calle Agencia 123',
+      fecha: 'Jun 09/2023',
+      numeroTiquete: '11111123',
+      agencia: '01 Popayan-Agencia',
+      despachador: planillaEstado.nombre_vendedor,
+      horaSalida: '19:24',
+      ruta: `${planillaEstado.inicio_ruta} - ${planillaEstado.fin_ruta}`,
+      tarifa: planillaEstado.precio_ruta,
+      vehiculoPlaca: planillaEstado.numero_placa_vehiculo,
+      vehiculoCodigo: planillaEstado.codigo_interno_vehiculo,
+      pasajes: 1,
+      total: 5000,
+      aseguradora: 'Sura',
+      numeroPoliza: '123456789',
+      fechaImpresion: obtenerFechaYHoraActual(),
+      mensaje: '* Gracias por su compra *',
+      webEmpresa: 'www.empresa.com'
+    }
+    return datosTiquete;
+  }
+  const [datosTiquete, setDatosTiquete] = useState(generarDatosPlanilla());
+
+
   return (
     <CardContainer>
-      <header>Planillaje</header>
+      <header className={styles.header}>Planillaje</header>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="details personal">
-          <span className="title">Agencias</span>
+        <div className={`${styles.details} ${styles.personal}`}>
+          <span className={styles.title}>Agencias</span>
 
-          <div className="fields">
+          <div className={styles.fields}>
 
-            <div className="input-fields">
-              <label htmlFor="id_ruta">Ruta</label>
-
+            <div className={styles['input-fields']}>
+              <label htmlFor="id_ruta" className={styles.label}>Ruta</label>
 
               <Controller
                 name="id_ruta"
@@ -151,7 +184,7 @@ function Planillaje() {
                 rules={{ required: true }} // Reglas de validación
                 render={({ field }) => (
                   <Select
-                    className={styles['select']}
+                    className={styles.select}
                     styles={customStyles}
                     isClearable={true}
                     options={rutas}
@@ -159,12 +192,11 @@ function Planillaje() {
                   />
                 )}
               />
-              {errors.id_ruta && <span className="input-error">Este campo es requerido</span>}
+              {errors.id_ruta && <span className={styles['input-error']}>Este campo es requerido</span>}
             </div>
 
-            <div className="input-fields">
-              <label htmlFor="id_conductor">Conductor</label>
-
+            <div className={styles['input-fields']}>
+              <label htmlFor="id_conductor" className={styles.label}>Conductor</label>
 
               <Controller
                 name="id_conductor"
@@ -172,7 +204,7 @@ function Planillaje() {
                 rules={{ required: true }} // Reglas de validación
                 render={({ field }) => (
                   <Select
-                    className={styles['select']}
+                    className={styles.select}
                     styles={customStyles}
                     isClearable={true}
                     options={conductores}
@@ -180,12 +212,11 @@ function Planillaje() {
                   />
                 )}
               />
-              {errors.id_ruta && <span className="input-error">Este campo es requerido</span>}
+              {errors.id_ruta && <span className={styles['input-error']}>Este campo es requerido</span>}
             </div>
 
-            <div className="input-fields">
-              <label htmlFor="id_vehiculo">Vehiculo</label>
-
+            <div className={styles['input-fields']}>
+              <label htmlFor="id_vehiculo" className={styles.label}>Vehiculo</label>
 
               <Controller
                 name="id_vehiculo"
@@ -193,7 +224,7 @@ function Planillaje() {
                 rules={{ required: true }} // Reglas de validación
                 render={({ field }) => (
                   <Select
-                    className={styles['select']}
+                    className={styles.select}
                     styles={customStyles}
                     isClearable={true}
                     options={vehiculos}
@@ -201,12 +232,11 @@ function Planillaje() {
                   />
                 )}
               />
-              {errors.id_ruta && <span className="input-error">Este campo es requerido</span>}
+              {errors.id_ruta && <span className={styles['input-error']}>Este campo es requerido</span>}
             </div>
 
-            <div className="input-fields">
-              <label htmlFor="id_agencia">Agencia</label>
-
+            <div className={styles['input-fields']}>
+              <label htmlFor="id_agencia" className={styles.label}>Agencia</label>
 
               <Controller
                 name="id_agencia"
@@ -214,7 +244,7 @@ function Planillaje() {
                 rules={{ required: true }} // Reglas de validación
                 render={({ field }) => (
                   <Select
-                    className={styles['select']}
+                    className={styles.select}
                     styles={customStyles}
                     isClearable={true}
                     options={agencias}
@@ -222,23 +252,21 @@ function Planillaje() {
                   />
                 )}
               />
-              {errors.id_ruta && <span className="input-error">Este campo es requerido</span>}
+              {errors.id_ruta && <span className={styles['input-error']}>Este campo es requerido</span>}
             </div>
 
           </div>
         </div>
 
-        <div className="buttons">
-          <button className="save-button">
-            <span className="button-text">Guardar</span>
-            <i className='bx bx-plus-circle'></i>
+        <div className={styles.buttons}>
+          <button className={`${styles['save-button']} ${styles.button}`}>
+            <span className={styles['button-text']}>Guardar</span>
+            <i className={`bx bx-plus-circle ${styles.icon}`}></i>
           </button>
-
         </div>
       </form>
-
-
     </CardContainer>
+
   )
 }
 export default Planillaje

@@ -32,8 +32,17 @@
     margin: 0 auto;
 }
 
+.ventas{
+    width: 100%;
+}
 
+
+.dividido{
+    display: flex;
+    gap: 16px;
+}
 section {
+    user-select: none;
     display: flex;
     flex-direction: column;
    /*  background-color: bisque; */
