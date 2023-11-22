@@ -50,7 +50,7 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
          mensaje, webEmpresa } = datos
 
     return (
-        <div className={styles.tiquete}>
+        <div className={styles.planilla}>
             <div className={styles.cabecera}>
                 <p>{razon_social}</p>
                 <p className={styles.nit}>Nit: {nit}</p>
