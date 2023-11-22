@@ -12,7 +12,8 @@ import { Options } from "../api/general";
 import useToast from '../hooks/useToast';
 import { useAuth } from "../context/AuthContext";
 import Planilla from "../components/Planilla";
-import { obtenerFechaYHoraActual } from "../utils/utils";
+import { obtenerFecha, obtenerFechaYHoraActual } from "../utils/utils";
+import { obtenerEmpresa } from "../api/empresa";
 
 function Planillaje() {
 
@@ -74,6 +75,7 @@ function Planillaje() {
   const obtenerVehiculos = async () => {
     try {
       const vehiculos = await vehiculosLoader() as VehiculoTypes[];
+      console.log(vehiculos)
       const respuesta: Options[] = vehiculos.map(vehiculo => ({
         value: vehiculo.id_vehiculo,
         label: vehiculo.codigo_interno + ' - ' + vehiculo.placa
@@ -84,6 +86,8 @@ function Planillaje() {
       console.error("Error al obtener Conductores:", error);
     }
   }
+
+
 
   const onSubmit = async (data: PlanillaRegistrar) => {
     try {
@@ -116,13 +120,23 @@ function Planillaje() {
   }
   const showToast = useToast();
 
+  const { planilla: planillaEstado, empresa: empresaEstado, usuario: despachador,asignarEmpresa } = useAuth();
 
+
+  const obtenerDatosEmpresa = async () => {
+    const datos = await obtenerEmpresa();
+
+    if (datos !== null) {
+        asignarEmpresa(datos);
+    }
+  }
   useEffect(() => {
     obtenerRutas();
     obtenerConductores();
     obtenerVehiculos();
     obtenerAgencias();
-    setDatosPlanilla(generarDatosPlanilla());
+    obtenerDatosEmpresa();
+    empresaEstado.razon_social = 'Empresa de Prueba';
   }, [])
 
 
@@ -137,36 +151,38 @@ function Planillaje() {
   };
 
 
-  const { planilla: planillaEstado, empresa: empresaEstado, asignarEmpresa } = useAuth();
 
-  const generarDatosPlanilla = () => {
 
-    const datosTiquete = {
-      razon_social: empresaEstado.razon_social,
-      nit: empresaEstado.nit,
-      telefono: empresaEstado.telefono,
-      direccion: empresaEstado.direccion,
-      direccionAgencia: 'Calle Agencia 123',
-      fecha: 'Jun 09/2023',
-      numeroTiquete: '11111123',
-      agencia: '01 Popayan-Agencia',
-      despachador: planillaEstado.nombre_vendedor,
-      horaSalida: '19:24',
-      ruta: `${planillaEstado.inicio_ruta} - ${planillaEstado.fin_ruta}`,
-      tarifa: planillaEstado.precio_ruta,
-      vehiculoPlaca: planillaEstado.numero_placa_vehiculo,
-      vehiculoCodigo: planillaEstado.codigo_interno_vehiculo,
-      pasajes: 1,
-      total: 5000,
-      aseguradora: 'Sura',
-      numeroPoliza: '123456789',
-      fechaImpresion: obtenerFechaYHoraActual(),
-      mensaje: '* Gracias por su compra *',
-      webEmpresa: 'www.empresa.com'
-    }
-    return datosTiquete;
-  }
-  const [datosPlanilla, setDatosPlanilla] = useState(generarDatosPlanilla());
+ 
+
+
+
+  const [datosPlanilla, setDatosPlanilla] = useState({
+    razon_social: empresaEstado.razon_social,
+    nit: empresaEstado.nit,
+    telefono: empresaEstado.telefono,
+    direccion: empresaEstado.direccion,
+    direccionAgencia: 'Calle Agencia 123',
+    fecha: obtenerFecha(new Date()),
+    numeroPlanilla: '00 ',
+    agencia: 'N/A',
+    despachador: despachador.nombres,
+    horaSalida: '19:24',
+    ruta: 'N/A',
+    tarifa: planillaEstado.precio_ruta,
+    vehiculoPlaca: planillaEstado.numero_placa_vehiculo,
+    vehiculoCodigo: planillaEstado.codigo_interno_vehiculo,
+    pasajes: 1,
+    vehiculoPropietario: 'N/A',
+    total: 5000,
+    conductor: 'N/A',
+    numeroPoliza: '123456789',
+    fechaImpresion: obtenerFechaYHoraActual(),
+    mensaje: '* Gracias por su compra *',
+    webEmpresa: 'www.empresa.com'
+  });
+  
+  
 
 
   return (
@@ -192,6 +208,8 @@ function Planillaje() {
                     isClearable={true}
                     options={rutas}
                     {...field}
+                    onChange={(selectedOption) => {setDatosPlanilla({...datosPlanilla, ruta: selectedOption?.label })}}
+
                   />
                 )}
               />
@@ -212,10 +230,11 @@ function Planillaje() {
                     isClearable={true}
                     options={conductores}
                     {...field}
+                    onChange={(selectedOption) => {setDatosPlanilla({...datosPlanilla, conductor: selectedOption?.label })}}
                   />
                 )}
               />
-              {errors.id_ruta && <span className={styles['input-error']}>Este campo es requerido</span>}
+              {errors.id_conductor && <span className={styles['input-error']}>Este campo es requerido</span>}
             </div>
 
             <div className={styles['input-fields']}>
@@ -232,10 +251,15 @@ function Planillaje() {
                     isClearable={true}
                     options={vehiculos}
                     {...field}
+                    onChange={
+                      (selectedOption) => {
+
+                      }
+                    }
                   />
                 )}
               />
-              {errors.id_ruta && <span className={styles['input-error']}>Este campo es requerido</span>}
+              {errors.id_vehiculo && <span className={styles['input-error']}>Este campo es requerido</span>}
             </div>
 
             <div className={styles['input-fields']}>
@@ -252,10 +276,12 @@ function Planillaje() {
                     isClearable={true}
                     options={agencias}
                     {...field}
+                    onChange={(selectedOption) => {setDatosPlanilla({...datosPlanilla, agencia: selectedOption?.label })}}
+
                   />
                 )}
               />
-              {errors.id_ruta && <span className={styles['input-error']}>Este campo es requerido</span>}
+              {errors.id_agencia && <span className={styles['input-error']}>Este campo es requerido</span>}
             </div>
 
           </div>

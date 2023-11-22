@@ -8,7 +8,7 @@ export type PlanillaProps = {
     direccion: string
     direccionAgencia: string
     fecha: string
-    numeroTiquete: string
+    numeroPlanilla: string
     agencia: string
     despachador: string
     horaSalida: string
@@ -22,7 +22,9 @@ export type PlanillaProps = {
     numeroPoliza: string
     fechaImpresion: string
     mensaje: string,
-    webEmpresa: string
+    webEmpresa: string,
+    conductor: string,
+    vehiculoPropietario: string
     }
 }
 
@@ -34,20 +36,18 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
          direccion,
          direccionAgencia,
          fecha,
-         numeroTiquete,
+         numeroPlanilla,
          agencia,
          despachador,
          horaSalida,
          ruta,
-         tarifa,
          vehiculoPlaca,
          vehiculoCodigo,
-         pasajes,
-         fechaImpresion,
+         vehiculoPropietario,
          total,
-         aseguradora,
-         numeroPoliza,
-         mensaje, webEmpresa } = datos
+         fechaImpresion,
+         conductor
+         } = datos
 
     return (
         <div className={styles.planilla}>
@@ -59,39 +59,44 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
             </div>
 
             <div className={styles['info-tiquete']}>
-                <p className={styles['texto-centrado']}>----------[ Tiquete de Viaje ]----------</p>
-                <span><p>Fecha: {fecha}</p>  <p>No :{numeroTiquete}</p> </span>
+                <p className={styles['texto-centrado']}>----------[ Planilla de Viaje ]----------</p>
+                <span><p>Fecha: {fecha}</p>  <pre>No :{numeroPlanilla}</pre> </span>
                 <p>-----------------------------------------</p>
 
                 <p>Agencia......: {agencia}</p>
                 <p>Despachador..: {despachador}</p>
-                <p>Hora-Salida..: {horaSalida}</p>
                 <p>Ruta.........: {ruta}</p>
-                <p>Tarifa.......: {tarifa}</p>
+                <p>Hora-Salida..: {horaSalida}</p>
                 <p>Vehiculo.....: {vehiculoCodigo} Placas: {vehiculoPlaca}</p>
-                <p>Pasajes......: {pasajes}     TOTAL: {total}</p>
-                <p>Puesto No..:</p>
-                <p>-----------------------------------------</p>
-                <br />
-                <p className={styles['texto-centrado']}>TIQUETE POR FUERA DEL DESPACHO</p>
-                <p className={styles['texto-centrado']}> *** RECAUDA EL MOTORISTA ***</p>
-                <br />
-                <p>-----------------------------------------</p>
-            </div>
+                <p>Conductor....: {conductor}</p>
+                <p>Propietario..: {vehiculoPropietario}</p>
 
-            <div className={styles['info-poliza']}>
-                <p>Aseguradora: {aseguradora}</p>
-                <p>No.Poliza..: {numeroPoliza}</p>
-                <p>Impres: {fechaImpresion}</p>
+                <p>-----------------------------------------</p>
+                <pre className={styles['texto-centrado']}>Tiquetes / Pasajes        Cant        Valor</pre>
+                <p>-----------------------------------------</p>
+                <pre>00 INICIO-DESTINO          19         60,000</pre>
+                <pre>--------------Total$       19         {total}</pre>
+                <br />
+                <br />
+                <p className={styles['texto-centrado']}>--------[ GASTOS Y DEDUCCIONES ]--------</p>
+                <pre className={styles['texto-centrado']}> Cpt Descripcion                     Valor</pre>
+                <p>-----------------------------------------</p>
+                <p>Gasto-Despacho.........</p>
+                <p>Planilla</p>
+                <p>Fondo Reposicion</p>
+                <p>----------Total deducciones: 8,700</p>
+                <br />
+                <br />
+                <p className={styles['texto-centrado']}>--------- NETO Planilla: 52,100 ---------</p>
+                <p>Impreso: {fechaImpresion}</p>
             </div>
 
             <div className={styles['pie-pagina']}>
-                <p>-----------------------------------------</p>
-                <p>SEÑOR PASAJERO: ESTE ATENTO AL DESPACHO DEL VEHICULO ASIGNADO. LA EMPRESA NO SE RESPONSABILIZA POR PERDIDA DEL VIAJE. EN DE PERDIDA DEL VIAJE NO REINTEGRA EL VALOR DEL MISMO.</p>
                 <br />
                 <br />
-                <p className={styles['texto-centrado']}>{mensaje}</p>
-                <p className={styles['texto-centrado']}>{webEmpresa}</p>
+                <br />
+                <pre>-------------------     -------------------</pre>
+                <pre>Despachador             Motorista</pre>
             </div>
         </div>
 

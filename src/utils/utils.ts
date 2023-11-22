@@ -28,3 +28,19 @@ export function obtenerFechaYHoraActual(): string {
     
     return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
+
+
+  export function obtenerFecha(fecha: Date): string {
+    const mesesEnEspanol = [
+      "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+    ];
+  
+    const mes = mesesEnEspanol[fecha.getMonth()];
+    const dia = fecha.getDate();
+    const año = fecha.getFullYear();
+  
+    // Ajustar el formato para tener un espacio adicional para los días de un solo dígito
+    const diaFormateado = dia < 10 ? ` ${dia}` : `${dia}`;
+  
+    return `${mes} ${diaFormateado}/${año}`; "Jun 09/2023";
+  }
