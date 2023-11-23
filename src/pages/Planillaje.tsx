@@ -26,7 +26,7 @@ function Planillaje() {
   const [rutas, setRutas] = useState<Options[]>()
   const [agencias, setAgencias] = useState<AgenciaTypes[]>()
   const [conductores, setConductores] = useState<ConductorTypes[]>()
-  const [vehiculos, setVehiculos] = useState<VehiculoTypes[]>()
+  const [vehiculos, setVehiculos] = useState<VehiculoTypes[]>([])
 
   const obtenerRutas = async () => {
     try {
@@ -76,16 +76,23 @@ function Planillaje() {
     try {
       const vehiculos = await vehiculosLoader() as VehiculoTypes[];
       console.log(vehiculos)
-      const respuesta: Options[] = vehiculos.map(vehiculo => ({
-        value: vehiculo.id_vehiculo,
-        label: vehiculo.codigo_interno + ' - ' + vehiculo.placa
-      }));
+      setVehiculos(vehiculos);
+      return vehiculos;
 
-      setVehiculos(respuesta);
     } catch (error) {
       console.error("Error al obtener Conductores:", error);
-    }
+   }
   }
+
+  // Función para crear el formato de mapeo
+const formatearListaVehiculosSelect = (vehiculos) => {
+  return vehiculos.map(vehiculo => ({
+    value: vehiculo.id_vehiculo,
+    label: vehiculo.codigo_interno + ' - ' + vehiculo.placa
+  }));
+}
+
+  
 
 
 
@@ -168,13 +175,13 @@ function Planillaje() {
     agencia: 'N/A',
     despachador: despachador.nombres,
     horaSalida: '19:24',
-    ruta: 'N/A',
+    ruta: 'TextoLa',
     tarifa: planillaEstado.precio_ruta,
     vehiculoPlaca: planillaEstado.numero_placa_vehiculo,
     vehiculoCodigo: planillaEstado.codigo_interno_vehiculo,
-    pasajes: 1,
+    puestos: 999,
     vehiculoPropietario: 'N/A',
-    total: 5000,
+    total: 65000,
     conductor: 'N/A',
     numeroPoliza: '123456789',
     fechaImpresion: obtenerFechaYHoraActual(),
@@ -249,11 +256,15 @@ function Planillaje() {
                     className={styles.select}
                     styles={customStyles}
                     isClearable={true}
-                    options={vehiculos}
+                    options={formatearListaVehiculosSelect(vehiculos)}
                     {...field}
                     onChange={
                       (selectedOption) => {
 
+                        const placa = "placa"
+                        const codigoInterno = "codigo interno"
+
+                        setDatosPlanilla({...datosPlanilla, vehiculoCodigo: codigoInterno, vehiculoPlaca: placa})
                       }
                     }
                   />
