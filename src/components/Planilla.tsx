@@ -1,7 +1,9 @@
+import { generarTablaCentrada } from '../utils/utils'
+import TablaTiquete from './TablaTiquete'
 import styles from './planilla.module.css'
 
 export type PlanillaProps = {
-    datos: {
+  datos: {
     razon_social: string
     nit: string
     telefono: string
@@ -20,87 +22,99 @@ export type PlanillaProps = {
     total: number,
     aseguradora: string
     numeroPoliza: string
+    puestos: number
     fechaImpresion: string
     mensaje: string,
     webEmpresa: string,
     conductor: string,
     vehiculoPropietario: string
-    }
+  }
 }
 
 const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
 
-    const { razon_social,
-         nit,
-         telefono,
-         direccion,
-         direccionAgencia,
-         fecha,
-         numeroPlanilla,
-         agencia,
-         despachador,
-         horaSalida,
-         ruta,
-         vehiculoPlaca,
-         vehiculoCodigo,
-         vehiculoPropietario,
-         total,
-         fechaImpresion,
-         conductor
-         } = datos
+  const titulos = ['Titulo 1', 'Titulo 2', 'Titulo 3', 'Titulo 4'];
+  const datoss = [
+    ["Valor1", "Valor2", "Valor3", "Valor4"],
+    ["Valor5", "Valor6", "Valor7", "Valor8"]
+  ];
 
-    return (
-        <div className={styles.planilla}>
-            <div className={styles.cabecera}>
-                <p>{razon_social}</p>
-                <p className={styles.nit}>Nit: {nit}</p>
-                <p>{direccion} Tel: {telefono}</p>
-                <p>{direccionAgencia}</p>
-            </div>
+  const { razon_social,
+    nit,
+    telefono,
+    direccion,
+    direccionAgencia,
+    fecha,
+    numeroPlanilla,
+    agencia,
+    despachador,
+    horaSalida,
+    ruta,
+    vehiculoPlaca,
+    vehiculoCodigo,
+    vehiculoPropietario,
+    total,
+    puestos,
+    fechaImpresion,
+    conductor
+  } = datos
 
-            <div className={styles['info-tiquete']}>
-                <p className={styles['texto-centrado']}>----------[ Planilla de Viaje ]----------</p>
-                <span><p>Fecha: {fecha}</p>  <pre>No :{numeroPlanilla}</pre> </span>
-                <p>-----------------------------------------</p>
 
-                <p>Agencia......: {agencia}</p>
-                <p>Despachador..: {despachador}</p>
-                <p>Ruta.........: {ruta}</p>
-                <p>Hora-Salida..: {horaSalida}</p>
-                <p>Vehiculo.....: {vehiculoCodigo} Placas: {vehiculoPlaca}</p>
-                <p>Conductor....: {conductor}</p>
-                <p>Propietario..: {vehiculoPropietario}</p>
 
-                <p>-----------------------------------------</p>
-                <pre className={styles['texto-centrado']}>Tiquetes / Pasajes        Cant        Valor</pre>
-                <p>-----------------------------------------</p>
-                <pre>00 INICIO-DESTINO          19         60,000</pre>
-                <pre>--------------Total$       19         {total}</pre>
-                <br />
-                <br />
-                <p className={styles['texto-centrado']}>--------[ GASTOS Y DEDUCCIONES ]--------</p>
-                <pre className={styles['texto-centrado']}> Cpt Descripcion                     Valor</pre>
-                <p>-----------------------------------------</p>
-                <p>Gasto-Despacho.........</p>
-                <p>Planilla</p>
-                <p>Fondo Reposicion</p>
-                <p>----------Total deducciones: 8,700</p>
-                <br />
-                <br />
-                <p className={styles['texto-centrado']}>--------- NETO Planilla: 52,100 ---------</p>
-                <p>Impreso: {fechaImpresion}</p>
-            </div>
 
-            <div className={styles['pie-pagina']}>
-                <br />
-                <br />
-                <br />
-                <pre>-------------------     -------------------</pre>
-                <pre>Despachador             Motorista</pre>
-            </div>
-        </div>
+  return (
+    <div className={styles.planilla}>
+      <div className={styles.cabecera}>
+        <p>{razon_social}</p>
+        <p className={styles.nit}>Nit: {nit}</p>
+        <p>{direccion} Tel: {telefono}</p>
+        <p>{direccionAgencia}</p>
+      </div>
 
-    )
+      <div className={styles['info-tiquete']}>
+        <p className={styles['texto-centrado']}>----------[ Planilla de Viaje ]----------</p>
+        <span><p>Fecha: {fecha}</p>  <pre>No :{numeroPlanilla}</pre> </span>
+        <p>-----------------------------------------</p>
+
+        <p>Agencia......: {agencia}</p>
+        <p>Despachador..: {despachador}</p>
+        <p>Ruta.........: {ruta}</p>
+        <p>Hora-Salida..: {horaSalida}</p>
+        <p>Vehiculo.....: {vehiculoCodigo} Placas: {vehiculoPlaca}</p>
+        <p>Conductor....: {conductor}</p>
+        <p>Propietario..: {vehiculoPropietario}</p>
+
+        <p>-----------------------------------------</p>
+        //Tabla centrada automaticamente
+        {generarTablaCentrada(titulos, datoss).map((linea, index) => (
+          <pre key={index}>{linea}</pre>
+        ))}
+        <pre>--------------Total$       19         {total}</pre>
+        <br />
+        <br />
+        <p className={styles['texto-centrado']}>--------[ GASTOS Y DEDUCCIONES ]--------</p>
+        <pre className={styles['texto-centrado']}> Cpt Descripcion                     Valor</pre>
+        <p>-----------------------------------------</p>
+        <p>Gasto-Despacho.........</p>
+        <p>Planilla</p>
+        <p>Fondo Reposicion</p>
+        <p>----------Total deducciones: 8,700</p>
+        <br />
+        <br />
+        <p className={styles['texto-centrado']}>--------- NETO Planilla: 52,100 ---------</p>
+        <p>Impreso: {fechaImpresion}</p>
+      </div >
+
+  <div className={styles['pie-pagina']}>
+    <br />
+    <br />
+    <br />
+    <pre>-------------------     -------------------</pre>
+    <pre>Despachador             Motorista</pre>
+  </div>
+    </div >
+
+  )
 }
 
 export default Planilla
