@@ -15,6 +15,7 @@ import useToast from '../hooks/useToast'
 import Tiquete, { TiqueteProps } from '../components/Tiquete'
 import { useReactToPrint } from "react-to-print";
 import { obtenerEmpresa } from '../api/empresa'
+import { de } from 'date-fns/locale'
 
 
 type Inputs = {
@@ -152,7 +153,6 @@ const Ventas = () => {
         cantidadTiquetes: 1,
         estaLleno: false,
         estaDespachado: planillaEstado.viaje_completado
-
     })
 
     const actualizarCantidadPuestos = (cantidad: number) => {
@@ -187,6 +187,8 @@ const Ventas = () => {
             setValue('total', 0);
             setValue('puestos', (0 + "/" + 0));
             setValue('valorTiquete', 0);
+
+
         }
     }
 
@@ -221,8 +223,9 @@ const Ventas = () => {
 
     useEffect(() => {
         establecerValoresFormulario()
-
-    }, [detallesVenta])
+        generarDatosTiquete()
+        setDatosTiquete(generarDatosTiquete(detallesVenta, planillaEstado));
+      }, [detallesVenta])
 
     const tiqueteRef = useRef(null);
 
@@ -232,34 +235,37 @@ const Ventas = () => {
 
 
     const generarDatosTiquete = () => {
+        const nuevaFecha = obtenerFechaYHoraActual();
+      
+        return {
+          razon_social: empresaEstado?.razon_social,
+          nit: empresaEstado?.nit,
+          telefono: empresaEstado?.telefono,
+          direccion: empresaEstado?.direccion,
+          direccionAgencia: 'N/A',
+          fecha: nuevaFecha,
+          numeroTiquete: '00',
+          agencia: 'N/A',
+          despachador: planillaEstado?.nombre_vendedor,
+          horaSalida: '19:24',
+          ruta: `${planillaEstado?.inicio_ruta} - ${planillaEstado?.fin_ruta}`,
+          tarifa: planillaEstado?.precio_ruta,
+          vehiculoPlaca: planillaEstado?.numero_placa_vehiculo,
+          vehiculoCodigo: planillaEstado?.codigo_interno_vehiculo,
+          pasajes: detallesVenta?.cantidadTiquetes,
+          total: planillaEstado?.precio_ruta * detallesVenta?.cantidadTiquetes,
+          aseguradora: 'N/A',
+          numeroPoliza: 'N/A',
+          fechaImpresion: nuevaFecha,
+          mensaje: '* Gracias por su compra *',
+          webEmpresa: 'www.empresa.com'
+        };
+      };
+      
 
-        const datosTiquete = {
-            razon_social: empresaEstado.razon_social,
-            nit: empresaEstado.nit,
-            telefono: empresaEstado.telefono,
-            direccion: empresaEstado.direccion,
-            direccionAgencia: 'Calle Agencia 123',
-            fecha: 'Jun 09/2023',
-            numeroTiquete: '11111123',
-            agencia: '01 Popayan-Agencia',
-            despachador: planillaEstado.nombre_vendedor,
-            horaSalida: '19:24',
-            ruta: `${planillaEstado.inicio_ruta} - ${planillaEstado.fin_ruta}`,
-            tarifa: planillaEstado.precio_ruta,
-            vehiculoPlaca: planillaEstado.numero_placa_vehiculo,
-            vehiculoCodigo: planillaEstado.codigo_interno_vehiculo,
-            pasajes: detallesVenta.cantidadTiquetes,
-            total: planillaEstado.precio_ruta * detallesVenta.cantidadTiquetes,
-            aseguradora: 'Sura',
-            numeroPoliza: '123456789',
-            fechaImpresion: obtenerFechaYHoraActual(),
-            mensaje: '* Gracias por su compra *',
-            webEmpresa: 'www.empresa.com'
-        }
-        return datosTiquete;
-    }
+    const [datosTiquete, setDatosTiquete] = useState(() => generarDatosTiquete(detallesVenta, planillaEstado));
 
-    const [datosTiquete, setDatosTiquete] = useState(generarDatosTiquete());
+
 
     return (
         <CardContainer>
