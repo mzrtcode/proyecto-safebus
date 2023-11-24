@@ -11,7 +11,8 @@ export interface PlanillajeTypes {
   numero_placa_vehiculo: string;
   codigo_interno_vehiculo: string;
   nombre_agencia: string;
-  hora_salida: Date | null;
+  direccion_agencia: string;
+  hora_salida: Date;
   cantidad_puestos_vehiculo: number;
   precio_ruta: number
   viaje_completado: boolean,
@@ -26,7 +27,7 @@ export interface PlanillaRegistrar {
   id_vehiculo: number;
   id_agencia: number;
   viaje_completado?: boolean;
-  hora_salida?: Date | null;
+  hora_salida: Date;
 }
 
 
@@ -36,7 +37,16 @@ export const planillajeLoader = async (): Promise<PlanillajeTypes[]> => {
     if (res.status !== 200) {
       throw new Error("Error al obtener los datos de planillas");
     }
-    return res.data.data;
+
+    // Modificar el campo hora_salida y convertirlo a objetos Date
+    const planillasConFechaModificada = res.data.data.map((planilla: PlanillajeTypes) => {
+      return {
+        ...planilla,
+        hora_salida: new Date(planilla.hora_salida),
+      };
+    });
+
+    return planillasConFechaModificada;
   } catch (error) {
     if (error instanceof Error) {
       console.log(error.message);
@@ -48,16 +58,15 @@ export const planillajeLoader = async (): Promise<PlanillajeTypes[]> => {
 export const planillaRegistrar = async (planilla: PlanillaRegistrar): Promise<number> => {
   const response = await axios.post('/planillas', planilla);
   return response.status; // Devuelve el código de estado de la respuesta
-
 };
 
 export const despacharPlanilla = async (id_planilla: number): Promise<number> => {
-  const response = await axios.post(`/planillas/despachar/${id_planilla}`);
+  const response = await axios.put(`/planillas/despachar/${id_planilla}`);
   return response.status; // Devuelve el código de estado de la respuesta
 };
 
 export const eliminarPlanilla = async (id_planilla: number): Promise<number> => {
-  const response = await axios.post(`/planillas/${id_planilla}`);
+  const response = await axios.delete(`/planillas/${id_planilla}`);
   return response.status; // Devuelve el código de estado de la respuesta
 };
 
