@@ -6,8 +6,8 @@ export type TiqueteProps = {
     razon_social: string
     nit: string
     telefono: string
-    direccion: string
     direccionAgencia: string
+    direccionEmpresa: string
     fecha: string
     numeroTiquete: string
     agencia: string
@@ -32,7 +32,7 @@ const Tiquete: React.FC<TiqueteProps> = ({ datos }) => {
     const { razon_social,
          nit,
          telefono,
-         direccion,
+         direccionEmpresa,
          direccionAgencia,
          fecha,
          numeroTiquete,
@@ -55,7 +55,7 @@ const Tiquete: React.FC<TiqueteProps> = ({ datos }) => {
             <div className={styles.cabecera}>
                 <p>{razon_social}</p>
                 <p className={styles.nit}>Nit: {nit}</p>
-                <p>{direccion} Tel: {telefono}</p>
+                <p>{direccionEmpresa} Tel: {telefono}</p>
                 <p>{direccionAgencia}</p>
             </div>
 
