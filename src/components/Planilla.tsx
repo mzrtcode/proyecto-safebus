@@ -54,7 +54,6 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
     vehiculoCodigo,
     vehiculoPropietario,
     total,
-    puestos,
     fechaImpresion,
     conductor
   } = datos
@@ -85,9 +84,11 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
         <p>Propietario..: {vehiculoPropietario}</p>
 
         <p>-----------------------------------------</p>
-        //Tabla centrada automaticamente
         {generarTablaCentrada(titulos, datoss).map((linea, index) => (
+          <>
           <pre key={index}>{linea}</pre>
+          {index === 0 && <pre>---------------------------------------------</pre>}
+          </>
         ))}
         <pre>--------------Total$       19         {total}</pre>
         <br />
