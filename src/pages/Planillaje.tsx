@@ -14,6 +14,7 @@ import { useAuth } from "../context/AuthContext";
 import Planilla from "../components/Planilla";
 import { obtenerFecha, obtenerFechaYHoraActual } from "../utils/utils";
 import { obtenerEmpresa } from "../api/empresa";
+import { obtenerPropietario } from "../api/propietarios";
 
 function Planillaje() {
 
@@ -175,7 +176,7 @@ const formatearListaVehiculosSelect = (vehiculos) => {
     agencia: 'N/A',
     despachador: despachador.nombres,
     horaSalida: '19:24',
-    ruta: 'TextoLa',
+    ruta: 'N/A',
     tarifa: planillaEstado.precio_ruta,
     vehiculoPlaca: planillaEstado.numero_placa_vehiculo,
     vehiculoCodigo: planillaEstado.codigo_interno_vehiculo,
@@ -258,15 +259,34 @@ const formatearListaVehiculosSelect = (vehiculos) => {
                     isClearable={true}
                     options={formatearListaVehiculosSelect(vehiculos)}
                     {...field}
-                    onChange={
-                      (selectedOption) => {
-
-                        const placa = "placa"
-                        const codigoInterno = "codigo interno"
-
-                        setDatosPlanilla({...datosPlanilla, vehiculoCodigo: codigoInterno, vehiculoPlaca: placa})
+                    onChange={async (selectedOption) => {
+                      // Obtener el ID del vehículo seleccionado
+                      const idVehiculo = selectedOption?.value;
+                    
+                      // Obtener el ID del propietario asociado al vehículo
+                      const idPropietario = vehiculos.find(vehiculo => vehiculo.id_vehiculo === idVehiculo)?.id_propietario;
+                      let nombrePropietario = 'N/A';
+                    
+                      // Obtener la información adicional del vehículo (placa y código interno)
+                      const vehiculo = vehiculos.find(vehiculo => vehiculo.id_vehiculo === idVehiculo);
+                      const placa = vehiculo?.placa;
+                      const codigoInterno = vehiculo?.codigo_interno;
+                    
+                      // Obtener el nombre completo del propietario si el ID del propietario no es undefined
+                      if (idPropietario !== undefined) {
+                        const propietario = await obtenerPropietario(idPropietario);
+                        nombrePropietario = `${propietario?.nombres} ${propietario?.apellidos}`
                       }
-                    }
+                    
+                      // Actualizar el estado con la información del vehículo y propietario
+                      setDatosPlanilla({
+                        ...datosPlanilla,
+                        vehiculoCodigo: codigoInterno !== undefined ? codigoInterno : 'N/A', // Verificar si el código interno es undefined
+                        vehiculoPlaca: placa !== undefined ? placa : 'N/A', // Verificar si la placa es undefined
+                        vehiculoPropietario: nombrePropietario
+                      });
+                    }}
+                    
                   />
                 )}
               />
