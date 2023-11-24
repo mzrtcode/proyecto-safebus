@@ -117,3 +117,22 @@ export const generarTablaCentrada = (titulos: string[], datos: Datos): string[] 
   // Asegurar que la longitud total se respete
   return tabla.map(fila => fila.slice(0, longitudTotal));
 };
+
+
+/**
+ * Calcula la hora de salida sumando 30 minutos a una fecha dada.
+ *
+ * @param {Date} fecha - La fecha de la cual se calculará la nueva hora de salida.
+ * @returns {string} Una cadena en formato "hh:mm" representando la nueva hora de salida.
+ */
+export const calcularHoraSalida = (fecha: Date): string => {
+  // Sumar 30 minutos en milisegundos para obtener la nueva fecha
+  const nuevaFecha = new Date(fecha.getTime() + 30 * 60000);
+
+  // Obtener las horas y minutos con formato de dos dígitos
+  const horas = nuevaFecha.getHours().toString().padStart(2, '0');
+  const minutos = nuevaFecha.getMinutes().toString().padStart(2, '0');
+
+  // Retornar la nueva hora en formato "hh:mm"
+  return `${horas}:${minutos}`;
+};
