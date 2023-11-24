@@ -7,7 +7,7 @@ export type PlanillaProps = {
     razon_social: string
     nit: string
     telefono: string
-    direccion: string
+    direccionEmpresa: string
     direccionAgencia: string
     fecha: string
     numeroPlanilla: string
@@ -42,7 +42,7 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
   const { razon_social,
     nit,
     telefono,
-    direccion,
+    direccionEmpresa,
     direccionAgencia,
     fecha,
     numeroPlanilla,
@@ -66,7 +66,7 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
       <div className={styles.cabecera}>
         <p>{razon_social}</p>
         <p className={styles.nit}>Nit: {nit}</p>
-        <p>{direccion} Tel: {telefono}</p>
+        <p>{direccionEmpresa} Tel: {telefono}</p>
         <p>{direccionAgencia}</p>
       </div>
 
