@@ -57,11 +57,11 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
 
     const [empresa, setEmpresa] = useState<EmpresaTypes>({
-        nit: '010100101',
-        razon_social: 'Razon Social',
-        direccion: 'CLL 1 # 1 - 1',
-        telefono: '1234567890',
-        ciudad: 'Bogota',
+        nit: 'N/A',
+        razon_social: 'N/A',
+        direccion: 'N/A',
+        telefono: 'N/A',
+        ciudad: 'N/A',
     });
 
     const asignarEmpresa =  (empresaActual: EmpresaTypes):void =>{
