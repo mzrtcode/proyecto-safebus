@@ -10,13 +10,12 @@ import { useLoaderData } from 'react-router-dom'
 import ContenedorPlanillas from '../components/ContenedorPlanillas'
 import { useAuth } from '../context/AuthContext'
 import { TiquetesVendidos, obtenerTiquetesVendedidosPorPlanillaId, registrarTiquete } from '../api/tiquetes'
-import { formatoHoraAmPm, obtenerFechaYHoraActual } from '../utils/utils'
+import { formatoHoraAmPm, obtenerFecha, obtenerFechaYHoraActual } from '../utils/utils'
 import useToast from '../hooks/useToast'
 import Tiquete, { TiqueteProps } from '../components/Tiquete'
 import { useReactToPrint } from "react-to-print";
 import { obtenerEmpresa } from '../api/empresa'
-import { de } from 'date-fns/locale'
-
+import { AgenciaTypes, obtenerAgencia } from '../api/agencias'
 
 type Inputs = {
     agencia: string,
@@ -133,6 +132,8 @@ const Ventas = () => {
         }
     }
 
+
+
     const actualizarPlanillas = async () => {
         const planillasActualizadas = await planillajeLoader();
         setPlanillas(planillasActualizadas)
@@ -225,7 +226,7 @@ const Ventas = () => {
         establecerValoresFormulario()
         generarDatosTiquete()
         setDatosTiquete(generarDatosTiquete(detallesVenta, planillaEstado));
-      }, [detallesVenta])
+    }, [detallesVenta])
 
     const tiqueteRef = useRef(null);
 
@@ -235,33 +236,36 @@ const Ventas = () => {
 
 
     const generarDatosTiquete = () => {
-        const nuevaFecha = obtenerFechaYHoraActual();
-      
+        const nuevaFecha = obtenerFecha(new Date);
+        const horaActual = formatoHoraAmPm(new Date);
+        const horaSalida = planillaEstado && planillaEstado.hora_salida
+            ? `${planillaEstado.hora_salida.getHours()}:${planillaEstado.hora_salida.getMinutes()}` : 'N/A';
+
         return {
-          razon_social: empresaEstado?.razon_social,
-          nit: empresaEstado?.nit,
-          telefono: empresaEstado?.telefono,
-          direccion: empresaEstado?.direccion,
-          direccionAgencia: 'N/A',
-          fecha: nuevaFecha,
-          numeroTiquete: '00',
-          agencia: 'N/A',
-          despachador: planillaEstado?.nombre_vendedor,
-          horaSalida: '19:24',
-          ruta: `${planillaEstado?.inicio_ruta} - ${planillaEstado?.fin_ruta}`,
-          tarifa: planillaEstado?.precio_ruta,
-          vehiculoPlaca: planillaEstado?.numero_placa_vehiculo,
-          vehiculoCodigo: planillaEstado?.codigo_interno_vehiculo,
-          pasajes: detallesVenta?.cantidadTiquetes,
-          total: planillaEstado?.precio_ruta * detallesVenta?.cantidadTiquetes,
-          aseguradora: 'N/A',
-          numeroPoliza: 'N/A',
-          fechaImpresion: nuevaFecha,
-          mensaje: '* Gracias por su compra *',
-          webEmpresa: 'www.empresa.com'
+            razon_social: empresaEstado?.razon_social,
+            nit: empresaEstado?.nit,
+            telefono: empresaEstado?.telefono,
+            direccionAgencia: planillaEstado?.direccion_agencia || 'N/A',
+            direccionEmpresa: empresaEstado?.direccion,
+            fecha: nuevaFecha,
+            numeroTiquete: '00',
+            agencia: planillaEstado.nombre_agencia || 'N/A',
+            despachador: planillaEstado?.nombre_vendedor,
+            horaSalida,
+            ruta: `${planillaEstado?.inicio_ruta} - ${planillaEstado?.fin_ruta}`,
+            tarifa: planillaEstado?.precio_ruta,
+            vehiculoPlaca: planillaEstado?.numero_placa_vehiculo,
+            vehiculoCodigo: planillaEstado?.codigo_interno_vehiculo,
+            pasajes: detallesVenta?.cantidadTiquetes,
+            total: planillaEstado?.precio_ruta * detallesVenta?.cantidadTiquetes,
+            aseguradora: 'N/A',
+            numeroPoliza: 'N/A',
+            fechaImpresion: horaActual,
+            mensaje: '* Gracias por su compra *',
+            webEmpresa: 'www.empresa.com'
         };
-      };
-      
+    };
+
 
     const [datosTiquete, setDatosTiquete] = useState(() => generarDatosTiquete(detallesVenta, planillaEstado));
 
