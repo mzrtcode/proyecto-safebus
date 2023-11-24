@@ -12,21 +12,21 @@ import { Options } from "../api/general";
 import useToast from '../hooks/useToast';
 import { useAuth } from "../context/AuthContext";
 import Planilla from "../components/Planilla";
-import { obtenerFecha, obtenerFechaYHoraActual } from "../utils/utils";
+import { calcularHoraSalida, obtenerFecha, obtenerFechaYHoraActual } from "../utils/utils";
 import { obtenerEmpresa } from "../api/empresa";
 import { obtenerPropietario } from "../api/propietarios";
 
 function Planillaje() {
 
-  const { register, handleSubmit, setValue, reset, control, formState: {
+  const { register, handleSubmit, setValue, reset, control, watch,  formState: {
     errors,
   } } = useForm<PlanillaRegistrar>();
 
   const { usuario } = useAuth()
 
-  const [rutas, setRutas] = useState<Options[]>()
-  const [agencias, setAgencias] = useState<AgenciaTypes[]>()
-  const [conductores, setConductores] = useState<ConductorTypes[]>()
+  const [rutas, setRutas] = useState<Options[]>([])
+  const [agencias, setAgencias] = useState<AgenciaTypes[]>([])
+  const [conductores, setConductores] = useState<ConductorTypes[]>([])
   const [vehiculos, setVehiculos] = useState<VehiculoTypes[]>([])
 
   const obtenerRutas = async () => {
@@ -48,16 +48,22 @@ function Planillaje() {
     try {
       const agencias = await agenciasLoader() as AgenciaTypes[];
       const agenciasActivas = agencias.filter(agencia => agencia.estado === true)
-      const respuesta: Options[] = agenciasActivas.map(agencia => ({
-        value: agencia.id_agencia,
-        label: agencia.nombre
-      }));
-
-      setAgencias(respuesta);
+     
+      setAgencias(agenciasActivas);
     } catch (error) {
       console.error("Error al obtener Agencias:", error);
     }
   }
+
+  const generarOptionsAgencias = (agencias: AgenciaTypes[]) => {
+    const respuesta: Options[] = agencias.map(agencia => ({
+      value: agencia.id_agencia,
+      label: agencia.nombre
+    }));
+    return respuesta;
+  }
+
+  
 
   const obtenerConductores = async () => {
     try {
@@ -112,7 +118,7 @@ const formatearListaVehiculosSelect = (vehiculos) => {
         id_vehiculo: idVehiculoValue,
         id_vendedor: usuario?.id_usuario
       }
-
+            
       const statusCode = await planillaRegistrar(updatedData)
       if (statusCode === 201) {
         showToast(`Planilla registrada`, 'success', 'bottom-center');
@@ -169,13 +175,13 @@ const formatearListaVehiculosSelect = (vehiculos) => {
     razon_social: empresaEstado.razon_social,
     nit: empresaEstado.nit,
     telefono: empresaEstado.telefono,
-    direccion: empresaEstado.direccion,
+    direccionEmpresa: planillaEstado.nombre_agencia,
     direccionAgencia: 'Calle Agencia 123',
     fecha: obtenerFecha(new Date()),
     numeroPlanilla: '00 ',
     agencia: 'N/A',
     despachador: despachador.nombres,
-    horaSalida: '19:24',
+    horaSalida: calcularHoraSalida(new Date),
     ruta: 'N/A',
     tarifa: planillaEstado.precio_ruta,
     vehiculoPlaca: planillaEstado.numero_placa_vehiculo,
@@ -189,7 +195,92 @@ const formatearListaVehiculosSelect = (vehiculos) => {
     mensaje: '* Gracias por su compra *',
     webEmpresa: 'www.empresa.com'
   });
+
+  useEffect(() => {
+    // Observa cambios en el campo id_ruta
+    const idRutaSeleccionada = watch('id_ruta');
   
+    // Realiza la lógica de actualización del estado de datosPlanilla
+    if (idRutaSeleccionada) {
+      setDatosPlanilla((prevDatosPlanilla) => ({
+        ...prevDatosPlanilla,
+        ruta: idRutaSeleccionada.label || 'N/A',  // Actualiza según tu lógica
+      }));
+    }
+  }, [watch('id_ruta')]);
+  
+  useEffect(() => {
+    // Observa cambios en el campo id_conductor
+    const idConductorSeleccionado = watch('id_conductor');
+  
+    // Realiza la lógica de actualización del estado de datosPlanilla
+    if (idConductorSeleccionado) {
+      setDatosPlanilla((prevDatosPlanilla) => ({
+        ...prevDatosPlanilla,
+        conductor: idConductorSeleccionado.label || 'N/A',  // Actualiza según tu lógica
+      }));
+    }
+  }, [watch('id_conductor')]);
+
+  useEffect(() => {
+    // Observa cambios en el campo id_vehiculo
+    const idVehiculoSeleccionado = watch('id_vehiculo');
+  
+    // Realiza la lógica de actualización del estado de datosPlanilla
+    const actualizarDatosVehiculo = async () => {
+      if (idVehiculoSeleccionado) {
+        // Obtener el ID del vehículo seleccionado
+        const idVehiculo = idVehiculoSeleccionado.value;
+  
+        // Obtener el ID del propietario asociado al vehículo
+        const idPropietario = vehiculos.find(vehiculo => vehiculo.id_vehiculo === idVehiculo)?.id_propietario;
+        let nombrePropietario = 'N/A';
+  
+        // Obtener la información adicional del vehículo (placa y código interno)
+        const vehiculo = vehiculos.find(vehiculo => vehiculo.id_vehiculo === idVehiculo);
+        const placa = vehiculo?.placa;
+        const codigoInterno = vehiculo?.codigo_interno;
+  
+        // Obtener el nombre completo del propietario si el ID del propietario no es undefined
+        if (idPropietario !== undefined) {
+          const propietario = await obtenerPropietario(idPropietario);
+          nombrePropietario = `${propietario?.nombres} ${propietario?.apellidos}`;
+        }
+  
+        // Actualizar el estado con la información del vehículo y propietario
+        setDatosPlanilla((prevDatosPlanilla) => ({
+          ...prevDatosPlanilla,
+          vehiculoCodigo: codigoInterno !== undefined ? codigoInterno : 'N/A',
+          vehiculoPlaca: placa !== undefined ? placa : 'N/A',
+          vehiculoPropietario: nombrePropietario,
+        }));
+      }
+    };
+  
+    actualizarDatosVehiculo();
+  }, [watch('id_vehiculo')]);
+  
+  useEffect(() => {
+    // Observa cambios en el campo id_agencia
+    const idAgenciaSeleccionada = watch('id_agencia');
+    const idAgencia = +idAgenciaSeleccionada?.value;
+    const direccionAgencia = agencias.find(agencia => agencia.id_agencia === idAgencia)?.direccion;
+    
+  
+    // Realiza la lógica de actualización del estado de datosPlanilla
+    const actualizarDatosAgencia = () => {
+      if (idAgenciaSeleccionada) {
+        setDatosPlanilla((prevDatosPlanilla) => ({
+          ...prevDatosPlanilla,
+          agencia: idAgenciaSeleccionada.label || 'N/A',
+          direccionAgencia: direccionAgencia || 'N/A',
+
+        }));
+      }
+    };
+  
+    actualizarDatosAgencia();
+  }, [watch('id_agencia')]);
   
 
 
@@ -216,7 +307,6 @@ const formatearListaVehiculosSelect = (vehiculos) => {
                     isClearable={true}
                     options={rutas}
                     {...field}
-                    onChange={(selectedOption) => {setDatosPlanilla({...datosPlanilla, ruta: selectedOption?.label })}}
 
                   />
                 )}
@@ -238,7 +328,6 @@ const formatearListaVehiculosSelect = (vehiculos) => {
                     isClearable={true}
                     options={conductores}
                     {...field}
-                    onChange={(selectedOption) => {setDatosPlanilla({...datosPlanilla, conductor: selectedOption?.label })}}
                   />
                 )}
               />
@@ -259,33 +348,7 @@ const formatearListaVehiculosSelect = (vehiculos) => {
                     isClearable={true}
                     options={formatearListaVehiculosSelect(vehiculos)}
                     {...field}
-                    onChange={async (selectedOption) => {
-                      // Obtener el ID del vehículo seleccionado
-                      const idVehiculo = selectedOption?.value;
-                    
-                      // Obtener el ID del propietario asociado al vehículo
-                      const idPropietario = vehiculos.find(vehiculo => vehiculo.id_vehiculo === idVehiculo)?.id_propietario;
-                      let nombrePropietario = 'N/A';
-                    
-                      // Obtener la información adicional del vehículo (placa y código interno)
-                      const vehiculo = vehiculos.find(vehiculo => vehiculo.id_vehiculo === idVehiculo);
-                      const placa = vehiculo?.placa;
-                      const codigoInterno = vehiculo?.codigo_interno;
-                    
-                      // Obtener el nombre completo del propietario si el ID del propietario no es undefined
-                      if (idPropietario !== undefined) {
-                        const propietario = await obtenerPropietario(idPropietario);
-                        nombrePropietario = `${propietario?.nombres} ${propietario?.apellidos}`
-                      }
-                    
-                      // Actualizar el estado con la información del vehículo y propietario
-                      setDatosPlanilla({
-                        ...datosPlanilla,
-                        vehiculoCodigo: codigoInterno !== undefined ? codigoInterno : 'N/A', // Verificar si el código interno es undefined
-                        vehiculoPlaca: placa !== undefined ? placa : 'N/A', // Verificar si la placa es undefined
-                        vehiculoPropietario: nombrePropietario
-                      });
-                    }}
+
                     
                   />
                 )}
@@ -305,9 +368,8 @@ const formatearListaVehiculosSelect = (vehiculos) => {
                     className={styles.select}
                     styles={customStyles}
                     isClearable={true}
-                    options={agencias}
+                    options={generarOptionsAgencias(agencias)}
                     {...field}
-                    onChange={(selectedOption) => {setDatosPlanilla({...datosPlanilla, agencia: selectedOption?.label })}}
 
                   />
                 )}
