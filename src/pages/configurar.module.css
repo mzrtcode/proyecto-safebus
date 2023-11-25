@@ -1,0 +1,16 @@
+header{
+    position: relative;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+ header::before{
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    height: 3px;
+    width: 27px;
+    background-color: #4070f4;
+}

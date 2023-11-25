@@ -19,6 +19,7 @@ export type PlanillaProps = {
     vehiculoPlaca: string,
     vehiculoCodigo: string,
     pasajes: number
+    precio: number
     total: number,
     aseguradora: string
     numeroPoliza: string
@@ -33,12 +34,7 @@ export type PlanillaProps = {
 
 const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
 
-  const titulos = ['Titulo 1', 'Titulo 2', 'Titulo 3', 'Titulo 4'];
-  const datoss = [
-    ["Valor1", "Valor2", "Valor3", "Valor4"],
-    ["Valor5", "Valor6", "Valor7", "Valor8"]
-  ];
-
+ 
   const { razon_social,
     nit,
     telefono,
@@ -50,14 +46,20 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
     despachador,
     horaSalida,
     ruta,
+    tarifa,
+    puestos,
     vehiculoPlaca,
     vehiculoCodigo,
     vehiculoPropietario,
     total,
     fechaImpresion,
-    conductor
+    conductor,
   } = datos
 
+  const titulos = ['Tiquetes / Pasajes', 'Cant', 'Valor'];
+  const datoss = [
+    [ruta, puestos.toString(), tarifa.toString(),]
+  ];
 
 
 
@@ -90,7 +92,7 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
           {index === 0 && <pre>---------------------------------------------</pre>}
           </>
         ))}
-        <pre>--------------Total$       19         {total}</pre>
+        <pre>--------------Total$       {tarifa}         {total}</pre>
         <br />
         <br />
         <p className={styles['texto-centrado']}>--------[ GASTOS Y DEDUCCIONES ]--------</p>

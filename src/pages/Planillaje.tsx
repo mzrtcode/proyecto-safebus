@@ -24,7 +24,7 @@ function Planillaje() {
 
   const { usuario } = useAuth()
 
-  const [rutas, setRutas] = useState<Options[]>([])
+  const [rutas, setRutas] = useState<RutasTypes[]>([])
   const [agencias, setAgencias] = useState<AgenciaTypes[]>([])
   const [conductores, setConductores] = useState<ConductorTypes[]>([])
   const [vehiculos, setVehiculos] = useState<VehiculoTypes[]>([])
@@ -33,15 +33,18 @@ function Planillaje() {
     try {
       const rutas = await rutasLoader() as RutasTypes[];
       const rutasActivas = rutas.filter(ruta => ruta.estado === true)
-      const respuesta: Options[] = rutasActivas.map(ruta => ({
-        value: ruta.id_ruta,
-        label: ruta.nombre_inicio + ' - ' + ruta.nombre_fin
-      }));
-
-      setRutas(respuesta);
+      setRutas(rutasActivas);
     } catch (error) {
       console.error("Error al obtener Rutas:", error);
     }
+  }
+
+  const generarOptionsRutas = (rutas: RutasTypes[]) => {
+    const respuesta: Options[] = rutas.map(agencia => ({
+      value: agencia.id_ruta,
+      label: agencia.nombre_inicio + '-' + agencia.nombre_fin
+    }));
+    return respuesta;
   }
 
   const obtenerAgencias = async () => {
@@ -62,8 +65,7 @@ function Planillaje() {
     }));
     return respuesta;
   }
-
-  
+ 
 
   const obtenerConductores = async () => {
     try {
@@ -98,10 +100,6 @@ const formatearListaVehiculosSelect = (vehiculos) => {
     label: vehiculo.codigo_interno + ' - ' + vehiculo.placa
   }));
 }
-
-  
-
-
 
   const onSubmit = async (data: PlanillaRegistrar) => {
     try {
@@ -150,10 +148,7 @@ const formatearListaVehiculosSelect = (vehiculos) => {
     obtenerVehiculos();
     obtenerAgencias();
     obtenerDatosEmpresa();
-    empresaEstado.razon_social = 'Empresa de Prueba';
   }, [])
-
-
 
   const customStyles = {
     control: base => ({
@@ -165,30 +160,24 @@ const formatearListaVehiculosSelect = (vehiculos) => {
   };
 
 
-
-
- 
-
-
-
   const [datosPlanilla, setDatosPlanilla] = useState({
     razon_social: empresaEstado.razon_social,
     nit: empresaEstado.nit,
     telefono: empresaEstado.telefono,
-    direccionEmpresa: planillaEstado.nombre_agencia,
-    direccionAgencia: 'Calle Agencia 123',
+    direccionEmpresa: empresaEstado.direccion,
+    direccionAgencia: 'N/A',
     fecha: obtenerFecha(new Date()),
     numeroPlanilla: '00 ',
     agencia: 'N/A',
     despachador: despachador.nombres,
     horaSalida: calcularHoraSalida(new Date),
     ruta: 'N/A',
-    tarifa: planillaEstado.precio_ruta,
+    tarifa: planillaEstado.precio_ruta || 0,
     vehiculoPlaca: planillaEstado.numero_placa_vehiculo,
     vehiculoCodigo: planillaEstado.codigo_interno_vehiculo,
-    puestos: 999,
+    puestos: 0,
     vehiculoPropietario: 'N/A',
-    total: 65000,
+    total: 0,
     conductor: 'N/A',
     numeroPoliza: '123456789',
     fechaImpresion: obtenerFechaYHoraActual(),
@@ -196,6 +185,11 @@ const formatearListaVehiculosSelect = (vehiculos) => {
     webEmpresa: 'www.empresa.com'
   });
 
+
+  useEffect(() => {
+    obtenerDatosEmpresa();
+  }, [])
+  
   useEffect(() => {
     // Observa cambios en el campo id_ruta
     const idRutaSeleccionada = watch('id_ruta');
@@ -305,7 +299,7 @@ const formatearListaVehiculosSelect = (vehiculos) => {
                     className={styles.select}
                     styles={customStyles}
                     isClearable={true}
-                    options={rutas}
+                    options={generarOptionsRutas(rutas)}
                     {...field}
 
                   />

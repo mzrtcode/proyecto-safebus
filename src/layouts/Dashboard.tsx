@@ -93,9 +93,9 @@ const Dashboard = () => {
         {
             name: "Reportes",
             icon: "bx bx-pie-chart-alt-2 estadisticas-icon",
-            sublinks: [{ name: "Reportes", link: "#" }],
+            sublinks: [{ name: "Reportes", link: "/reportes" }],
             color: "purple",
-            rol: ['administrador'],
+            rol: ['vendedor'],
             handleArrowClick: null,
         },
         {
@@ -112,9 +112,9 @@ const Dashboard = () => {
         {
             name: "Configurar",
             icon: "bx bx-cog configurar-icon",
-            sublinks: [{ name: "Configurar", link: "#" }],
+            sublinks: [{ name: "Configurar", link: "/configurar" }],
             color: "pink",
-            rol: ['administrador', 'vendedor'],
+            rol: ['administrador'],
             handleArrowClick: null,
         },
     ];

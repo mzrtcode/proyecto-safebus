@@ -117,8 +117,10 @@ const Estadisticas = () => {
             </Card>
         <br />
             <div className={styles.dividido}>
-                <Card>Grafico Clientes</Card>
-                <Card>Grafico Horas</Card>
+                <Card>Ventas Mensuales</Card>
+                <Card>Ventas 
+                    
+                </Card>
 
             </div>
         </>

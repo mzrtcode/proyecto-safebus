@@ -30,6 +30,8 @@ import { administradoresLoader } from './api/administradores';
 import { planillajeLoader } from './api/planillaje';
 import path from 'path';
 import Estadisticas from './pages/Estadisticas';
+import Reportes from './pages/Reportes';
+import Configurar from './pages/Configurar';
 
 
 const router = createBrowserRouter([
@@ -62,6 +64,7 @@ const router = createBrowserRouter([
       {path: 'vendedores/:id', element: <Vendedores/>, loader: vendedoresLoader},
       {path: 'administradores', element: <Administradores/>, loader: administradoresLoader},
       {path: 'administradores/:id', element: <Administradores/>, loader: administradoresLoader},
+
       
 
      
@@ -80,6 +83,24 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage/>
+  },
+
+  {
+    path: "/",
+    element: <Dashboard/> ,
+    children: [
+      {path: '/reportes', element:  <Reportes/> },
+     
+    ]
+  },
+
+  {
+    path: "/",
+    element: <Dashboard/> ,
+    children: [
+      {path: '/configurar', element:  <Configurar/> },
+     
+    ]
   },
 
  

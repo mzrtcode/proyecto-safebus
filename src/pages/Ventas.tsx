@@ -16,6 +16,7 @@ import Tiquete, { TiqueteProps } from '../components/Tiquete'
 import { useReactToPrint } from "react-to-print";
 import { obtenerEmpresa } from '../api/empresa'
 import { AgenciaTypes, obtenerAgencia } from '../api/agencias'
+import { useStateManager } from 'react-select'
 
 type Inputs = {
     agencia: string,
@@ -204,18 +205,22 @@ const Ventas = () => {
     }
 
     const crearTiquete = async (id_planilla: number, puestos_vendidos: number) => {
-        handlePrint();
+
         const tiquete = {
             id_planilla,
             puestos_vendidos
         }
-        console.log({ id_planilla })
 
-
-        const statusCode = await registrarTiquete(tiquete);
-        if (statusCode === 201) {
+        const respuesta = await registrarTiquete(tiquete);
+        if (respuesta.status === 201) {
+            setTiqueteCreadoId(respuesta.data.id)
             obtenerTiquetesVendidos(planillaEstado.id_planilla)
+            generarDatosTiquete();
             showToast(`Tiquete Vendido`, 'success', 'bottom-center');
+            // Espera 100 milisegundos antes de imprimir
+            setTimeout(() => {
+                handlePrint();
+            }, 100);
         } else {
             showToast(`Error al registrar el tiquete`, 'error', 'bottom-center')
         }
@@ -228,11 +233,15 @@ const Ventas = () => {
         setDatosTiquete(generarDatosTiquete(detallesVenta, planillaEstado));
     }, [detallesVenta])
 
+
+
     const tiqueteRef = useRef(null);
 
     const handlePrint = useReactToPrint({
         content: () => tiqueteRef.current,
     });
+
+    const [tiqueteCreadoId, setTiqueteCreadoId] = useState(0);
 
 
     const generarDatosTiquete = () => {
@@ -248,7 +257,7 @@ const Ventas = () => {
             direccionAgencia: planillaEstado?.direccion_agencia || 'N/A',
             direccionEmpresa: empresaEstado?.direccion,
             fecha: nuevaFecha,
-            numeroTiquete: '00',
+            numeroTiquete: tiqueteCreadoId,
             agencia: planillaEstado.nombre_agencia || 'N/A',
             despachador: planillaEstado?.nombre_vendedor,
             horaSalida,

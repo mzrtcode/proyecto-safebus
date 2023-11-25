@@ -11,9 +11,9 @@ export type NuevoTiquete = Omit<TiquetesVendidos, 'id_tiquete' | 'fecha_hora'>;
 
 
 
-export const obtenerTiquetesVendedidosPorPlanillaId = async (id_ruta: number): Promise<TiquetesVendidos[]> => {
+export const obtenerTiquetesVendedidosPorPlanillaId = async (id_planilla: number): Promise<TiquetesVendidos[]> => {
   try {
-    const response = await axios.get(`/tiquetes/${id_ruta}`);
+    const response = await axios.get(`/tiquetes/${id_planilla}`);
     if (response.status !== 200) {
       throw new Error("Error al obtener los tiquetes");
     }
@@ -36,8 +36,17 @@ export const obtenerTiquetesVendedidosPorPlanillaId = async (id_ruta: number): P
 }
 
 
-export const registrarTiquete = async (tiquete: NuevoTiquete): Promise<number> => {
-  const response = await axios.post('/tiquetes', tiquete);
-  return response.status; // Devuelve el código de estado de la respuesta
+type TiqueteData = {
+  id: number;
+  id_planilla: number;
+  puestos_vendidos: number;
+};
 
+export const registrarTiquete = async (tiquete: NuevoTiquete): Promise<{ status: number, data: TiqueteData }> => {
+  try {
+    const response  = await axios.post('/tiquetes', tiquete);
+    return { status: response.status, data: response.data };
+  } catch (error) {
+    return { status: 500, data: {id: 0, id_planilla: 0, puestos_vendidos: 0} || { mensaje: 'Error interno del servidor' } };
+  }
 };
