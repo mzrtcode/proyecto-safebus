@@ -6,12 +6,14 @@ export interface EmpresaTypes {
     direccion: string,
     telefono: string,
     ciudad: string,
+    mensaje: string,
+    porcentaje_costo_planilla: number,
+    fondo_reposicion: number,
   }
 
   export const obtenerEmpresa = async (): Promise<EmpresaTypes | null> => {
     try {
       const res = await axios.get("/empresa");
-      console.log(res)
       if (res.status !== 200) {
         throw new Error("Error al obtener los datos de la empresa");
       }
@@ -23,4 +25,10 @@ export interface EmpresaTypes {
       }
       return null; // Devuelve un array vacío en caso de error.
     }
+  };
+
+
+  export const actualizarEmpresa = async (empresa: EmpresaTypes): Promise<number> => {
+    const response = await axios.put('/empresa', empresa);
+    return response.status; // Devuelve el código de estado de la respuesta
   };
