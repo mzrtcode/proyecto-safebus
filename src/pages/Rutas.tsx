@@ -247,7 +247,7 @@ const Rutas = () => {
 
 
 
-              {errors.inicio_ruta && <span className="input-error">Este campo es requerido</span>}
+              {errors.inicio_ruta && <span className={styles['input-error']}>Este campo es requerido</span>}
             </div>
 
             <div className={styles['input-fields']}>
@@ -266,7 +266,7 @@ const Rutas = () => {
                   />
                 )}
               />
-              {errors.fin_ruta && <span className="input-error">Este campo es requerido</span>}
+              {errors.fin_ruta && <span className={styles['input-error']}>Este campo es requerido</span>}
             </div>
 
 
@@ -287,7 +287,7 @@ const Rutas = () => {
 
 
 
-              {errors.costo && <span className="input-error">Este campo es requerido</span>}
+              {errors.costo && <span className={styles['input-error']}>Este campo es requerido</span>}
             </div>
 
           </div>

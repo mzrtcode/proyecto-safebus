@@ -139,7 +139,7 @@ const Localidades = () => {
                                 })}
                             />
 
-                            {errors.nombre && <span className="input-error">Este campo es requerido</span>}
+                            {errors.nombre && <span className={styles['input-error']}>Este campo es requerido</span>}
 
                         </div>
 
@@ -154,7 +154,7 @@ const Localidades = () => {
                                     maxLength: 3
                                 })}
                             />
-                            {errors.acronimo && <span className="input-error">Este campo es requerido</span>}
+                            {errors.acronimo && <span className={styles['input-error']}>Este campo es requerido</span>}
 
                         </div>
                     </div>
