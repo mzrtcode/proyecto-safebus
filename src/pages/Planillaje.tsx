@@ -1,7 +1,7 @@
 import { Controller, useForm } from "react-hook-form";
 import CardContainer from "../components/CardContainer"
 import { PlanillaRegistrar, PlanillajeTypes, despacharPlanilla, planillaRegistrar } from "../api/planillaje";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { AgenciaTypes, agenciasLoader, obtenerAgencia } from "../api/agencias";
 import { ConductorTypes, conductoresLoader } from "../api/conductores";
 import { RutasTypes, rutasLoader } from "../api/rutas";
@@ -11,17 +11,19 @@ import Select, { StylesConfig } from 'react-select';
 import { Options } from "../api/general";
 import useToast from '../hooks/useToast';
 import { useAuth } from "../context/AuthContext";
-import Planilla from "../components/Planilla";
-import { calcularHoraSalida, obtenerFecha, obtenerFechaYHoraActual } from "../utils/utils";
+import Planilla, { PlanillaProps } from "../components/Planilla";
+import { calcularHoraSalida, formatearNumeroConComas, obtenerFecha, obtenerFechaYHoraActual } from "../utils/utils";
 import { obtenerEmpresa } from "../api/empresa";
 import { obtenerPropietario } from "../api/propietarios";
+import { useReactToPrint } from "react-to-print";
 
 function Planillaje() {
 
-  const { register, handleSubmit, setValue, reset, control, watch,  formState: {
+  const { register, handleSubmit, setValue, reset, control, watch, formState: {
     errors,
   } } = useForm<PlanillaRegistrar>();
 
+  const { planilla: planillaEstado, empresa: empresaEstado, usuario: despachador, asignarEmpresa } = useAuth();
   const { usuario } = useAuth()
 
   const [rutas, setRutas] = useState<RutasTypes[]>([])
@@ -38,6 +40,7 @@ function Planillaje() {
       console.error("Error al obtener Rutas:", error);
     }
   }
+  const planillaRef = useRef(null);
 
   const generarOptionsRutas = (rutas: RutasTypes[]) => {
     const respuesta: Options[] = rutas.map(agencia => ({
@@ -51,7 +54,7 @@ function Planillaje() {
     try {
       const agencias = await agenciasLoader() as AgenciaTypes[];
       const agenciasActivas = agencias.filter(agencia => agencia.estado === true)
-     
+
       setAgencias(agenciasActivas);
     } catch (error) {
       console.error("Error al obtener Agencias:", error);
@@ -65,7 +68,7 @@ function Planillaje() {
     }));
     return respuesta;
   }
- 
+
 
   const obtenerConductores = async () => {
     try {
@@ -90,16 +93,65 @@ function Planillaje() {
 
     } catch (error) {
       console.error("Error al obtener Conductores:", error);
-   }
+    }
   }
 
   // Función para crear el formato de mapeo
-const formatearListaVehiculosSelect = (vehiculos) => {
-  return vehiculos.map(vehiculo => ({
-    value: vehiculo.id_vehiculo,
-    label: vehiculo.codigo_interno + ' - ' + vehiculo.placa
-  }));
-}
+  const formatearListaVehiculosSelect = (vehiculos: VehiculoTypes[]) => {
+    return vehiculos.map(vehiculo => ({
+      value: vehiculo.id_vehiculo,
+      label: vehiculo.codigo_interno + ' - ' + vehiculo.placa
+    }));
+  }
+
+  const handlePrint = useReactToPrint({
+    content: () => planillaRef.current,
+  });
+
+
+
+
+  useEffect(() => {
+    obtenerRutas();
+    obtenerConductores();
+    obtenerVehiculos();
+    obtenerAgencias();
+    obtenerDatosEmpresa();
+  }, [])
+
+  useEffect(() => {
+    setDatosPlanilla(generarDatosPlanilla())
+  }, [empresaEstado])
+
+
+  const generarDatosPlanilla = () => {
+    return {
+      razon_social: empresaEstado?.razon_social || 'N/A',
+      nit: empresaEstado.nit,
+      telefono: empresaEstado.telefono,
+      direccionEmpresa: empresaEstado.direccion,
+      direccionAgencia: 'N/A',
+      fechaCreacion: obtenerFecha(new Date()),
+      fechaImpresion: obtenerFechaYHoraActual(),
+      numeroPlanilla: 0,
+      agencia: 'N/A',
+      despachador: despachador.nombres,
+      horaSalida: calcularHoraSalida(new Date),
+      ruta: 'N/A',
+      vehiculoPlaca: planillaEstado.numero_placa_vehiculo,
+      vehiculoCodigo: planillaEstado.codigo_interno_vehiculo,
+      puestos: 0,
+      vehiculoPropietario: 'N/A',
+      total: '0',
+      costoPlanilla: '0',
+      conductor: 'N/A',
+      fondoReposicion: formatearNumeroConComas(empresaEstado?.fondo_reposicion),
+      totalDeducciones: '0',
+      netoPlanilla: '0'
+    }
+  }
+
+  const [datosPlanilla, setDatosPlanilla] = useState(generarDatosPlanilla());
 
   const onSubmit = async (data: PlanillaRegistrar) => {
     try {
@@ -116,10 +168,19 @@ const formatearListaVehiculosSelect = (vehiculos) => {
         id_vehiculo: idVehiculoValue,
         id_vendedor: usuario?.id_usuario
       }
-            
-      const statusCode = await planillaRegistrar(updatedData)
-      if (statusCode === 201) {
+
+      const respuesta = await planillaRegistrar(updatedData)
+      if (respuesta.status === 201) {
+        setDatosPlanilla({
+          ...datosPlanilla,
+          numeroPlanilla:  respuesta.data.id_planilla
+        })
+        
         showToast(`Planilla registrada`, 'success', 'bottom-center');
+        // Espera 100 milisegundos antes de imprimir
+        setTimeout(() => {
+          handlePrint();
+        }, 100);
       } else {
         showToast('Error al registrar la planilla', 'error', 'bottom-center');
       }
@@ -132,23 +193,17 @@ const formatearListaVehiculosSelect = (vehiculos) => {
   }
   const showToast = useToast();
 
-  const { planilla: planillaEstado, empresa: empresaEstado, usuario: despachador,asignarEmpresa } = useAuth();
 
 
   const obtenerDatosEmpresa = async () => {
     const datos = await obtenerEmpresa();
 
     if (datos !== null) {
-        asignarEmpresa(datos);
+      asignarEmpresa(datos);
+      console.log(datos)
     }
   }
-  useEffect(() => {
-    obtenerRutas();
-    obtenerConductores();
-    obtenerVehiculos();
-    obtenerAgencias();
-    obtenerDatosEmpresa();
-  }, [])
+ 
 
   const customStyles = {
     control: base => ({
@@ -160,53 +215,30 @@ const formatearListaVehiculosSelect = (vehiculos) => {
   };
 
 
-  const [datosPlanilla, setDatosPlanilla] = useState({
-    razon_social: empresaEstado.razon_social,
-    nit: empresaEstado.nit,
-    telefono: empresaEstado.telefono,
-    direccionEmpresa: empresaEstado.direccion,
-    direccionAgencia: 'N/A',
-    fecha: obtenerFecha(new Date()),
-    numeroPlanilla: '00 ',
-    agencia: 'N/A',
-    despachador: despachador.nombres,
-    horaSalida: calcularHoraSalida(new Date),
-    ruta: 'N/A',
-    tarifa: planillaEstado.precio_ruta || 0,
-    vehiculoPlaca: planillaEstado.numero_placa_vehiculo,
-    vehiculoCodigo: planillaEstado.codigo_interno_vehiculo,
-    puestos: 0,
-    vehiculoPropietario: 'N/A',
-    total: 0,
-    conductor: 'N/A',
-    numeroPoliza: '123456789',
-    fechaImpresion: obtenerFechaYHoraActual(),
-    mensaje: '* Gracias por su compra *',
-    webEmpresa: 'www.empresa.com'
-  });
-
-
-  useEffect(() => {
-    obtenerDatosEmpresa();
-  }, [])
   
+
+
   useEffect(() => {
     // Observa cambios en el campo id_ruta
     const idRutaSeleccionada = watch('id_ruta');
-  
+
+    const ruta = rutas.find(ruta => ruta.id_ruta === idRutaSeleccionada?.value);
+
+
     // Realiza la lógica de actualización del estado de datosPlanilla
     if (idRutaSeleccionada) {
       setDatosPlanilla((prevDatosPlanilla) => ({
         ...prevDatosPlanilla,
-        ruta: idRutaSeleccionada.label || 'N/A',  // Actualiza según tu lógica
+        ruta: idRutaSeleccionada.label || 'N/A',
+        tarifa: ruta?.costo || 0,
       }));
     }
   }, [watch('id_ruta')]);
-  
+
   useEffect(() => {
     // Observa cambios en el campo id_conductor
     const idConductorSeleccionado = watch('id_conductor');
-  
+
     // Realiza la lógica de actualización del estado de datosPlanilla
     if (idConductorSeleccionado) {
       setDatosPlanilla((prevDatosPlanilla) => ({
@@ -219,48 +251,49 @@ const formatearListaVehiculosSelect = (vehiculos) => {
   useEffect(() => {
     // Observa cambios en el campo id_vehiculo
     const idVehiculoSeleccionado = watch('id_vehiculo');
-  
+
     // Realiza la lógica de actualización del estado de datosPlanilla
     const actualizarDatosVehiculo = async () => {
       if (idVehiculoSeleccionado) {
         // Obtener el ID del vehículo seleccionado
         const idVehiculo = idVehiculoSeleccionado.value;
-  
+
         // Obtener el ID del propietario asociado al vehículo
         const idPropietario = vehiculos.find(vehiculo => vehiculo.id_vehiculo === idVehiculo)?.id_propietario;
         let nombrePropietario = 'N/A';
-  
+
         // Obtener la información adicional del vehículo (placa y código interno)
         const vehiculo = vehiculos.find(vehiculo => vehiculo.id_vehiculo === idVehiculo);
         const placa = vehiculo?.placa;
         const codigoInterno = vehiculo?.codigo_interno;
-  
+
         // Obtener el nombre completo del propietario si el ID del propietario no es undefined
         if (idPropietario !== undefined) {
           const propietario = await obtenerPropietario(idPropietario);
           nombrePropietario = `${propietario?.nombres} ${propietario?.apellidos}`;
         }
-  
+
         // Actualizar el estado con la información del vehículo y propietario
         setDatosPlanilla((prevDatosPlanilla) => ({
           ...prevDatosPlanilla,
           vehiculoCodigo: codigoInterno !== undefined ? codigoInterno : 'N/A',
           vehiculoPlaca: placa !== undefined ? placa : 'N/A',
           vehiculoPropietario: nombrePropietario,
+          puestos: vehiculo?.cantidad_puestos || 0,
         }));
       }
     };
-  
+
     actualizarDatosVehiculo();
   }, [watch('id_vehiculo')]);
-  
+
   useEffect(() => {
     // Observa cambios en el campo id_agencia
     const idAgenciaSeleccionada = watch('id_agencia');
     const idAgencia = +idAgenciaSeleccionada?.value;
     const direccionAgencia = agencias.find(agencia => agencia.id_agencia === idAgencia)?.direccion;
-    
-  
+
+
     // Realiza la lógica de actualización del estado de datosPlanilla
     const actualizarDatosAgencia = () => {
       if (idAgenciaSeleccionada) {
@@ -272,10 +305,30 @@ const formatearListaVehiculosSelect = (vehiculos) => {
         }));
       }
     };
-  
+
     actualizarDatosAgencia();
   }, [watch('id_agencia')]);
-  
+
+
+  // Calcular total
+  useEffect(() => {
+    const tarifa = +datosPlanilla.tarifa;
+    const puestos = +datosPlanilla.puestos;
+    const total = tarifa * puestos;
+    const costoPlanilla = total * empresaEstado?.porcentaje_costo_planilla / 100
+    const totalDeducciones = costoPlanilla + empresaEstado?.fondo_reposicion
+    const netoPlanilla = total - totalDeducciones
+
+    setDatosPlanilla((prevDatosPlanilla) => ({
+      ...prevDatosPlanilla,
+      total: formatearNumeroConComas(total),
+      costoPlanilla: formatearNumeroConComas(costoPlanilla),
+      totalDeducciones: formatearNumeroConComas(totalDeducciones),
+      netoPlanilla: formatearNumeroConComas(netoPlanilla)
+    }));
+  }, [datosPlanilla.tarifa, datosPlanilla.puestos]);
+
+ 
 
 
   return (
@@ -343,7 +396,7 @@ const formatearListaVehiculosSelect = (vehiculos) => {
                     options={formatearListaVehiculosSelect(vehiculos)}
                     {...field}
 
-                    
+
                   />
                 )}
               />
@@ -381,7 +434,7 @@ const formatearListaVehiculosSelect = (vehiculos) => {
           </button>
         </div>
       </form>
-      <div>
+      <div ref={planillaRef}>
         <Planilla datos={datosPlanilla} />
       </div>
     </CardContainer>
