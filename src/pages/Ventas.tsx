@@ -9,12 +9,13 @@ import { PlanillajeTypes, despacharPlanilla, eliminarPlanilla, planillajeLoader 
 import { useLoaderData } from 'react-router-dom'
 import ContenedorPlanillas from '../components/ContenedorPlanillas'
 import { useAuth } from '../context/AuthContext'
-import { TiquetesVendidos, obtenerTiquetesVendedidosPorPlanillaId, registrarTiquete } from '../api/tiquetes'
+import { TiquetesVendidos, eliminarTiquete, obtenerTiquetesVendedidosPorPlanillaId, registrarTiquete } from '../api/tiquetes'
 import { formatoHoraAmPm, obtenerFecha } from '../utils/utils'
 import useToast from '../hooks/useToast'
 import Tiquete from '../components/Tiquete'
 import { useReactToPrint } from "react-to-print";
 import { obtenerEmpresa } from '../api/empresa'
+import Acciones from '../components/Acciones'
 
 
 type Inputs = {
@@ -33,39 +34,55 @@ interface TiqueteInfo {
     pasajeros: number;
     total: number,
     hora: string;
+    acciones?: JSX.Element;
 }
 
-const columnas = [
-    {
-        name: 'Numero tiquete',
-        selector: (row: TiqueteInfo) => row.numeroTiquete,
-        sortable: true
-    },
-    {
-        name: 'Ruta',
-        selector: (row: TiqueteInfo) => row.ruta,
-        sortable: true
-    },
-    {
-        name: 'Pasajeros',
-        selector: (row: TiqueteInfo) => row.pasajeros,
-        sortable: true
-    },
-    {
-        name: 'Total',
-        selector: (row: TiqueteInfo) => row.total,
-        sortable: true
-    },
-    {
-        name: 'Hora',
-        selector: (row: TiqueteInfo) => row.hora,
-        sortable: true
-    }
-];
 
 const Ventas = () => {
     const showToast = useToast();
 
+    const eliminarTiqueteId = async (id_tiquete: number): Promise<void> => {
+        const respuesta = await eliminarTiquete(id_tiquete);
+        if(respuesta.status !== 200){
+            showToast(`Tiquete no eliminado`, 'error', 'bottom-center');
+        }
+        obtenerTiquetesVendidos(planillaEstado.id_planilla);
+        showToast(`Tiquete eliminado`, 'success', 'bottom-center');
+    }
+    
+    
+    const columnas = [
+        {
+            name: 'Numero tiquete',
+            selector: (row: TiqueteInfo) => row.numeroTiquete,
+            sortable: true
+        },
+        {
+            name: 'Ruta',
+            selector: (row: TiqueteInfo) => row.ruta,
+            sortable: true
+        },
+        {
+            name: 'Pasajeros',
+            selector: (row: TiqueteInfo) => row.pasajeros,
+            sortable: true
+        },
+        {
+            name: 'Total',
+            selector: (row: TiqueteInfo) => row.total,
+            sortable: true
+        },
+        {
+            name: 'Hora',
+            selector: (row: TiqueteInfo) => row.hora,
+            sortable: true
+        },
+        {
+            name: 'Acciones',
+            cell: (row: TiqueteInfo) => <Acciones editarLink={null} eliminar={eliminarTiqueteId} id={row.numeroTiquete} />
+        }
+    ];
+    
 
 
     const { planilla: planillaEstado, empresa: empresaEstado, asignarEmpresa } = useAuth();
@@ -196,7 +213,7 @@ const Ventas = () => {
     const anularPlanilla = async (id_planilla: number) => {
         const statusCode = await eliminarPlanilla(id_planilla);
         if (statusCode === 204) {
-            actualizarPlanillas()
+            obtenerTiquetesVendidos(planillaEstado.id_planilla);
             showToast(`Planilla eliminada`, 'success', 'bottom-center');
         } else {
             showToast(`Error al eliminar planilla`, 'error', 'bottom-center')
