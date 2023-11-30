@@ -25,7 +25,7 @@ export function obtenerFechaYHoraActual(): string {
 }
 
 export function formatearNumeroConComas(numero: number): string {
-
+  if (typeof numero !== 'number') return ''
   return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -47,77 +47,54 @@ export function obtenerFecha(fecha: Date): string {
 
 
 
-/**
-* Genera una tabla centrada a partir de títulos y datos proporcionados.
-*
-* @param {string[]} titulos - Los títulos de las columnas.
-* @param {string[][]} datos - Los datos para llenar la tabla.
-* @returns {string} La tabla centrada como una cadena de texto.
-*
-* @example
-* const titulos = ['Nombre', 'Edad', 'Ciudad'];
-* const datos = [
-*   ['Juan', '25', 'Ciudad A'],
-*   ['Ana', '30', 'Ciudad B'],
-*   ['Carlos', '28', 'Ciudad C'],
-* ];
-*
-* console.log(generarTablaCentrada(titulos, datos));
-*
-* // Salida esperada:
-* //  Nombre  | Edad |  Ciudad
-* //  Juan    |  25  |Ciudad A
-* //  Ana     |  30  |Ciudad B
-* // Carlos   |  28  |Ciudad C
-*/
-export const generarTablaCentrada = (titulos: string[], datos: Datos): string[] => {
-  const longitudTotal: number = 44;
+export function generarTabla(arrays: string[][]): string {
+  const maxCaracteres: number[] = [20, 3, 9]; // Máximo de caracteres por columna
+  const espaciosInicio: number = 1; // Espacios al inicio de cada fila
+  const espaciosFin: number = 1; // Espacios al final de cada fila
+  const espaciosEntreValores: number[] = [7, 3]; // Espacios entre valores
+  const separador: string = '     '; // Espacio entre columnas
 
-  // Calcular la longitud máxima permitida para cada columna
-  const longitudMaximaColumnas: Record<string, number> = titulos.reduce((longitudes, titulo) => {
-    const longitudTitulo: number = titulo.length;
-    const longitudMaximaValores: number = datos.reduce((maximo, fila) => {
-      const valor: string = (fila[titulo] || '').toString();
-      return Math.max(maximo, valor.length);
-    }, 0);
-    const longitudMaxima: number = Math.max(longitudTitulo, longitudMaximaValores);
-    longitudes[titulo] = Math.min(longitudMaxima, Math.floor((longitudTotal + titulos.length - 1) / titulos.length)); // Asegurar que no exceda la longitud total
-    return longitudes;
-  }, {});
-
-  // Función para centrar un texto en una columna con espacio alrededor
-  const centrarEnColumna = (texto: string, longitudMaxima: number): string => {
-    const espacioAlrededor: number = Math.max(1, (longitudMaxima - texto.length) / 2);
-    return ' '.repeat(Math.floor(espacioAlrededor)) + texto + ' '.repeat(Math.ceil(espacioAlrededor));
+  // Función para ajustar la longitud de una cadena según el límite máximo
+  const ajustarLongitud = (valor: string, max: number): string => {
+      if (valor.length > max) {
+          return valor.slice(0, max); // Cortar si excede el máximo
+      } else {
+          const espacios: string = ' '.repeat(max - valor.length);
+          return valor + espacios; // Completar con espacios si es necesario
+      }
   };
 
-  // Construir la primera línea con los títulos
-  const primeraLinea: string = titulos.map((titulo, index) => {
-    const longitudMaxima: number = longitudMaximaColumnas[titulo];
-    return centrarEnColumna(titulo, longitudMaxima);
-  }).join(' '.repeat(Math.max(1, titulos.length - 1))); // Separador de espacio entre títulos, mínimo 1 espacio
+  // Función para generar una fila de la tabla
+  const generarFila = (fila: string[]): string => {
+      const valoresAjustados: string[] = fila.map((valor, indice) => {
+          return ajustarLongitud(valor, maxCaracteres[indice]);
+      });
 
-  // Función para generar una fila centrada
-  const generarFilaCentrada = (valores: string[]): string => {
-    return titulos.map((titulo, index) => {
-      const valor: string = (valores[index] || '').toString().slice(0, longitudMaximaColumnas[titulo]); // Cortar el valor si es demasiado largo
-      return centrarEnColumna(valor, longitudMaximaColumnas[titulo]);
-    }).join(' '.repeat(Math.max(1, titulos.length - 1))); // Separador de espacio entre valores, mínimo 1 espacio
+      const filaConEspacios: string[] = [
+          ' '.repeat(espaciosInicio),
+          valoresAjustados[0],
+          ' '.repeat(espaciosEntreValores[0]),
+          valoresAjustados[1],
+          ' '.repeat(espaciosEntreValores[1]),
+          valoresAjustados[2],
+          ' '.repeat(espaciosFin)
+      ];
+
+      return filaConEspacios.join('');
   };
 
-  // Construir la tabla
-  const tabla: string[] = [primeraLinea];
+  // Generar la tabla
+  const cabecera: string = "         Ruta               Cant     Valor   \n---------------------------------------------";
+  const contenido: string = arrays.map(generarFila).join('\n');
 
-  datos.forEach((valores: string[]) => {
-    const valoresRecortados: string[] = valores.slice(0, titulos.length); // Recortar valores para que no excedan el número de títulos
-    const filaCentrada: string = generarFilaCentrada(valoresRecortados);
-    tabla.push(filaCentrada);
-  });
+  // Imprimir la tabla
+  return (cabecera + '\n' + contenido);
+}
 
-  // Asegurar que la longitud total se respete
-  return tabla.map(fila => fila.slice(0, longitudTotal));
-};
-
+export function dividirPorSaltoDeLinea(texto: string): string[] {
+  const lineas: string[] = texto.split('\n');
+  return lineas;
+}
 
 /**
  * Calcula la hora de salida sumando 30 minutos a una fecha dada.
@@ -136,3 +113,49 @@ export const calcularHoraSalida = (fecha: Date): string => {
   // Retornar la nueva hora en formato "hh:mm"
   return `${horas}:${minutos}`;
 };
+
+
+export function generarTablaInformePlanillas(datos: string[][]): string {
+  const maxCaracteres = [9, 4, 3, 3, 7]; // Máximo de caracteres por columna
+  const espaciosEntreColumnas = [3, 3, 4, 4]; // Espacios entre columnas
+  const separador = '     '; // Espacio entre columnas
+
+  // Función para ajustar la longitud de una cadena según el límite máximo
+  const ajustarLongitud = (valor: string, max: number): string => {
+      if (valor.length > max) {
+          return valor.slice(0, max); // Cortar si excede el máximo
+      } else {
+          const espaciosAntes = ' '.repeat(Math.floor((max - valor.length) / 2));
+          const espaciosDespues = ' '.repeat(Math.ceil((max - valor.length) / 2));
+          return espaciosAntes + valor + espaciosDespues; // Centrar agregando espacios antes y después
+      }
+  };
+
+  // Función para generar una fila de la tabla
+  const generarFila = (fila: string[]): string => {
+      const valoresAjustados: string[] = fila.map((valor, indice) => {
+          return ajustarLongitud(valor, maxCaracteres[indice]);
+      });
+
+      const filaConEspacios: string[] = [
+          valoresAjustados[0],
+          ' '.repeat(espaciosEntreColumnas[0]),
+          valoresAjustados[1],
+          ' '.repeat(espaciosEntreColumnas[1]),
+          valoresAjustados[2],
+          ' '.repeat(espaciosEntreColumnas[2]),
+          valoresAjustados[3],
+          ' '.repeat(espaciosEntreColumnas[3]),
+          valoresAjustados[4],
+      ];
+
+      return filaConEspacios.join('');
+  };
+
+  // Generar la tabla
+  const cabecera = "Planilla    Vehic  Ruta   Psj     Vr-Total \n--------------------------------------------";
+  const contenido = datos.map(generarFila).join('\n');
+
+  // Imprimir la tabla
+  return (cabecera + '\n' + contenido);
+}

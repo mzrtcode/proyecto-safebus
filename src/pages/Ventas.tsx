@@ -10,13 +10,12 @@ import { useLoaderData } from 'react-router-dom'
 import ContenedorPlanillas from '../components/ContenedorPlanillas'
 import { useAuth } from '../context/AuthContext'
 import { TiquetesVendidos, obtenerTiquetesVendedidosPorPlanillaId, registrarTiquete } from '../api/tiquetes'
-import { formatoHoraAmPm, obtenerFecha, obtenerFechaYHoraActual } from '../utils/utils'
+import { formatoHoraAmPm, obtenerFecha } from '../utils/utils'
 import useToast from '../hooks/useToast'
-import Tiquete, { TiqueteProps } from '../components/Tiquete'
+import Tiquete from '../components/Tiquete'
 import { useReactToPrint } from "react-to-print";
 import { obtenerEmpresa } from '../api/empresa'
-import { AgenciaTypes, obtenerAgencia } from '../api/agencias'
-import { useStateManager } from 'react-select'
+
 
 type Inputs = {
     agencia: string,
@@ -230,7 +229,7 @@ const Ventas = () => {
     useEffect(() => {
         establecerValoresFormulario()
         generarDatosTiquete()
-        setDatosTiquete(generarDatosTiquete(detallesVenta, planillaEstado));
+        setDatosTiquete(generarDatosTiquete());
     }, [detallesVenta])
 
 
@@ -276,7 +275,7 @@ const Ventas = () => {
     };
 
 
-    const [datosTiquete, setDatosTiquete] = useState(() => generarDatosTiquete(detallesVenta, planillaEstado));
+    const [datosTiquete, setDatosTiquete] = useState(() => generarDatosTiquete());
 
 
 
