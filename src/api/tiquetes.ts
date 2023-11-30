@@ -50,3 +50,13 @@ export const registrarTiquete = async (tiquete: NuevoTiquete): Promise<{ status:
     return { status: 500, data: {id: 0, id_planilla: 0, puestos_vendidos: 0} || { mensaje: 'Error interno del servidor' } };
   }
 };
+
+
+export const eliminarTiquete = async (id_tiquete: number): Promise<{ status: number, data: TiqueteData }> => {
+  try {
+    const response  = await axios.delete(`/tiquetes/${id_tiquete}`);
+    return { status: response.status, data: response.data };
+  } catch (error) {
+    return { status: 500, data: {id: 0, id_planilla: 0, puestos_vendidos: 0} || { mensaje: 'Error interno del servidor' } };
+  }
+}
