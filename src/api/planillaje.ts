@@ -55,9 +55,34 @@ export const planillajeLoader = async (): Promise<PlanillajeTypes[]> => {
   }
 };
 
-export const planillaRegistrar = async (planilla: PlanillaRegistrar): Promise<number> => {
-  const response = await axios.post('/planillas', planilla);
-  return response.status; // Devuelve el código de estado de la respuesta
+export const planillaRegistrar = async (planilla: PlanillaRegistrar): Promise<{ status: number, data: PlanillajeTypes }> => {
+  try {
+    const response = await axios.post('/planillas', planilla);
+    return { status: response.status, data: response.data }; // Devuelve el código de estado de la respuesta
+  } catch (error) {
+    return {
+      status: 500, data: {
+        id_planilla: 0,
+        inicio_ruta: 'N/A',
+        fin_ruta: 'N/A',
+        nombre_conductor: 'N/A',
+        apellido_conductor: 'N/A',
+        nombre_vendedor: 'N/A',
+        apellido_vendedor: 'N/A',
+        numero_placa_vehiculo: 'N/A',
+        codigo_interno_vehiculo: 'N/A',
+        nombre_agencia: 'N/A',
+        direccion_agencia: 'N/A',
+        hora_salida: new Date,
+        cantidad_puestos_vehiculo: 0,
+        precio_ruta: 0,
+        viaje_completado: false,
+        acronimo_inicio: 'N/A',
+        acronimo_fin: 'N/A',
+      } || { mensaje: 'Error interno del servidor' }
+    };
+
+  }
 };
 
 export const despacharPlanilla = async (id_planilla: number): Promise<number> => {
