@@ -80,7 +80,7 @@ const Agencias = () => {
   }, [id])
   const columnas = [
     {
-      name: 'Nombre localidad',
+      name: 'Nombre agencia',
       selector: (row: AgenciaTypes) => row.nombre,
       sortable: true
     },
@@ -135,7 +135,7 @@ const Agencias = () => {
           <span className={styles.title}>Agencias</span>
           <div className={styles.fields}>
             <div className={styles["input-fields"]}>
-              <label htmlFor="nombre">Nombre localidad</label>
+              <label htmlFor="nombre">Nombre Agencia</label>
               <input
                 type="text"
                 id="nombre"
