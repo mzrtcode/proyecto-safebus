@@ -1,5 +1,4 @@
-import { generarTablaCentrada } from '../utils/utils'
-import TablaTiquete from './TablaTiquete'
+import { dividirPorSaltoDeLinea, formatearNumeroConComas, generarTabla } from '../utils/utils'
 import styles from './planilla.module.css'
 
 export type PlanillaProps = {
@@ -9,26 +8,29 @@ export type PlanillaProps = {
     telefono: string
     direccionEmpresa: string
     direccionAgencia: string
-    fecha: string
-    numeroPlanilla: string
+    fechaCreacion: string
+    numeroPlanilla: number
     agencia: string
     despachador: string
     horaSalida: string
     ruta: string
-    tarifa: number
     vehiculoPlaca: string,
     vehiculoCodigo: string,
     pasajes: number
     precio: number
-    total: number,
+    total: string,
     aseguradora: string
     numeroPoliza: string
     puestos: number
-    fechaImpresion: string
+    fechaImpresion: string,
+    fondoReposicion: string,
     mensaje: string,
+    costoPlanilla: string,
     webEmpresa: string,
     conductor: string,
-    vehiculoPropietario: string
+    vehiculoPropietario: string,
+    totalDeducciones: string
+    netoPlanilla: string
   }
 }
 
@@ -40,13 +42,14 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
     telefono,
     direccionEmpresa,
     direccionAgencia,
-    fecha,
+    fechaCreacion,
     numeroPlanilla,
     agencia,
     despachador,
     horaSalida,
     ruta,
-    tarifa,
+    fondoReposicion,
+    costoPlanilla,
     puestos,
     vehiculoPlaca,
     vehiculoCodigo,
@@ -54,12 +57,9 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
     total,
     fechaImpresion,
     conductor,
+    totalDeducciones,
+    netoPlanilla
   } = datos
-
-  const titulos = ['Tiquetes / Pasajes', 'Cant', 'Valor'];
-  const datoss = [
-    [ruta, puestos.toString(), tarifa.toString(),]
-  ];
 
 
 
@@ -74,7 +74,7 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
 
       <div className={styles['info-tiquete']}>
         <p className={styles['texto-centrado']}>----------[ Planilla de Viaje ]----------</p>
-        <span><p>Fecha: {fecha}</p>  <pre>No :{numeroPlanilla}</pre> </span>
+        <span><p>Fecha: {fechaCreacion}</p>  <pre>No :{numeroPlanilla}</pre> </span>
         <p>-----------------------------------------</p>
 
         <p>Agencia......: {agencia}</p>
@@ -86,25 +86,27 @@ const Planilla: React.FC<PlanillaProps> = ({ datos }) => {
         <p>Propietario..: {vehiculoPropietario}</p>
 
         <p>-----------------------------------------</p>
-        {generarTablaCentrada(titulos, datoss).map((linea, index) => (
-          <>
-          <pre key={index}>{linea}</pre>
-          {index === 0 && <pre>---------------------------------------------</pre>}
-          </>
-        ))}
-        <pre>--------------Total$       {tarifa}         {total}</pre>
+        {
+          dividirPorSaltoDeLinea(generarTabla([
+            [ruta, puestos.toString(), total]
+          ])).map(linea =>
+            {
+              return <pre>{linea}</pre>
+            })
+        }
+        <pre>----------------Total$       {puestos}     {total}</pre>
         <br />
         <br />
         <p className={styles['texto-centrado']}>--------[ GASTOS Y DEDUCCIONES ]--------</p>
         <pre className={styles['texto-centrado']}> Cpt Descripcion                     Valor</pre>
         <p>-----------------------------------------</p>
         <p>Gasto-Despacho.........</p>
-        <p>Planilla</p>
-        <p>Fondo Reposicion</p>
-        <p>----------Total deducciones: 8,700</p>
+        <pre>Planilla                            {costoPlanilla}</pre>
+        <pre>Fondo Reposicion                    {fondoReposicion}</pre>
+        <pre>----------Total deducciones:        {totalDeducciones}</pre>
         <br />
         <br />
-        <p className={styles['texto-centrado']}>--------- NETO Planilla: 52,100 ---------</p>
+        <p className={styles['texto-centrado']}>--------- NETO Planilla: {netoPlanilla} ---------</p>
         <p>Impreso: {fechaImpresion}</p>
       </div >
 
