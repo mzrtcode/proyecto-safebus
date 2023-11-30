@@ -1,4 +1,3 @@
-import { obtenerFechaYHoraActual } from '../utils/utils'
 import styles from './tiquete.module.css'
 
 export type TiqueteProps = {
