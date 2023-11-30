@@ -23,7 +23,7 @@ export interface EmpresaTypes {
         console.log(error)
         console.log(error.message);
       }
-      return null; // Devuelve un array vacío en caso de error.
+      return []; // Devuelve un array vacío en caso de error.
     }
   };
 
