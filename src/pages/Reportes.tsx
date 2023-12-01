@@ -233,7 +233,6 @@ function Reportes() {
       <div>
         <h4>Resumen Pasajes</h4>
         <Table columnas={columnasResumenPasajes} datos={datosTablaResumenPasajes} />
-        <p>total</p>
 
         <h4>Relacion Planillas</h4>
         <Table columnas={columnasRelacionPlanillas} datos={datosTablaRelacionPlanillas} />

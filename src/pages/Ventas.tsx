@@ -10,7 +10,7 @@ import { useLoaderData } from 'react-router-dom'
 import ContenedorPlanillas from '../components/ContenedorPlanillas'
 import { useAuth } from '../context/AuthContext'
 import { TiquetesVendidos, eliminarTiquete, obtenerTiquetesVendedidosPorPlanillaId, registrarTiquete } from '../api/tiquetes'
-import { formatoHoraAmPm, obtenerFecha } from '../utils/utils'
+import { formatearNumeroConComas, formatoHoraAmPm, obtenerFecha } from '../utils/utils'
 import useToast from '../hooks/useToast'
 import Tiquete from '../components/Tiquete'
 import { useReactToPrint } from "react-to-print";
@@ -69,7 +69,7 @@ const Ventas = () => {
         },
         {
             name: 'Total',
-            selector: (row: TiqueteInfo) => row.total,
+            selector: (row: TiqueteInfo) => formatearNumeroConComas(row.total),
             sortable: true
         },
         {
